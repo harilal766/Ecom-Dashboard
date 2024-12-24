@@ -24,9 +24,11 @@ def home(request):
             context["scheduled_orders"] = True
         
         if ord_resp != None:
-            summary = amazon_dashboard(response=ord_resp)
-            context["shipment_summary"] = summary
+            summary_dict = amazon_dashboard(response=ord_resp)
+            context["shipment_summary"] = summary_dict
             context["ship_date"] = iso_8601_timestamp(0).split("T")[0]
+
+            color_text(message=summary_dict.keys(),color="blue")
         else:
             color_text(message="Empty response from getOrders",color="red")
         return render(request,'home.html',context)
@@ -58,8 +60,8 @@ def amazon_shipment_report(request):
         # since amazon's time limit for daily orders is 11 am , make \\
         # context initialization for Django...
         context = {"path" : None}
-        #next_ship = amzn_next_ship_date().split("T")[0]
-        next_ship = todays_ind_date
+        next_ship = amzn_next_ship_date()
+        #next_ship = todays_ind_date
 
         """
         last ship date needed to be stored in the database to avoid logical errors 

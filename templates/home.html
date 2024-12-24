@@ -10,13 +10,19 @@
             <a href="{% url 'sales:amazon_reports' %}">
                 <i style="color: black;" class="fa-brands fa-amazon"></i>
                 <!--Display shipment report option only when available-->
-                {% if scheduled_orders %}
-                    Shipment Report : {{ship_date}} </a>
-                {% endif %}
+                <section>
+                    {% if scheduled_orders %}
+                        Shipment Report : {{ship_date}} </a>
+                    {% endif %}
+                    <select>
+                        <option></option>
+                    </select>
+            
+                </section>
             {% for date,payment in shipment_summary.items %}
             <div class="order-summary">
                 {% if date != 'total_orders' %}
-                <h4>{{date}} : </h3>
+                <h4>{{date}} : </h3> 
                 {% for method,count in payment.items %}
                 <h4>{{method}} - {{count}},</h3>
                 {% endfor %}

@@ -6,3 +6,7 @@ class Configuration(models.Model):
     account_name = models.CharField(max_length=400,unique=True,default="seller")
     total_orders = models.IntegerField(default=0)
     last_schedule = models.DateTimeField(default=None)
+
+
+class SPAPI(models.Model):
+    pass
