@@ -79,6 +79,18 @@ nav a:hover {
     gap:4px; 
 }
 
+.dashboard {
+    justify: center;
+    text-align: center;
+    border: 1px solid red;
+    border-radius: 4px;
+    width: 50%;
+}
+
+
+
+  
+
 /* FOOTER ----------------------------------------------------------------------------------------*/
 .footer {
     height:90px;

@@ -15,9 +15,12 @@
                         Shipment Report : {{ship_date}} </a>
                     {% endif %}
                     <select>
-                        <option></option>
+                        {% for key,value in shipment_summary.items %}
+                            {% if key != 'total_orders' %}
+                                <option>{{key}}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
-            
                 </section>
             {% for date,payment in shipment_summary.items %}
             <div class="order-summary">
@@ -27,17 +30,25 @@
                 <h4>{{method}} - {{count}},</h3>
                 {% endfor %}
                 {% endif %}
-                </div>
+            </div>
             {% endfor %}
         {% else %}
             <h4 style="color: var(--alert-text);">API Response unavaillable.</h4> 
         {% endif %}
     </div>
+</div>
 
+<!--New amazon dashboard-->
+<div class="dashboard">
+    <h1>Amazon Dashboard</h1>
+    <section class="top-row">
+        <h6>Total Orders</h6>
+    </section>
 </div>
 </section>
 
 
 
+  
 
 {% endblock %}
