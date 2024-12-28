@@ -39,20 +39,21 @@ out = r"D:/Ecom-Dashboard/Test documents/combined.xlsx"
 excel_appending(dataframes=[excel,pivot],out_path=out)
 
 """
-order_statuses = [
-    "PendingAvailability","Pending","Unshipped",
-    "PartiallyShipped","Shipped","InvoiceUnconfirmed",
-    "Canceled","Unfulfillable"
-]
-ord = Orders()
 
-rep = ord.getOrders(CreatedAfter=from_timestamp(4),OrderStatuses="Canceled")
+import os
+import django
 
-print(rep)
+# Set the environment variable for Django settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_manager.settings')  # Replace with your settings module
 
+# Initialize Django
+django.setup()
 
+from sales.models import SPAPI_Credential
 
+obj = SPAPI_Credential.objects.all()
 
+print(obj)
 
 
 

@@ -68,14 +68,27 @@ class SPAPIBase:
         else:
             color_text(message="Endpoint : production endpoint",color="blue")
 
-    def response_analayzer(status_code):
-        pass
+    def limit_analyzer(response):
+        try:
+            color_text(message=f"Headers : \n{response.headers}",color="red")
+
+            rate_limit = response.headers.get('x-amzn-RateLimit-Limit',None)
+            remaining_rate_limit = response.headers.get('x-amzn-RateLimit-Remaining',None)
+            
+            if not (rate_limit == None) or (remaining_rate_limit == None):
+                color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, Request Count : {request_count}/{burst}")
+        
+        except Exception as e:
+            better_error_handling(e)         
 
     def manage_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
         self.endpoint_checker()
         try:
             response = self.make_request(endpoint=endpoint,method=method,params=params,
                                              json_input=json_input)
+            
+            self.limit_analyzer(response=response)
+
             if response.status_code == 200:
                 response = response.json()
 
@@ -142,10 +155,9 @@ class SPAPIBase:
                 better_error_handling(f"Error : {e}")
                 break
         return None
-    
-    
 
 class Orders(SPAPIBase):
+
     def getOrders(self,CreatedAfter=None,CreatedBefore=None,
                   OrderStatuses=None,
                   LastUpdatedAfter=None,
@@ -204,7 +216,7 @@ class Orders(SPAPIBase):
             if OrderStatuses not in order_statuses:
                 return color_text(message="The order status you gave is not available in sp api",color="red")
             #breakpoint()
-            response = super().manage_request(endpoint=endpoint,params=self.params,
+            response = super().execute_request(endpoint=endpoint,params=self.params,
                                                 payload='payload',method='get',burst=20)
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
