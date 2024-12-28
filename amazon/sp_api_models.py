@@ -125,7 +125,14 @@ class Orders(SPAPIBase):
                   PaymentMethods=None,EasyShipShipmentStatuses=None,
                   EarliestShipDate=None,LatestShipDate=None,
                   FulfillmentChannels=None):
+        
+        order_statuses = [
+        "PendingAvailability","Pending","Unshipped",
+        "PartiallyShipped","Shipped","InvoiceUnconfirmed",
+        "Canceled","Unfulfillable"
+    ]
         """
+        
         Note: Either the CreatedAfter parameter or the LastUpdatedAfter parameter is required.
         Both cannot be empty. CreatedAfter or CreatedBefore cannot be set when LastUpdatedAfter is set.
 
@@ -166,6 +173,9 @@ class Orders(SPAPIBase):
         Both cannot be empty. CreatedAfter or CreatedBefore cannot be set when LastUpdatedAfter is set.
         """
         if (CreatedAfter != None) or (LastUpdatedAfter != None):
+            # Verification conditions.
+            if OrderStatuses not in order_statuses:
+                return color_text(message="The order status you gave is not available in sp api",color="red")
             #breakpoint()
             response = super().execute_request(endpoint=endpoint,params=self.params,
                                                 payload='payload',method='get',burst=20)

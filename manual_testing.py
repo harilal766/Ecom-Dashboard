@@ -39,24 +39,26 @@ out = r"D:/Ecom-Dashboard/Test documents/combined.xlsx"
 excel_appending(dataframes=[excel,pivot],out_path=out)
 
 """
+order_statuses = [
+    "PendingAvailability","Pending","Unshipped",
+    "PartiallyShipped","Shipped","InvoiceUnconfirmed",
+    "Canceled","Unfulfillable"
+]
+ord = Orders()
 
+rep = ord.getOrders(CreatedAfter=from_timestamp(4),OrderStatuses="Canceled")
 
-
-from sales.models import SPAPI_Credential
-
-
-cred = SPAPI_Credential.objects.all()
-print(cred)
-
-
-
-
-
-
+print(rep)
 
 
 
 
+
+
+
+
+def similarity_count():
+    pass
 
 
 
