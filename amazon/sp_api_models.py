@@ -62,13 +62,21 @@ class SPAPIBase:
             better_error_handling(e)
     
 
-    def execute_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
-        retry = 5; delay=1
-        
+    def endpoint_checker(self):
+        color_text(message=self)
         if self.base_url == sandbox_endpoint:
             color_text(message="Endpoint : sandbox endpoint",color="blue",end="\r")
         else:
             color_text(message="Endpoint : production endpoint",color="blue",end="\r")
+
+    def response_code_analayzer():
+        pass
+
+
+    def execute_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
+        retry = 5; delay=1
+
+        self.endpoint_checker()
 
         # detecting burst limit should have top priority...
         for request_count in range(burst):
@@ -117,6 +125,9 @@ class SPAPIBase:
                 better_error_handling(f"Error : {e}")
                 break
         return None
+    
+    def manage_request():
+        pass
 
 class Orders(SPAPIBase):
     def getOrders(self,CreatedAfter=None,CreatedBefore=None,
@@ -185,8 +196,7 @@ class Orders(SPAPIBase):
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
         elif CreatedAfter == None and LastUpdatedAfter == None:
-            color_text(message="Either the CreatedAfter or the LastUpdatedAfter parameter is required,\nBoth cannot be empty",color="red")
-            return None
+            return color_text(message="Either the CreatedAfter or the LastUpdatedAfter parameter is required,\nBoth cannot be empty",color="red")
 
     def getOrder(self,orderId):
         endpoint = f"/orders/v0/orders/{orderId}"
