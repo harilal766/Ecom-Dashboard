@@ -31,7 +31,7 @@ class SPAPIBase:
             # Common parameters, individual ones will be added from the respective functions
             self.params = {"MarketplaceIds": self.marketplace_id}
             status = f"Params : {getattr(self,'params','Not Initialized')}"
-            color_text(message=status)
+            #color_text(message=status)
             self.success_codes = {200,201}
             self.rate_limit = {}
         else:
@@ -77,7 +77,16 @@ class SPAPIBase:
             response = self.make_request(endpoint=endpoint,method=method,params=params,
                                              json_input=json_input)
             if response.status_code == 200:
-                return response.json()
+                response = response.json()
+
+                if payload != None:
+                    return response.get(payload)
+                else:
+                    return response
+                
+            else:
+                return color_text(message="The status code is not 200",color="red")
+            
         except:
             pass
 
@@ -120,7 +129,6 @@ class SPAPIBase:
                     response.raise_for_status()
                     break
                 else:
-                    print(response.status_code)
                     color_text(message=request_count,color="red")
                     request_count += 1
                     time.sleep(1) # to delay based on the rate limit which is negligible
@@ -177,7 +185,7 @@ class Orders(SPAPIBase):
         - Damaged (The package was damaged by the carrier.)
         """
         endpoint = "/orders/v0/orders"
-        color_text(message=f"Before update : {self.params}",color="red")
+        #color_text(message=f"Before update : {self.params}",color="red")
         self.params.update({"CreatedAfter" : CreatedAfter,
                             "CreatedBefore" : CreatedBefore,
                             "OrderStatuses": OrderStatuses,
@@ -186,7 +194,7 @@ class Orders(SPAPIBase):
                             "EarliestShipDate" : EarliestShipDate, "LatestShipDate" : LatestShipDate,
                             "EasyShipShipmentStatuses" : EasyShipShipmentStatuses}) 
          
-        color_text(message=f"After update : {self.params}")
+        #color_text(message=f"After update : {self.params}")
         """
         Note: Either the CreatedAfter parameter or the LastUpdatedAfter parameter is required.
         Both cannot be empty. CreatedAfter or CreatedBefore cannot be set when LastUpdatedAfter is set.
@@ -196,7 +204,7 @@ class Orders(SPAPIBase):
             if OrderStatuses not in order_statuses:
                 return color_text(message="The order status you gave is not available in sp api",color="red")
             #breakpoint()
-            response = super().execute_request(endpoint=endpoint,params=self.params,
+            response = super().manage_request(endpoint=endpoint,params=self.params,
                                                 payload='payload',method='get',burst=20)
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
