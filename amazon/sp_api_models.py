@@ -55,23 +55,31 @@ class SPAPIBase:
             if response != None :
                 return response
             else:
-                color_text(message="Response Error",color="red",end="\r")
+                color_text(message="Response Error",color="red")
                 return None
             
         except Exception as e:
             better_error_handling(e)
     
-
     def endpoint_checker(self):
         color_text(message=self)
         if self.base_url == sandbox_endpoint:
-            color_text(message="Endpoint : sandbox endpoint",color="blue",end="\r")
+            color_text(message="Endpoint : sandbox endpoint",color="blue")
         else:
-            color_text(message="Endpoint : production endpoint",color="blue",end="\r")
+            color_text(message="Endpoint : production endpoint",color="blue")
 
-    def response_code_analayzer():
+    def response_analayzer(status_code):
         pass
 
+    def manage_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
+        self.endpoint_checker()
+        try:
+            response = self.make_request(endpoint=endpoint,method=method,params=params,
+                                             json_input=json_input)
+            if response.status_code == 200:
+                return response.json()
+        except:
+            pass
 
     def execute_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
         retry = 5; delay=1
@@ -92,42 +100,42 @@ class SPAPIBase:
                 response = self.make_request(endpoint=endpoint,method=method,params=params,
                                              json_input=json_input)
 
-                color_text(message=f"Headers {request_count}: \n{response.headers}",color="red",end="\r")
+                color_text(message=f"Headers {request_count}: \n{response.headers}",color="red")
 
                 rate_limit = response.headers.get('x-amzn-RateLimit-Limit',None)
                 remaining_rate_limit = response.headers.get('x-amzn-RateLimit-Remaining',None)
 
-                color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, Request Count : {request_count}/{burst}",end="\r")
+                color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, Request Count : {request_count}/{burst}")
                 
                 #color_text(message=response.headers,color="red")
                 
                 if request_count == burst:
-                    color_text(message="Burst Limit reached",color="red",end="\r")
+                    color_text(message="Burst Limit reached",color="red")
 
                 if response.status_code == 429:
                     delay *=2
                     time.sleep(delay)
-                    color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red',end="\r")
+                    color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red')
                 elif response.status_code >= 400:
                     response.raise_for_status()
                     break
                 else:
-                    color_text(message=request_count,color="red",end="\r")
+                    print(response.status_code)
+                    color_text(message=request_count,color="red")
                     request_count += 1
-                    time.sleep(5) # to delay based on the rate limit which is negligible
+                    time.sleep(1) # to delay based on the rate limit which is negligible
                     response_data = response.json()
                     return response_data.get(payload,None) if payload else response_data
                 
             except AttributeError as e:
-                color_text(message=f"Attribute Error Found : {e}\n{response}\n-----------------------------------",color='red',end="\r")
+                color_text(message=f"Attribute Error Found : {e}\n{response}\n-----------------------------------",color='red')
                 break
             except requests.exceptions.RequestException as e:
                 better_error_handling(f"Error : {e}")
                 break
         return None
     
-    def manage_request():
-        pass
+    
 
 class Orders(SPAPIBase):
     def getOrders(self,CreatedAfter=None,CreatedBefore=None,
@@ -193,6 +201,7 @@ class Orders(SPAPIBase):
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
                 return response.get("Orders")
+            
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
         elif CreatedAfter == None and LastUpdatedAfter == None:
