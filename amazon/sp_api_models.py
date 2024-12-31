@@ -365,3 +365,8 @@ class Reports(SPAPIBase):
 
 class Shipping(SPAPIBase):
     pass
+
+
+class Finances(SPAPIBase):
+    pass
+
