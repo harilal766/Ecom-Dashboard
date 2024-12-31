@@ -93,7 +93,11 @@ nav a:hover {
     width: 50%;
 }
 
-
+.dashboard h5 {
+    transform: rotate(90deg); /* Rotate 90 degrees clockwise */
+    transform-origin: left top; /* Adjust origin if needed */
+    display: inline-block; /* Required to transform text */
+}
   
 
 /* FOOTER ----------------------------------------------------------------------------------------*/

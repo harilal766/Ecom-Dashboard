@@ -49,11 +49,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_manager.settings')  # Repl
 # Initialize Django
 django.setup()
 
-from sales.models import SPAPI_Credential
-
-obj = SPAPI_Credential.objects.all()
-
-print(obj)
 
 
 

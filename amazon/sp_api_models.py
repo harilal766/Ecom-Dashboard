@@ -10,6 +10,7 @@ created_after = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
 
 production_endpoint = "https://sellingpartnerapi-eu.amazon.com"
 sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"
+
 import logging
 import requests
 
@@ -264,13 +265,22 @@ class EasyShip(SPAPIBase):
     """
     Operations
 
-    listHandoverSlots
+    listHandoverSlots post
     getScheduledPackage
     createScheduledPackage
     updateScheduledPackages
     createScheduledPackageBulk
     """ 
-    pass
+    def listHandoverSlots(self):
+        pass
+    def getScheduledPackage(self):
+        pass
+    def createScheduledPackage(self):
+        pass
+    def updateScheduledPackages(self):
+        pass
+    def createScheduledPackageBulk(self):
+        pass
 
 class Reports(SPAPIBase):
     # https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-reference        
