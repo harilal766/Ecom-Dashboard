@@ -79,14 +79,19 @@ nav a:hover {
     gap:4px; 
 }
 
+
+.dashboards {
+    display: flex;
+}
 .dashboard {
     justify: center;
+    box-sizing: content-box;
+    margin: 4px;
     text-align: center;
     border: 1px solid red;
     border-radius: 4px;
     width: 50%;
 }
-
 
 
   
