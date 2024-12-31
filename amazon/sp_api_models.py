@@ -265,22 +265,38 @@ class EasyShip(SPAPIBase):
     """
     Operations
 
-    listHandoverSlots post
+    listHandoverSlots - post
     getScheduledPackage
     createScheduledPackage
     updateScheduledPackages
-    createScheduledPackageBulk
+    createScheduledPackageBul
     """ 
     def listHandoverSlots(self):
-        pass
-    def getScheduledPackage(self):
-        pass
+        endpoint = "/easyShip/2022-03-23/timeSlot"
+        rate = 1
+        burst = 5
+        #self.params.update({"ListHandoverSlotsRequest" : 0})
+        return super().execute_request(endpoint = endpoint,method='post',params=self.params,burst=5)
+    
+    def getScheduledPackage(self,amazonOrderId):
+        endpoint = "/easyShip/2022-03-23/package"
+        self.params.update(
+            { "amazonOrderId" : amazonOrderId }
+        )
+        print(f"Params : {self.params}")
+        print(self.headers)
+        return super().execute_request(endpoint=endpoint,params=self.params,method='get',burst=5)
+    
     def createScheduledPackage(self):
         pass
     def updateScheduledPackages(self):
         pass
     def createScheduledPackageBulk(self):
-        pass
+        """
+
+        """
+        endpoint = "/easyShip/2022-03-23/packages/bulk"
+        
 
 class Reports(SPAPIBase):
     # https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-reference        

@@ -58,9 +58,13 @@ def similarity_count():
 
 
 
+es = EasyShip()
 
+sh = es.getScheduledPackage(amazonOrderId=
+                            "405-8922362-3421912"
+                            )
 
-
+print(sh)
 
 
 
