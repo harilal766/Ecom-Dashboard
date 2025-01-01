@@ -57,7 +57,7 @@ def django_db_ops(operation):
     Replacing .env with database for the storing of credentials.
     1. Add an option on the front end to add a new store/ ecommmerce platform account.
     2. redirect the user to the amazon/shopify/platform dedicated page.
-    3. collect required credentials : 
+    3. collect required credentials :
         api keys , tokens, store name, store credential object id in database.
     4. 
 """
