@@ -40,15 +40,24 @@ excel_appending(dataframes=[excel,pivot],out_path=out)
 
 """
 
-import os
-import django
 
-# Set the environment variable for Django settings
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_manager.settings')  # Replace with your settings module
+import os,django
 
-# Initialize Django
-django.setup()
+def django_db_ops(operation):
+    # Set the environment variable for Django settings
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_manager.settings') 
+    # Initialize Django
+    django.setup()
+    if operation.lower() == "read":
+        pass
 
+
+
+"""
+    Replacing .env with database for the storing of credentials.
+    1. Add an option on the front end to add a new store/ ecommmerce platform account.
+    
+"""
 
 
 

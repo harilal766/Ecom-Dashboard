@@ -59,6 +59,7 @@ def generate_access_token():
             # Store the new token in to the env file before returning it.
             file_handler(filepath='.env',operation='update',
                 field='ACCESS_TOKEN',updated_value=access_token)
+            
             #color_text(message="access token -> env file",color='green')
             # request time -> json file
             filepath = dir_switch(win=win_sp_api_config,lin=lin_sp_api_config)
