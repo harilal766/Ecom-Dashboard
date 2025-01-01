@@ -10,6 +10,7 @@ created_after = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
 
 production_endpoint = "https://sellingpartnerapi-eu.amazon.com"
 sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"
+
 import logging
 import requests
 
@@ -31,7 +32,7 @@ class SPAPIBase:
             # Common parameters, individual ones will be added from the respective functions
             self.params = {"MarketplaceIds": self.marketplace_id}
             status = f"Params : {getattr(self,'params','Not Initialized')}"
-            color_text(message=status)
+            #color_text(message=status)
             self.success_codes = {200,201}
             self.rate_limit = {}
         else:
@@ -55,20 +56,58 @@ class SPAPIBase:
             if response != None :
                 return response
             else:
-                color_text(message="Response Error",color="red",end="\r")
+                color_text(message="Response Error",color="red")
                 return None
             
         except Exception as e:
             better_error_handling(e)
     
+    def endpoint_checker(self):
+        color_text(message=self)
+        if self.base_url == sandbox_endpoint:
+            color_text(message="Endpoint : sandbox endpoint",color="blue")
+        else:
+            color_text(message="Endpoint : production endpoint",color="blue")
+
+    def limit_analyzer(response):
+        try:
+            color_text(message=f"Headers : \n{response.headers}",color="red")
+
+            rate_limit = response.headers.get('x-amzn-RateLimit-Limit',None)
+            remaining_rate_limit = response.headers.get('x-amzn-RateLimit-Remaining',None)
+            
+            if not (rate_limit == None) or (remaining_rate_limit == None):
+                color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, Request Count : {request_count}/{burst}")
+        
+        except Exception as e:
+            better_error_handling(e)         
+
+    def manage_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
+        self.endpoint_checker()
+        try:
+            response = self.make_request(endpoint=endpoint,method=method,params=params,
+                                             json_input=json_input)
+            
+            self.limit_analyzer(response=response)
+
+            if response.status_code == 200:
+                response = response.json()
+
+                if payload != None:
+                    return response.get(payload)
+                else:
+                    return response
+                
+            else:
+                return color_text(message="The status code is not 200",color="red")
+            
+        except:
+            pass
 
     def execute_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
         retry = 5; delay=1
-        
-        if self.base_url == sandbox_endpoint:
-            color_text(message="Endpoint : sandbox endpoint",color="blue",end="\r")
-        else:
-            color_text(message="Endpoint : production endpoint",color="blue",end="\r")
+
+        self.endpoint_checker()
 
         # detecting burst limit should have top priority...
         for request_count in range(burst):
@@ -84,34 +123,34 @@ class SPAPIBase:
                 response = self.make_request(endpoint=endpoint,method=method,params=params,
                                              json_input=json_input)
 
-                color_text(message=f"Headers {request_count}: \n{response.headers}",color="red",end="\r")
+                color_text(message=f"Headers {request_count}: \n{response.headers}",color="red")
 
                 rate_limit = response.headers.get('x-amzn-RateLimit-Limit',None)
                 remaining_rate_limit = response.headers.get('x-amzn-RateLimit-Remaining',None)
 
-                color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, Request Count : {request_count}/{burst}",end="\r")
+                color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, Request Count : {request_count}/{burst}")
                 
                 #color_text(message=response.headers,color="red")
                 
                 if request_count == burst:
-                    color_text(message="Burst Limit reached",color="red",end="\r")
+                    color_text(message="Burst Limit reached",color="red")
 
                 if response.status_code == 429:
                     delay *=2
                     time.sleep(delay)
-                    color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red',end="\r")
+                    color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red')
                 elif response.status_code >= 400:
                     response.raise_for_status()
                     break
                 else:
-                    color_text(message=request_count,color="red",end="\r")
+                    color_text(message=request_count,color="red")
                     request_count += 1
-                    time.sleep(5) # to delay based on the rate limit which is negligible
+                    time.sleep(1) # to delay based on the rate limit which is negligible
                     response_data = response.json()
                     return response_data.get(payload,None) if payload else response_data
                 
             except AttributeError as e:
-                color_text(message=f"Attribute Error Found : {e}\n{response}\n-----------------------------------",color='red',end="\r")
+                color_text(message=f"Attribute Error Found : {e}\n{response}\n-----------------------------------",color='red')
                 break
             except requests.exceptions.RequestException as e:
                 better_error_handling(f"Error : {e}")
@@ -119,13 +158,21 @@ class SPAPIBase:
         return None
 
 class Orders(SPAPIBase):
+
     def getOrders(self,CreatedAfter=None,CreatedBefore=None,
                   OrderStatuses=None,
                   LastUpdatedAfter=None,
                   PaymentMethods=None,EasyShipShipmentStatuses=None,
                   EarliestShipDate=None,LatestShipDate=None,
                   FulfillmentChannels=None):
+        
+        order_statuses = [
+        "PendingAvailability","Pending","Unshipped",
+        "PartiallyShipped","Shipped","InvoiceUnconfirmed",
+        "Canceled","Unfulfillable"
+    ]
         """
+        
         Note: Either the CreatedAfter parameter or the LastUpdatedAfter parameter is required.
         Both cannot be empty. CreatedAfter or CreatedBefore cannot be set when LastUpdatedAfter is set.
 
@@ -151,7 +198,7 @@ class Orders(SPAPIBase):
         - Damaged (The package was damaged by the carrier.)
         """
         endpoint = "/orders/v0/orders"
-        color_text(message=f"Before update : {self.params}",color="red")
+        #color_text(message=f"Before update : {self.params}",color="red")
         self.params.update({"CreatedAfter" : CreatedAfter,
                             "CreatedBefore" : CreatedBefore,
                             "OrderStatuses": OrderStatuses,
@@ -160,23 +207,26 @@ class Orders(SPAPIBase):
                             "EarliestShipDate" : EarliestShipDate, "LatestShipDate" : LatestShipDate,
                             "EasyShipShipmentStatuses" : EasyShipShipmentStatuses}) 
          
-        color_text(message=f"After update : {self.params}")
+        #color_text(message=f"After update : {self.params}")
         """
         Note: Either the CreatedAfter parameter or the LastUpdatedAfter parameter is required.
         Both cannot be empty. CreatedAfter or CreatedBefore cannot be set when LastUpdatedAfter is set.
         """
         if (CreatedAfter != None) or (LastUpdatedAfter != None):
+            # Verification conditions.
+            if OrderStatuses not in order_statuses:
+                return color_text(message="The order status you gave is not available in sp api",color="red")
             #breakpoint()
             response = super().execute_request(endpoint=endpoint,params=self.params,
                                                 payload='payload',method='get',burst=20)
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
                 return response.get("Orders")
+            
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
         elif CreatedAfter == None and LastUpdatedAfter == None:
-            color_text(message="Either the CreatedAfter or the LastUpdatedAfter parameter is required,\nBoth cannot be empty",color="red")
-            return None
+            return color_text(message="Either the CreatedAfter or the LastUpdatedAfter parameter is required,\nBoth cannot be empty",color="red")
 
     def getOrder(self,orderId):
         endpoint = f"/orders/v0/orders/{orderId}"
@@ -215,13 +265,38 @@ class EasyShip(SPAPIBase):
     """
     Operations
 
-    listHandoverSlots
+    listHandoverSlots - post
     getScheduledPackage
     createScheduledPackage
     updateScheduledPackages
-    createScheduledPackageBulk
+    createScheduledPackageBul
     """ 
-    pass
+    def listHandoverSlots(self):
+        endpoint = "/easyShip/2022-03-23/timeSlot"
+        rate = 1
+        burst = 5
+        #self.params.update({"ListHandoverSlotsRequest" : 0})
+        return super().execute_request(endpoint = endpoint,method='post',params=self.params,burst=5)
+    
+    def getScheduledPackage(self,amazonOrderId):
+        endpoint = "/easyShip/2022-03-23/package"
+        self.params.update(
+            { "amazonOrderId" : amazonOrderId }
+        )
+        print(f"Params : {self.params}")
+        print(self.headers)
+        return super().execute_request(endpoint=endpoint,params=self.params,method='get',burst=5)
+    
+    def createScheduledPackage(self):
+        pass
+    def updateScheduledPackages(self):
+        pass
+    def createScheduledPackageBulk(self):
+        """
+
+        """
+        endpoint = "/easyShip/2022-03-23/packages/bulk"
+        
 
 class Reports(SPAPIBase):
     # https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-reference        
@@ -290,3 +365,8 @@ class Reports(SPAPIBase):
 
 class Shipping(SPAPIBase):
     pass
+
+
+class Finances(SPAPIBase):
+    pass
+

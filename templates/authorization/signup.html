@@ -11,9 +11,16 @@
     {% endif %}
     
     <div class="mb-4">
+        {% if register %}
+            <input class="form-control" id="email" type="email" name = "email" placeholder="E-mail">
+            <br>
+        {% endif %}
+        
         <input class="form-control" id="username" name = "username" placeholder="Username">
         <br>
         <input class="form-control" id="password" type="password" name = "password" placeholder="Password">
+        <br>
+        <input class="form-control" id="confirm_password" type="password" name = "confirm_password" placeholder="Confirm your password">
         <br>
         <button type="button" class="btn btn-primary">Register Account</button>
     </div>

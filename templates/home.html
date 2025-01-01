@@ -9,33 +9,60 @@
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
             <a href="{% url 'sales:amazon_reports' %}">
                 <i style="color: black;" class="fa-brands fa-amazon"></i>
-                {% if scheduled_orders %}
-                    Shipment Report : {{ship_date}} </a>
-                {% endif %}
+                <!--Display shipment report option only when available-->
+                <section>
+                    {% if scheduled_orders %}
+                        Shipment Report : {{ship_date}} </a>
+                    {% endif %}
+                    <select>
+                        {% for key,value in shipment_summary.items %}
+                            {% if key != 'total_orders' %}
+                                <option>{{key}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </section>
             {% for date,payment in shipment_summary.items %}
             <div class="order-summary">
                 {% if date != 'total_orders' %}
-                <h4>{{date}} : </h3>
+                <h4>{{date}} : </h3> 
                 {% for method,count in payment.items %}
                 <h4>{{method}} - {{count}},</h3>
                 {% endfor %}
                 {% endif %}
-                </div>
+            </div>
             {% endfor %}
         {% else %}
             <h4 style="color: var(--alert-text);">API Response unavaillable.</h4> 
         {% endif %}
     </div>
+</div>
+
+
+
+<div class="dashboards">
+    <!--New amazon dashboard-->
+    <div class="dashboard">
+        <h5>Amazon</h5>
+        <div class="top-row">
+            <h6>Total Orders</h6>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <h5>Amazon</h5>
+        <div class="top-row">
+            <h6>Total Orders</h6>
+        </div>
+    </div>
 
 </div>
+
+
 </section>
 
-1. API call limit handling. <br>
-2. Access token initialization from env file.<br>
-5. cache file.<br>
-6. auto data updation like js <br>
-7. Sandbox switching in developer options <br>
-8 . OTP login, email confirmation
 
+
+  
 
 {% endblock %}

@@ -64,7 +64,7 @@ nav a:hover {
     background-color: var(--dash-bg-color);
     padding: 5px; margin: 5px;
     border-radius: 5px;
-    width: 55%;
+    width: 35%;
     display: flex; flex-direction: column;
 }
 .child-container h4, h2 {
@@ -78,6 +78,27 @@ nav a:hover {
     justify-content: center;
     gap:4px; 
 }
+
+
+.dashboards {
+    display: flex;
+}
+.dashboard {
+    justify: center;
+    box-sizing: content-box;
+    margin: 4px;
+    text-align: center;
+    border: 1px solid red;
+    border-radius: 4px;
+    width: 50%;
+}
+
+.dashboard h5 {
+    transform: rotate(90deg); /* Rotate 90 degrees clockwise */
+    transform-origin: left top; /* Adjust origin if needed */
+    display: inline-block; /* Required to transform text */
+}
+  
 
 /* FOOTER ----------------------------------------------------------------------------------------*/
 .footer {

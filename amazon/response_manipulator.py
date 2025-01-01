@@ -110,7 +110,7 @@ def amazon_dashboard(response):
                     # taking orders count
                     summary_dict["total_orders"] += 1 
 
-                    ship_by_date = (order['LatestShipDate']).split("T")[0]
+                    ship_by_date = (order['LatestShipDate']) # 2024-12-28T18:29:59Z
                     payment_method = order['PaymentMethod']
 
                     if ship_by_date not in summary_dict.keys():

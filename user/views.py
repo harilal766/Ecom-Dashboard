@@ -8,8 +8,10 @@ from helpers.messages import *
 username_pattern = r"^[a-zA-Z]{6-12}$"
 password_pattern = r"\d{8-15}"
 
+
 def register(request):
-    context = {"status":None}
+    # credentials : username, password, email, confirm password
+    context = {"purpose": "Signup" , "status":None, "register": True, "login": None}
     if request.method == 'POST':
         client_username = request.POST["username"]
         client_password = request.POST["password"]
@@ -29,12 +31,9 @@ def register(request):
     color_text(message=f"Signup Status : {context['status']}")
     return render(request,"authorization/signup.html",context)
 
-
-
-
-
 def login(request):
-    pass
+    context = {"purpose": "Signup" , "status":None, "register": None, "login": True}
+    # credentials needed to login : username, password
 
 def logout(request):
     pass
