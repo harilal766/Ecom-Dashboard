@@ -94,7 +94,7 @@ nav a:hover {
 }
 
 .dashboard h5 {
-    transform: rotate(90deg); /* Rotate 90 degrees clockwise */
+    transform: rotate(-90deg); /* Rotate 90 degrees clockwise */
     transform-origin: left top; /* Adjust origin if needed */
     display: inline-block; /* Required to transform text */
 }
@@ -105,3 +105,10 @@ nav a:hover {
     height:90px;
     background-color: var(--footer-bg-color);
 }
+
+
+.form {
+    background-color: aquamarine;
+}
+
+
