@@ -5,7 +5,7 @@
     --link:blue; --link-hover:green;
 
     /* Texts */
-    --primary-font:Arial, Helvetica, sans-serif;
+    --primary-font: Helvetica, Arial, sans-serif;
 }
 
 /* Debugger */
@@ -15,28 +15,31 @@
 
 /* COMMON STYLES */
 
-
-
-body {
-    background-color: var(--bg);
-    margin: 0px; padding: 0px;
-    font-family: VAR(--primary-font);
-    margin: 0px; padding: 0px;
-}
-
-a{
+a {
     text-decoration: none;
     color: blueviolet;
     font-weight: bold;
 }
 
 /* INDIVIDUAL STYLES */
+body {
+    background-color: whitesmoke;
+    margin: 0px; padding: 0px;
+    font-family: VAR(--primary-font);
+    margin: 0px; padding: 0px;
+}
 
 /* Header */
 .header{
     display: flex;
     justify-content: space-between;
-    margin: 0px 10px 0px 10px;
+    margin: 0px;
+    box-shadow: 0px 1px 5px black;
+}
+
+
+.left-header, .right-header {
+    margin: 0px 10px 0px 10px; 
 }
 
 a:hover {
@@ -49,8 +52,13 @@ a:hover {
 }
 
 /* Sidebar */
+.sidebar{
+    background-color: azure;
+    box-shadow: 0px 1px 5px black;
+}
 .sidebar li{
     list-style-type: none;
+    
 }
 
 .sidebar ul{
