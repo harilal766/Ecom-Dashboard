@@ -1,0 +1,57 @@
+/* VARIABLES */
+:root{
+    /* Colors */
+    --bg:wheat;
+    --link:blue; --link-hover:green;
+
+    /* Texts */
+    --primary-font:Arial, Helvetica, sans-serif;
+}
+
+/* COMMON STYLES */
+a {
+    font-weight: bold;
+}
+
+a:hover {
+    color: aquamarine;
+    text-decoration: underline;
+}
+
+
+
+/* INDIVIDUAL STYLES */
+/* Navbar */
+.navbar{
+    display: flex;
+    justify-content: space-between;
+}
+
+.right-nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Home page */
+body {
+    flex:1;
+    display: flex; flex-direction: column;
+    background-color: var(--bg);
+    font-family: var(--primary-font);
+}
+/* Footer */
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+
+    height: 100px; width: 100%;
+    background-color: gray;
+}
+
+
+
+
