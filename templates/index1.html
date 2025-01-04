@@ -8,21 +8,27 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="left-nav">
-            <h1>ShopSyncer</h1>
+    <div class="header">
+        <div class="left-header">
+            <h2>ShopSyncer</h2>
         </div>
-        <div class="right-nav">
+        <div class="right-header">
+            <h2>User</h2>
+        </div>
+    </div>
+    <div class="body">
+        <div class="sidebar">
             <ul>
-                <li><a>Home</a></li>
-                <li><a>Amazon</a></li>
-                <li><a>Logout</a></li>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#home">Amazon</a></li>
+                <li><a>Signout</a></li>
             </ul>
         </div>
-        
-    </nav>
-    {% block content %}
-    {% endblock %}
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
     <footer>
         Shopsyncer &copy; 2025
     </footer>
