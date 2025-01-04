@@ -10,6 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.    
+def home1(request):
+    return render(request,'home1.html')
+
+
+
 def home(request):
     try:
         # initializing context with none, for handling errors 

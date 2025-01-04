@@ -21,11 +21,11 @@
         <!-- JS -->
         <script type="text/javasript" src="{% static 'js/nav.js' %}" defer></script>
     </head>
-    <body>
+    <body class="body">
         <header>
             <nav id = "navbar" class="navbar">
               <ul class = "nav_list">
-                <li><a href="{% url 'sales:home' %}">Home</a></li>|
+                <li><a href="{% url 'sales:home1' %}">Home</a></li>|
                 <li><a href="#">About</a></li>|
                 <li><a href="{% url 'sales:amazon' %}">Amazon</a></li>|
                 <li><a href="{% url 'amazon:add_amzn_store' %}">Add amazon store</a></li>|
@@ -35,7 +35,7 @@
               </ul>
             </nav>
         </header>
-        <main class="body">
+        <main>
             {% block content %}
             {% endblock %}
         </main>
