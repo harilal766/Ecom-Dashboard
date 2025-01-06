@@ -1,7 +1,13 @@
-{% include 'index.html' %}
+{% include 'index1.html' %}
 {% load static %}
 
 {% block content %}
+<div class="form">
+    <h1>Form</h1>
+</div>
+
+<!--
+
 <form class="container" method="POST" enctype="multipart/form-data" action="">
     {% csrf_token %}
     {% if status == None %}
@@ -25,4 +31,9 @@
         <button type="button" class="btn btn-primary">Register Account</button>
     </div>
 </form>
+
+
+-->
+
+
 {% endblock %}
