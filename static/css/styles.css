@@ -1,79 +1,39 @@
-/* VARIABLES */
-:root{
-    /* Colors */
-    --bg:wheat;
-    --link:blue; --link-hover:green;
-
-    /* Texts */
-    --primary-font: Helvetica, Arial, sans-serif;
+* {
+    margin: 0px; padding: 0px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Debugger */
-/* { border: 1px solid red; }*/
+div {
+    border: 1px solid red;
+}
 
+.body{
+    display: flex;
+}
 
-
-/* COMMON STYLES */
+ul {
+    list-style-type: none;
+}
 
 a {
     text-decoration: none;
-    color: blueviolet;
     font-weight: bold;
 }
 
-/* INDIVIDUAL STYLES */
-body {
-    background-color: whitesmoke;
-    margin: 0px; padding: 0px;
-    font-family: VAR(--primary-font);
-    margin: 0px; padding: 0px;
-}
-
-/* Header */
-.header{
-    display: flex;
-    justify-content: space-between;
-    margin: 0px;
-    box-shadow: 0px 1px 5px black;
-}
-
-
-.left-header, .right-header {
-    margin: 0px 10px 0px 10px; 
-}
-
-a:hover {
-    color: aquamarine;
-    text-decoration: underline;
-}
-
-.body {
-    display: flex;
-}
-
-/* Sidebar */
 .sidebar{
-    background-color: azure;
-    box-shadow: 0px 1px 5px black;
+    width: 160px;
+    display: flex; flex-direction: column;
+    background-color: lightblue;
 }
-.sidebar li{
-    list-style-type: none;
-    
+
+.sidebar h4 {
+    text-align: center;
 }
 
 .sidebar ul{
-    display: flex; flex-direction: column;
-    gap: 10px;
-    padding: 0px; margin: 20px 20px 0px 10px;
+    padding: 5px; margin-top: 10%;
 }
-/* Home page */
 
-/* Footer */
-footer{
-    display: flex;
-    justify-content: center; align-items: center;
-    font-weight: bolder;
-    height: 100px;
-    height: 60px;
-    background-color: gray;
+.sidebar li {
+    margin-bottom:10px;
 }
