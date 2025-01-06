@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from amazon.response_manipulator import amazon_dashboard
-from amazon.sp_api_models import Orders,Reports
-from datetime import datetime,timedelta
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
+from amazon.sp_api_models import Orders,Reports
+from datetime import datetime,timedelta
 from helpers.sql_scripts import *
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -40,9 +40,7 @@ def home(request):
     except Exception as e:
         better_error_handling(e)
 
-def amazon_detail_page(request):
-    context = {}
-    return render(request,"amazon_detail_page.html",context)
+
 
 def amazon_shipment_report(request):
     """"
@@ -65,8 +63,8 @@ def amazon_shipment_report(request):
         # since amazon's time limit for daily orders is 11 am , make \\
         # context initialization for Django...
         context = {"path" : None}
-        next_ship = amzn_next_ship_date()
-        #next_ship = todays_ind_date
+        #next_ship = amzn_next_ship_date()
+        next_ship = todays_ind_date
 
         """
         last ship date needed to be stored in the database to avoid logical errors 

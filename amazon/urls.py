@@ -7,4 +7,5 @@ app_name = 'amazon'
 
 urlpatterns = [
     path('add_amazon_store',views.add_amazon_store,name="add_amzn_store"),
+    path('amazon',views.amazon_detail_page,name="amazon"),
 ]

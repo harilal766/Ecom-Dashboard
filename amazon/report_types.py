@@ -1,3 +1,12 @@
+
+
+selected_types = {
+    "Shipment Report" : "GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
+    "Return Report" : "GET_FLAT_FILE_RETURNS_DATA_BY_RETURN_DATE",
+    "Settlement Report" : ""
+}
+
+
 order_report_types = {
     "actionable shipping flatfile" : "GET_FLAT_FILE_ACTIONABLE_ORDER_DATA_SHIPPING",
     "invoicing" : "GET_ORDER_REPORT_DATA_INVOICING",

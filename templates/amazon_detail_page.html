@@ -2,6 +2,23 @@
 {% block content %}
 <div>
     <h1>Amazon Reports</h1>
+    <h3>Report Generator</h3>
+    <h6>Select the report type : </h6>
+    <select>
+        {% for type in types %}
+        <option type={{type}}>{{type}}</option>
+        {% endfor %}
+    </select>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="date">Select starting date</label>
+        <input type="date" name="start_date" id="start_date">
+        <label for="date">Select ending date</label>
+        <input type="date" name="end_date" id="end_date">
+        <button type="submit" class="btn btn-primary">Generate Report</button>
+    </form>
+
 </div>
 
 
