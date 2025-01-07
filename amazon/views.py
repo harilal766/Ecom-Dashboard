@@ -62,14 +62,19 @@ def amazon_shipment_report(request):
         # context initialization for Django...
         context = {"path" : None}
         #next_ship = amzn_next_ship_date()
-        next_ship = todays_ind_date
+
+        selected_ship_date = request.POST.get("ship_date")
+        color_text(selected_ship_date,color="red")
+        selected_ship_date = todays_ind_date
+        # change it to the output got from front end
+        
 
         """
         last ship date needed to be stored in the database to avoid logical errors 
         if the scheduling report taking is being done after 11 am. 
         """
         orders_details = order_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Shipped",
-                                EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=next_ship)
+                                EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=selected_ship_date)
         space = " "*14
         if not orders_details == None:
             color_text(message=f"Orders  Count : {len(orders_details)}")
@@ -85,13 +90,13 @@ def amazon_shipment_report(request):
                         purchase_date = i["PurchaseDate"]; ship_date = i["LatestShipDate"]
                         payment_method = i["PaymentMethod"]; status = i["EasyShipShipmentStatus"]
                         # verify again to get orders for today only
-                        if ship_date.split("T")[0] == next_ship.split("T")[0]:
+                        if ship_date.split("T")[0] == selected_ship_date.split("T")[0]:
                             order_count += 1
                             if payment_method == "COD":
                                 cod_orders.append(order_id)
                             else:
                                 prepaid_orders.append(order_id)
-                            order_info = f"{order_count}.{order_id} : Status - {status}, puchased on - {purchase_date}, shipping on - {ship_date}, type - {payment_method} date : {next_ship}"
+                            order_info = f"{order_count}.{order_id} : Status - {status}, puchased on - {purchase_date}, shipping on - {ship_date}, type - {payment_method} date : {selected_ship_date}"
                             print(order_info)
                     else:
                         color_text(message=f"Not a dictionary but of type : {type(i)} ",color="red")
@@ -113,27 +118,32 @@ def amazon_shipment_report(request):
                     
                     if not column_filtered_df.empty :
                         # after that, make a loop to convert to convert cod and prepaid orders to excel sheet
-                        types = {"COD" : cod_orders,"Prepaid":prepaid_orders}
+                        types = {"COD" : cod_orders,"Prepaid": prepaid_orders}
                         for type_key,type_value in types.items():
-                            payment_type_filtered_orders_df = column_filtered_df[column_filtered_df['amazon_order_id'].isin(type_value)]
+                            if not len(type_key) == 0 :
+                                payment_type_filtered_orders_df = column_filtered_df[column_filtered_df['amazon_order_id'].isin(type_value)]
 
-                            # Creating manual report for tallying
-                            shipment_manual_report(df=payment_type_filtered_orders_df,
-                                df_prod_name_col="product_name", df_item_price_col="item_price",df_qtys_column="quantity",
-                                template_filename="amazon manual report template.xlsx",
-                                template_filepath=dir_switch(win=win_amazon_manual_report,lin=lin_amazon_manual_report),
-                                out_filename=f"Amazon manual report {type_key}.xlsx",
-                                out_filepath=dir_switch(win=win_amazon_manual_report_out,lin=lin_amazon_manual_report_out))
+                                # Creating manual report for tallying
+                                shipment_manual_report(df=payment_type_filtered_orders_df,
+                                    df_prod_name_col="product_name", df_item_price_col="item_price",df_qtys_column="quantity",
+                                    template_filename="amazon manual report template.xlsx",
+                                    template_filepath=dir_switch(win=win_amazon_manual_report,lin=lin_amazon_manual_report),
+                                    out_filename=f"Amazon manual report {type_key}.xlsx",
+                                    out_filepath=dir_switch(win=win_amazon_manual_report_out,lin=lin_amazon_manual_report_out))
 
-                            print(payment_type_filtered_orders_df)
-                            # Excel path should be changed to dynamic for django.
-                            excel_path = dir_switch(win=win_amazon_scheduled_report,lin=lin_amazon_scheduled_report)
-                            excel_name = f"Scheduled for {amzn_next_ship_date().split("T")[0]} - {type_key}.xlsx"
-                            color_text(message=f"Ship date : {amzn_next_ship_date().split("T")[0]}")
-                            excel_path = os.path.join(excel_path,excel_name)
-                            payment_type_filtered_orders_df.to_excel(excel_writer=excel_path,index="False",
-                                                            sheet_name=f"Sheet 1")
-                            context["path"] = excel_path
+                                print(payment_type_filtered_orders_df)
+                                # Excel path should be changed to dynamic for django.
+                                excel_path = dir_switch(win=win_amazon_scheduled_report,lin=lin_amazon_scheduled_report)
+                                excel_name = f"Scheduled for {selected_ship_date} - {type_key}.xlsx"
+                                color_text(message=f"Ship date : {selected_ship_date}")
+                                excel_path = os.path.join(excel_path,excel_name)
+                                payment_type_filtered_orders_df.to_excel(excel_writer=excel_path,index="False",
+                                                                sheet_name=f"Sheet 1")
+                                context["path"] = excel_path
+                            else:
+                                color_text(message=f"There are no orders in the type : {type_key}")
+                            if excel_path:
+                                context["status"] = f"Saved to {excel_path}"
                     else:
                         color_text("There are no scheduled orders",color="red")
             else:
@@ -141,7 +151,7 @@ def amazon_shipment_report(request):
         else:
             color_text(message="Empty order response",color="red")
 
-        return render(request,"amazon_reports.html",context)
+        return render(request,"home.html",context)
     except Exception as e:
         better_error_handling(e)
 
