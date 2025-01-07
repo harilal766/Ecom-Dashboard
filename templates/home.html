@@ -7,7 +7,7 @@
         <h2>Amazon Dashboard</h2>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
-            <a href="{% url 'sales:amazon_reports' %}">
+            <a href="{% url 'amazon:amazon_reports' %}">
                 <i style="color: black;" class="fa-brands fa-amazon"></i>
                 <!--Display shipment report option only when available-->
                 <section>
