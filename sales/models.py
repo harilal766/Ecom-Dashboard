@@ -17,3 +17,11 @@ class SPAPI_Credential(models.Model):
 
     def __str__(self):
         return str(self.access_token_updation_time)
+    
+
+class Store(models.Model):
+    platform = models.CharField(max_length=200,default="Ecom")
+    store_name = models.CharField(max_length=400,unique=True,default="seller")
+    
+
+    

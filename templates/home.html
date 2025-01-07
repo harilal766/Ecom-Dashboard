@@ -4,24 +4,33 @@
 <div class="parent-container">
     <!-- Child items for amazon -->
     <div class="child-container">
-        <h2>Amazon Dashboard</h2>
+        <h2>Amazon Dashboard {{status}}</h2>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
-            <a href="{% url 'sales:amazon_reports' %}">
-                <i style="color: black;" class="fa-brands fa-amazon"></i>
+            
+                
+
                 <!--Display shipment report option only when available-->
-                <section>
-                    {% if scheduled_orders %}
-                        Shipment Report : {{ship_date}} </a>
-                    {% endif %}
-                    <select>
-                        {% for key,value in shipment_summary.items %}
-                            {% if key != 'total_orders' %}
-                                <option>{{key}}</option>
-                            {% endif %}
+                {% if scheduled_dates %}
+                <form method="POST" action="{% url 'amazon:amazon_reports' %}">
+                    {% csrf_token %}
+                        Shipment Report :
+                        
+                    
+                    <select name="date_choice" id="date_choice">
+                        {% for date in scheduled_dates %}
+                            <option>{{date}}</option>
                         {% endfor %}
                     </select>
-                </section>
+                    
+                
+                    {% if status %}
+                    <p>{{status}}</p>
+                    {% endif %}
+                    <button type="submit">Generate Report</button>
+                </form>
+                {% endif %}
+                
             {% for date,payment in shipment_summary.items %}
             <div class="order-summary">
                 {% if date != 'total_orders' %}
@@ -32,31 +41,13 @@
                 {% endif %}
             </div>
             {% endfor %}
+        
         {% else %}
             <h4 style="color: var(--alert-text);">API Response unavaillable.</h4> 
         {% endif %}
     </div>
 </div>
 
-
-
-<div class="dashboards">
-    <!--New amazon dashboard-->
-    <div class="dashboard">
-        <h5>Amazon</h5>
-        <div class="top-row">
-            <h6>Total Orders</h6>
-        </div>
-    </div>
-
-    <div class="dashboard">
-        <h5>Amazon</h5>
-        <div class="top-row">
-            <h6>Total Orders</h6>
-        </div>
-    </div>
-
-</div>
 
 
 </section>

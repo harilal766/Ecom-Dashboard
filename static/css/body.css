@@ -1,0 +1,42 @@
+/* {border: 1px solid red;}*/
+
+body{
+    margin: 0; padding: 0;
+    display: flex; 
+    font-family: Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+}
+
+
+
+
+
+
+.body{
+    flex: 1;
+
+}
+
+
+
+.header{
+    height: 90px;
+    display: flex; 
+    justify-content: space-between;
+}
+
+
+
+
+.content{
+    display: flex; flex-direction: column;
+    background-color: gold;
+}
+
+
+
+/* Footer */
+.footer {
+    text-align: center;
+    background-color: gray;
+}
