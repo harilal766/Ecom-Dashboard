@@ -40,7 +40,7 @@ color_text(message="====",color="red")
 
 def amazon_shipment_report(request):
     if request.method == 'POST':
-        selected_ship_date = request.POST.get("ship_date")
+        selected_ship_date = request.POST.get("date_choice")
         color_text(selected_ship_date,color="red")
         amazon_context["status"] = selected_ship_date
 

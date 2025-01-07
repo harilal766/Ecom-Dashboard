@@ -4,7 +4,7 @@
 <div class="parent-container">
     <!-- Child items for amazon -->
     <div class="child-container">
-        <h2>Amazon Dashboard - {{status}}</h2>
+        <h2>Amazon Dashboard {{status}}</h2>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
             
@@ -12,14 +12,18 @@
 
                 <!--Display shipment report option only when available-->
                 {% if scheduled_dates %}
-                <form method="POST" enctype="multipart/form-data" action="{% url 'amazon:amazon_reports' %}">
+                <form method="POST" action="{% url 'amazon:amazon_reports' %}">
                     {% csrf_token %}
                         Shipment Report :
-                    <select>
+                        
+                    
+                    <select name="date_choice" id="date_choice">
                         {% for date in scheduled_dates %}
-                            <option value="ship_date">{{date}}</option>
+                            <option>{{date}}</option>
                         {% endfor %}
                     </select>
+                    
+                
                     {% if status %}
                     <p>{{status}}</p>
                     {% endif %}
