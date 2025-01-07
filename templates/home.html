@@ -4,7 +4,7 @@
 <div class="parent-container">
     <!-- Child items for amazon -->
     <div class="child-container">
-        <h2>Amazon Dashboard</h2>
+        <h2>Amazon Dashboard - {{status}}</h2>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
             
@@ -17,13 +17,13 @@
                         Shipment Report :
                     <select>
                         {% for date in scheduled_dates %}
-                            <option type="ship_date">{{date}}</option>
+                            <option value="ship_date">{{date}}</option>
                         {% endfor %}
                     </select>
                     {% if status %}
                     <p>{{status}}</p>
                     {% endif %}
-                    <input type="submit" value="Generate Report">
+                    <button type="submit">Generate Report</button>
                 </form>
                 {% endif %}
                 
