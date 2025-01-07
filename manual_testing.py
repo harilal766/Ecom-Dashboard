@@ -28,7 +28,14 @@ from helpers.excel_ops import *
 
 """
 
-"""
+
+
+
+
+def pivot_table(df,columns):
+    
+    pass
+
 excel = pd.read_excel(r"D:/5.Amazon/Mathew global/Scheduled report/Scheduled for 2024-12-20 - COD.xlsx",
                       sheet_name="Sheet1")
 
@@ -38,7 +45,6 @@ out = r"D:/Ecom-Dashboard/Test documents/combined.xlsx"
 
 excel_appending(dataframes=[excel,pivot],out_path=out)
 
-"""
 
 
 import os,django
