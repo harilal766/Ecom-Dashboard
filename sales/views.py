@@ -21,7 +21,8 @@ from django.views.decorators.csrf import csrf_exempt
 amazon_context = {
             'shipment_summary' : None, "ship_date": None, 
             "scheduled_orders":None,"scheduled_dates":None,
-            "path" : None, "status":None 
+            "path" : None, "status":None,
+            "excel_out":None
         }
 
 

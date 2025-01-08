@@ -36,21 +36,6 @@ def amazon_detail_page(request):
 from sales.views import amazon_context
 print(amazon_context)
 
-"""
-def amazon_shipment_report(request):
-    if request.method == 'POST':
-        selected_ship_date = request.POST.get("date_choice")
-        color_text(selected_ship_date,color="red")
-        amazon_context["status"] = selected_ship_date
-
-        print(amazon_context)
-
-    return render(request,"home.html",amazon_context)
-"""
-
-
-
-
 
 def amazon_shipment_report(request):
     """"
@@ -170,7 +155,7 @@ def amazon_shipment_report(request):
                                         color_text(f"The path {excel_path} does not exist",color="red")
                                 else:
                                     color_text(message=f"There are no orders in the type : {type_key}")
-                                    
+
                             if excel_path:
                                 amazon_context["status"] = f"Files {excel_files} saved to {excel_dir}"
                         else:
