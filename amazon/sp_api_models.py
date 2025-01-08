@@ -82,29 +82,64 @@ class SPAPIBase:
         except Exception as e:
             better_error_handling(e)         
 
-    def manage_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
-        self.endpoint_checker()
-        try:
-            response = self.make_request(endpoint=endpoint,method=method,params=params,
-                                             json_input=json_input)
-            
-            self.limit_analyzer(response=response)
-
-            if response.status_code == 200:
-                response = response.json()
-
-                if payload != None:
-                    return response.get(payload)
-                else:
-                    return response
-                
-            else:
-                return color_text(message="The status code is not 200",color="red")
-            
-        except:
-            pass
 
     def execute_request(self,endpoint,method,burst,json_input=None,params=None,payload=None):
+        retry = 5; delay=1
+        request_count = 0
+        self.endpoint_checker()
+
+        # detecting burst limit should have top priority...
+        
+        try:
+            # make sure the endpoint have a "/" at the begining and does not end with "/"
+            if endpoint[0] != '/':
+                endpoint = '/'+endpoint
+            status_end = " | "
+
+            url = self.base_url+endpoint
+                
+            # making requests is converted to a seperate function
+            response = self.make_request(endpoint=endpoint,method=method,params=params,
+                                             json_input=json_input)
+
+            color_text(message=f"Headers : \n{response.headers}",color="red")
+
+            rate_limit = response.headers.get('x-amzn-RateLimit-Limit',None)
+            remaining_rate_limit = response.headers.get('x-amzn-RateLimit-Remaining',None)
+
+            color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, {burst}")
+                
+            #color_text(message=response.headers,color="red")
+            # if the request count is under burst, code should execute...
+            if request_count == burst:
+                color_text(message="Burst Limit reached",color="red")
+
+            # Hitting the limit
+            if response.status_code == 429:
+                delay *=2
+                time.sleep(delay)
+                color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red')
+            elif response.status_code >= 400:
+                response.raise_for_status()
+                
+            else:
+                color_text(message=request_count,color="red")
+                request_count += 1
+                time.sleep(1) # to delay based on the rate limit which is negligible
+                response_data = response.json()
+                return response_data.get(payload,None) if payload else response_data
+                
+        except AttributeError as e:
+            color_text(message=f"Attribute Error Found : {e}\n{response}\n-----------------------------------",color='red')
+            
+        except requests.exceptions.RequestException as e:
+            better_error_handling(f"Error : {e}")
+
+
+
+
+
+    def execute_requessst(self,endpoint,method,burst,json_input=None,params=None,payload=None):
         retry = 5; delay=1
 
         self.endpoint_checker()
@@ -135,6 +170,7 @@ class SPAPIBase:
                 if request_count == burst:
                     color_text(message="Burst Limit reached",color="red")
 
+                
                 if response.status_code == 429:
                     delay *=2
                     time.sleep(delay)
@@ -156,6 +192,8 @@ class SPAPIBase:
                 better_error_handling(f"Error : {e}")
                 break
         return None
+
+
 
 class Orders(SPAPIBase):
 

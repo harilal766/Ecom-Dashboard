@@ -35,7 +35,6 @@ def amazon_detail_page(request):
 
 from sales.views import amazon_context
 print(amazon_context)
-color_text(message="====",color="red")
 
 """
 def amazon_shipment_report(request):
@@ -48,6 +47,7 @@ def amazon_shipment_report(request):
 
     return render(request,"home.html",amazon_context)
 """
+
 
 
 
@@ -94,6 +94,7 @@ def amazon_shipment_report(request):
                 color_text(message=f"Orders  Count : {len(orders_details)}")
                 # Primary Initializations
                 cod_orders = []; prepaid_orders = []; order_count = 0; 
+                excel_files = []
 
                 if isinstance(orders_details,list) and len(orders_details) != 0:
                     color_text(message=f"Orders scheduled for {todays_ind_date}")
@@ -138,6 +139,10 @@ def amazon_shipment_report(request):
                                 if not len(type_key) == 0 :
                                     payment_type_filtered_orders_df = column_filtered_df[column_filtered_df['amazon_order_id'].isin(type_value)]
 
+                                    
+
+
+
                                     # Creating manual report for tallying
                                     shipment_manual_report(df=payment_type_filtered_orders_df,
                                         df_prod_name_col="product_name", df_item_price_col="item_price",df_qtys_column="quantity",
@@ -148,10 +153,14 @@ def amazon_shipment_report(request):
 
                                     print(payment_type_filtered_orders_df)
                                     # Excel path should be changed to dynamic for django.
-                                    excel_path = dir_switch(win=win_amazon_scheduled_report,lin=lin_amazon_scheduled_report)
-                                    excel_name = f"Scheduled for {selected_ship_date} - {type_key}.xlsx"
+                                    excel_dir = dir_switch(win=win_amazon_scheduled_report,lin=lin_amazon_scheduled_report)
+                                    excel_name = f"Scheduled for {str(selected_ship_date).split("T")[0]} - {type_key}.xlsx"
+
+                                    # store the excel filenames to a list
+                                    excel_files.append(excel_name)
+
                                     color_text(message=f"Ship date : {selected_ship_date}")
-                                    excel_path = os.path.join(excel_path,excel_name)
+                                    excel_path = os.path.join(excel_dir,excel_name)
                                     # verify the path exists..
                                     if not len(excel_path) == 0:
                                         payment_type_filtered_orders_df.to_excel(excel_writer=excel_path,index="False",
@@ -161,8 +170,9 @@ def amazon_shipment_report(request):
                                         color_text(f"The path {excel_path} does not exist",color="red")
                                 else:
                                     color_text(message=f"There are no orders in the type : {type_key}")
-                                if excel_path:
-                                    amazon_context["status"] = f"Saved to {excel_path}"
+                                    
+                            if excel_path:
+                                amazon_context["status"] = f"Files {excel_files} saved to {excel_dir}"
                         else:
                             color_text("There are no scheduled orders",color="red")
                 else:
