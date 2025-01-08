@@ -26,7 +26,6 @@
 <body id="index" class="index_body">
     <div class="sidebar">
         <h4 class="din">Shop Syncer</h4>
-        <button onclick="cssDebugger()">Debugger</button>
 
         <div class="nav-lists">
             <h6>Common</h6>
@@ -56,19 +55,32 @@
         </div>
     </div>
 
-
-
-
-
-
-    
     <div class="body">
         <div class="header">
             <div class="left-header">
-                <h3>Search</h3>
+
+                <div class="header-content">
+                    <form class="header-content" method="POST" enctype="multipart/form-data" action="">
+                        <input name="Search_query" placeholder="Enter your query">
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+                
+                
+                
             </div>
+
+            
             <div class="right-header">
-                <h3>user</h3>
+
+                <div class="header-content">
+                    <button onclick="cssDebugger()">Debugger</button>
+                </div>
+                
+                <div class="header-content">
+                    <h3>user</h3>
+                </div>
+                
             </div>
         </div>
 
