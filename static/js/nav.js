@@ -55,10 +55,3 @@ toggleBtn.addEventListener("click",()=>{
 });
 
 
-function cssDebugger() {
-    console.log("Debug");
-    const style = "* { border : 1px solid red; }";
-    // if the style already exists, disble it
-    // else, add the style to the document
-    
-}

@@ -1,4 +1,4 @@
-/* {border: 1px solid red;}*/
+
 
 body{
     margin: 0; padding: 0;
@@ -20,18 +20,46 @@ body{
 
 
 .header{
-    height: 90px;
+    height: 50px;
+    padding: 5px;
     display: flex; 
     justify-content: space-between;
 }
 
+.right-header{
+    display: flex;
+    justify-content: center;
+}
 
 
+.header-content {
+    display: flex; align-self: center;
+}
 
 .content{
     display: flex; flex-direction: column;
-    background-color: gold;
+    padding: 10px;
+    background-color: rgb(222, 222, 222);
 }
+
+
+
+.graph-view{
+    width: 100px; height: 100px;
+}
+
+
+.parent-container, .graph-view {
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom:10px;
+    padding: 10px;
+}
+
+
+
+
+
 
 
 
