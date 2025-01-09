@@ -3,14 +3,13 @@
 body{
     margin: 0; padding: 0;
     display: flex; 
-    font-family: Helvetica, Arial, sans-serif;
     min-height: 100vh;
 }
 
 
 .body{
     flex: 1;
-
+    display: flex; flex-direction: column;s
 }
 
 .header{
@@ -71,12 +70,25 @@ body{
 }
 
 .form-container button{
-    min-height: 30px; min-width: 80px;
     font-weight:bold;
     font-family: Helvetica, Arial, sans-serif;
 }
 
 
+.form {
+    display: flex; flex-direction: column;
+    align-self: center;
+    gap: 8px;
+}
+
+.form-floating{
+    width: 700px;
+}
+
+
+.btn{
+    font-weight: 550;
+}
 /* Footer */
 .footer {
     display: flex;

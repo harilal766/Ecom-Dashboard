@@ -16,8 +16,7 @@ a { text-decoration: none;}
 }
 
 .site-name {
-    font-size: 20px;
-    justify-content: center;
+    font-weight: bold;
 }
 
 .nav-lists {
@@ -38,13 +37,10 @@ a { text-decoration: none;}
 .sidebar a{
     font-weight: 550;
     color: white;
-    
 }
 
 .nav-lists a:hover{
     color: gold;
 }
 
-.nav-lists li:hover {
-        margin: 0px 0px 0px 12%;
-}
+

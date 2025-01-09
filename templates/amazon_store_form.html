@@ -3,20 +3,24 @@
 
 {% block content %}
 <h1>Add amazon store</h1>
-<div class="form-container">
-    <form enctype="multipart/form-data">
-        <div class="form-field">
-            <input name="client_id" placeholder="Enter the client id">
-        </div>
-        <div class="form-field">
-                <input name = "client_secret" placeholder="Enter the client secret">
-        </div>
-        <div class="form-field">
-                <input name = "refresh_token" placeholder="Enter the refresh token">
-        </div>
-        <div>
-            <button>Submit</button>
-        </div>
-    </form>
-</div>
+
+<form class="form">
+    <div class="form-floating">
+        <input class="form-control" id="client_id" placeholder="name@example.com">
+        <label for="floatingInput">Enter the client ID</label>
+    </div>
+    <div class="form-floating">
+        <input class="form-control" id="client_secret" placeholder="Enter the client secret">
+        <label for="floatingPassword">Enter the client secret</label>
+    </div>
+    <div class="form-floating">
+        <input type="password" class="form-control" id="client_secret" placeholder="Enter the client secret">
+        <label for="floatingPassword">Enter the refresh token</label>
+    </div>
+    
+    <div class="form-floating">
+        <button type="submit" class="btn btn-primary">Submit Credentials</button>
+    </div>
+</form>
+
 {% endblock %}
