@@ -41,9 +41,10 @@ Display types of reports on the amazon dashbaord.
 add the parameters based on the selected type.
 generate the report based on the selected type and its parameters.
 
-
 the current working model should be merged to main, there are for bugs in the new upcoming model.
 """
+
+
 
 def amazon_shipment_report(request):
     """"
