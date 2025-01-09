@@ -8,16 +8,10 @@ body{
 }
 
 
-
-
-
-
 .body{
     flex: 1;
 
 }
-
-
 
 .header{
     height: 50px;
@@ -63,8 +57,24 @@ body{
 
 
 
+.form-container form {
+    display: flex; flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
 
+}
 
+.form-field  input {
+     height:30px; width: 500px;
+    border-radius: 5px;
+}
+
+.form-container button{
+    min-height: 30px; min-width: 80px;
+    font-weight:bold;
+    font-family: Helvetica, Arial, sans-serif;
+}
 
 
 /* Footer */

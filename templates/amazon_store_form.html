@@ -3,10 +3,16 @@
 
 {% block content %}
 <h1>Add amazon store</h1>
-<div class="form">
+<div class="form-container">
     <form enctype="multipart/form-data">
-        <div class="token">
+        <div class="form-field">
             <input name="client_id" placeholder="Enter the client id">
+        </div>
+        <div class="form-field">
+                <input name = "client_secret" placeholder="Enter the client secret">
+        </div>
+        <div class="form-field">
+                <input name = "refresh_token" placeholder="Enter the refresh token">
         </div>
         <div>
             <button>Submit</button>
