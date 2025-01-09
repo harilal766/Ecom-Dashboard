@@ -20,7 +20,8 @@ body{
 
 
 .header{
-    height: 90px;
+    height: 50px;
+    padding: 5px;
     display: flex; 
     justify-content: space-between;
 }
@@ -28,6 +29,11 @@ body{
 .right-header{
     display: flex;
     justify-content: center;
+}
+
+
+.header-content {
+    display: flex; align-self: center;
 }
 
 .content{

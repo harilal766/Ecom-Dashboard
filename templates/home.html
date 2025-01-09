@@ -16,6 +16,7 @@
                 <form method="POST" action="{% url 'amazon:amazon_reports' %}">
                     {% csrf_token %}
                         <h6>Shipment Report :</h6>
+                        
                     <select name="date_choice" id="date_choice">
                         {% for date in scheduled_dates %}
                             <option>{{date}}</option>
