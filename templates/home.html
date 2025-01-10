@@ -8,7 +8,8 @@
 <div class="parent-container">
     <!-- Child items for amazon -->
     <div class="child-container">
-        <h2>Amazon Dashboard {{status}}</h2>
+        <h2>Amazon Dashboard</h2>
+        <p>{{status}}</p>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
                 <!--Display shipment report option only when available-->
