@@ -4,8 +4,34 @@
     <h1>{{purpose}}</h1>
     <form class="form" method="POST" action="">
         {% csrf_token %}
-        {{form.as_p}}
-        <button class="btn btn-primary">{{button_text}}</button>
+
+        <div class="form-floating">
+            <input class="form-control" id="username" placeholder="Enter the username">
+            <label for="floatingInput">Enter the username</label>
+        </div>
+
+        {% if purpose == "signup" %}
+        <div class="form-floating">
+            <input class="form-control" type="email" id="email" placeholder="Enter the E-mail">
+            <label for="floatingInput">Enter the E-mail</label>
+        </div>
+        {% endif %}
+
+        <div class="form-floating">
+            <input class="form-control" type="password" id="password" placeholder="Enter password">
+            <label for="floatingInput">Enter password</label>
+        </div>
+        {% if purpose == "signup" %}
+        <div class="form-floating">
+            <input class="form-control" type="password" id="confirm_password" placeholder="Confirm the password">
+            <label for="floatingInput">Confirm the password</label>
+        </div>
+        {% endif %}
+
+        <div class="form-floating">
+            <button class="btn btn-primary">{{button_text}}</button>
+        </div>
+        
     </form>
     
 </div>

@@ -58,10 +58,11 @@ def home(request):
             summary_dict = amazon_dashboard(response=ord_resp)
             context["shipment_summary"] = summary_dict
             color_text(message=summary_dict.keys(),color="blue")
+            color_text(context)
         else:
             color_text(message="Empty response from getOrders",color="red")
         
-        print(context)
+        
         return render(request,'home.html',context)
     except Exception as e:
         better_error_handling(e)
