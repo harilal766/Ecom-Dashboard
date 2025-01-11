@@ -17,6 +17,7 @@ body{
     padding: 5px;
     display: flex; 
     justify-content: space-between;
+    background-color: #E6E6E3;
 }
 
 .left-header{

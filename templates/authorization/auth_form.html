@@ -6,30 +6,31 @@
         {% csrf_token %}
 
         <div class="form-floating">
-            <input class="form-control" id="username" placeholder="Enter the username">
+            <input class="form-control" name="username" id="username" placeholder="Enter the username">
             <label for="floatingInput">Enter the username</label>
         </div>
 
-        {% if purpose == "signup" %}
+        {% if purpose == "Sign-Up" %}
         <div class="form-floating">
-            <input class="form-control" type="email" id="email" placeholder="Enter the E-mail">
+            <input class="form-control" name="email" type="email" id="email" placeholder="Enter the E-mail">
             <label for="floatingInput">Enter the E-mail</label>
         </div>
         {% endif %}
 
         <div class="form-floating">
-            <input class="form-control" type="password" id="password" placeholder="Enter password">
+            <input class="form-control" name="password" type="password" id="password" placeholder="Enter password">
             <label for="floatingInput">Enter password</label>
         </div>
-        {% if purpose == "signup" %}
+
+        {% if purpose == "Sign-Up" %}
         <div class="form-floating">
-            <input class="form-control" type="password" id="confirm_password" placeholder="Confirm the password">
+            <input class="form-control" name="confirm_password" type="password" id="confirm_password" placeholder="Confirm the password">
             <label for="floatingInput">Confirm the password</label>
         </div>
         {% endif %}
 
         <div class="form-floating">
-            <button class="btn btn-primary">{{button_text}}</button>
+            <button type="submit" class="btn btn-primary">{{button_text}}</button>
         </div>
         
     </form>
