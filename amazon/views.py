@@ -9,6 +9,8 @@ from amazon.report_types import selected_types
 
 
 
+
+
 def add_amazon_store(request):
     return render(request,'amazon_store_form.html')
 

@@ -17,6 +17,17 @@ auth_context = {"purpose" : None,
                 "button_text": None
                 }
 
+# finding created usernames for verification, email also should be verified this way
+def usernames():
+    users = User.objects.all()
+    usernames = []
+    for user in users:
+        usernames.append(user.username)
+    return usernames
+
+def emails():
+    pass
+
 def register(request):
     """
     if the password is strong username and email is not taken already,
@@ -33,16 +44,25 @@ def register(request):
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm_password")
 
-        if password == confirm_password:
-            user = User.objects.create_user(username=username,password=password)
-            user.save()
+        # username verification
+        emails = []
+        if username not in usernames():
 
-            color_text("User Created")
-            return home
+            # email verification, for future use
+            if email not in emails:
+                pass
+
+            # password verificaion
+            if password == confirm_password:
+                user = User.objects.create_user(username=username,password=password)
+                user.save()
+                color_text("User Created")
+                #return home
+            else:
+                color_text(message="The passwords doesn't match",color="red")
+
         else:
-            color_text(message="The passwords doesnt match",color="red")
-
-        print(request.POST)
+            color_text(message=f"Username {username} already exists.",color="red")
     # credentials : username, password, email, confirm password
     return render(request,"authorization/auth_form.html",auth_context)
 
