@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block content %}
 <div class="form">
-    <h1>{{purpose}}</h1>
+    <h1 id="title">{{purpose}}</h1>
     <form class="form" method="POST" action="">
         {% csrf_token %}
 
@@ -18,8 +18,9 @@
         {% endif %}
 
         <div class="form-floating">
-            <input class="form-control" onclick="passwordStrength()" name="password" type="password" id="password" placeholder="Enter password">
-            <label for="floatingInput">Enter password</label>
+            <input class="form-control" onclick="passwordStrength()" name="password" type="password" 
+            id="password" placeholder="Enter password00">
+            <label id="password_label" for="floatingInput">Enter password</label>
         </div>
 
         {% if purpose == "Sign-Up" %}
