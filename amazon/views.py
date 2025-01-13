@@ -1,10 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from amazon.response_manipulator import amazon_dashboard
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
 from amazon.sp_api_models import Orders,Reports
 
 from amazon.report_types import selected_report_types
+
+from django.contrib.auth.models import User
+
+from amazon.models import SPAPI_Credential
 # Create your views here.
 
 
@@ -12,7 +16,22 @@ from amazon.report_types import selected_report_types
 
 
 def add_amazon_store(request):
-    return render(request,'amazon_store_form.html')
+    user = "Hari"
+    print(User.objects.all())
+    if request.method == "POST":
+        client_id = request.POST.get("client_id")
+        client_secret = request.POST.get("client_secret")
+        refresh_token = request.POST.get("refresh_token")
+
+        if client_id:
+            cred = SPAPI_Credential.objects.create(client_id = client_id, 
+                                                   client_secret = client_secret,
+                                    refresh_token = refresh_token, 
+                                    access_token = get_or_generate_access_token())
+            cred.save()
+            
+            return redirect("sales:home")
+    return render(request,'amazon_store_form.html', {"user" : user})
 
 
 def amazon_detail_page(request):
