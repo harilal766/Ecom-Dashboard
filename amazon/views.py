@@ -4,7 +4,7 @@ from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
 from amazon.sp_api_models import Orders,Reports
 
-from amazon.report_types import selected_types
+from amazon.report_types import selected_report_types
 # Create your views here.
 
 
@@ -17,7 +17,7 @@ def add_amazon_store(request):
 
 def amazon_detail_page(request):
 
-    context = {"types" : selected_types.keys()}
+    context = {"types" : selected_report_types.keys()}
 
     """
     Select Report type
@@ -48,7 +48,7 @@ the current working model should be merged to main, there are for bugs in the ne
 
 
 
-def amazon_shipment_report(request):
+def amazon_report_generator(request):
     """"
     Step 1 - Order API access
         1. Access the order api and access the shipped (scheduled) and pending pickup orders.
@@ -72,6 +72,9 @@ def amazon_shipment_report(request):
 
         if request.method == 'POST':
             selected_ship_date = request.POST.get("date_choice")
+
+            report_type = request.POST.get("report_choice")
+
             color_text(selected_ship_date,color="red")
         
             # change it to the output got from front end
@@ -83,8 +86,10 @@ def amazon_shipment_report(request):
             if the scheduling report taking is being done after 11 am. 
             """
             
-            orders_details = order_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Shipped",
-                                    EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=selected_ship_date)
+            orders_details = order_instance.getOrders(CreatedAfter=from_timestamp(7),
+                                                      OrderStatuses="Shipped",
+                                    EasyShipShipmentStatuses="PendingPickUp",
+                                    LatestShipDate=selected_ship_date)
             space = " "*14
             if not orders_details == None:
                 color_text(message=f"Orders  Count : {len(orders_details)}")

@@ -30,7 +30,7 @@ def home(request):
     try:
         # initializing context with none, for handling errors 
         context = {
-            'shipment_summary' : None,
+            'shipment_summary' : None, "report_types" : selected_report_types,
             "scheduled_orders":None,"scheduled_dates":None
             }
         orders_instance = Orders(); created_after = (datetime.utcnow() - timedelta(days=4)).isoformat()

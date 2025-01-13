@@ -16,8 +16,19 @@
                 {% if scheduled_dates %}
                 <form method="POST" action="{% url 'amazon:amazon_reports' %}">
                     {% csrf_token %}
-                        <h6>Shipment Report :</h6>
-                        
+                        <h6 id="report">Report : </h6>
+
+                    <select name = "report_choice" id="report_type">
+                        {% for type in report_types %}
+                        <option>{{type}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <script>
+                        const type = document.getElementById("report_type");
+                        console.log(type);
+                    </script>
+
                     <select name="date_choice" id="date_choice">
                         {% for date in scheduled_dates %}
                             <option>{{date}}</option>
@@ -27,7 +38,7 @@
                     {% if status %}
                     <p>{{status}}</p>
                     {% endif %}
-                    <button type="submit">Generate Report</button>
+                    <button class="btn btn-primary" type="submit">Generate Report</button>
                 </form>
                 {% endif %}
 

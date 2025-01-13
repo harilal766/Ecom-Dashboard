@@ -1,6 +1,6 @@
 
 
-selected_types = {
+selected_report_types = {
     "Shipment Report" : "GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
     "Return Report" : "GET_FLAT_FILE_RETURNS_DATA_BY_RETURN_DATE",
     "Settlement Report" : ""
