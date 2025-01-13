@@ -13,6 +13,12 @@ error_codes = [400,401,404,415,429,500,503]
 load_dotenv()
 
 # Replace these with your credentials
+
+# find the current user and filter the credentials based on the username, the username should be unique
+
+
+
+
 REFRESH_TOKEN = os.getenv("REFRESH_TOKEN")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")

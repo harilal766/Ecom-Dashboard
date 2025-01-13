@@ -6,6 +6,7 @@ from user.forms import Userform
 from sales.views import home 
 import re
 from helpers.messages import *
+
 # Create your views here.
 
 username_pattern = r"^[a-zA-Z]{6-12}$"
@@ -16,6 +17,17 @@ auth_context = {"purpose" : None,
                 "form" : None,
                 "button_text": None
                 }
+
+# make a temporary user and filter based on this.
+
+def current_user():
+    current_user = "qq"
+    filtered_user = User.objects.filter(username = current_user)
+    color_text(message=f"Current user : {filtered_user}",color="red")
+    return filtered_user
+
+    
+
 
 # finding created usernames for verification, email also should be verified this way
 def usernames():
