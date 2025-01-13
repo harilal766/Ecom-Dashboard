@@ -15,6 +15,12 @@ load_dotenv()
 # Replace these with your credentials
 
 # find the current user and filter the credentials based on the username, the username should be unique
+from amazon.models import SPAPI_Credential
+
+
+creds = SPAPI_Credential.objects.filter(user__username="Hari")
+
+
 
 
 

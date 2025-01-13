@@ -54,8 +54,6 @@ def amazon_detail_page(request):
         print(from_date,to_date)
     return render(request,"amazon_detail_page.html",context)
 
-from sales.views import amazon_context
-print(amazon_context)
 
 """
 Display types of reports on the amazon dashbaord.

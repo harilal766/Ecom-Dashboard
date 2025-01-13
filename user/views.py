@@ -20,14 +20,6 @@ auth_context = {"purpose" : None,
 
 # make a temporary user and filter based on this.
 
-def current_user():
-    current_user = "qq"
-    filtered_user = User.objects.filter(username = current_user)
-    color_text(message=f"Current user : {filtered_user}",color="red")
-    return filtered_user
-
-    
-
 
 # finding created usernames for verification, email also should be verified this way
 def usernames():
