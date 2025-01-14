@@ -15,7 +15,8 @@ password_pattern = r"\d{8-15}"
 
 auth_context = {"purpose" : None, 
                 "form" : None,
-                "button_text": None
+                "button_text": None,
+                "auth_status" : None
                 }
 
 # make a temporary user and filter based on this.
@@ -61,11 +62,13 @@ def register(request):
                 user = User.objects.create_user(username=username,password=password)
                 user.save()
                 color_text("User Created")
+                return redirect("sales:home")
                 #return home
             else:
                 color_text(message="The passwords doesn't match",color="red")
 
         else:
+            auth_context["auth_status"] = "username already exists"
             color_text(message=f"Username {username} already exists.",color="red")
     # credentials : username, password, email, confirm password
     return render(request,"authorization/auth_form.html",auth_context)

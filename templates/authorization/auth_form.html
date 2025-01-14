@@ -1,7 +1,13 @@
 {% extends 'index.html' %}
 {% block content %}
 <div class="form">
-    <h1 id="title">{{purpose}}</h1>
+    <div>
+        <h1 id="title">{{purpose}}</h1>
+        {% if auth_status %}
+        <h6>{{auth_status}} </h6>
+        {% endif %}
+    </div>
+    
     <form class="form" method="POST" action="">
         {% csrf_token %}
 
