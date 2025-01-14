@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
+
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
 
@@ -17,6 +18,8 @@ from django.views.decorators.csrf import csrf_exempt
     and it will contain the form whiich will trigger the 
     function for report generation.
 """
+
+# Current logged in user
 
 
 amazon_context = {
@@ -32,7 +35,7 @@ def home(request):
         # initializing context with none, for handling errors 
         context = {
             'shipment_summary' : None, "report_types" : selected_report_types,
-            "scheduled_orders":None,"scheduled_dates":None
+            "scheduled_orders":None,"scheduled_dates":None, "user" : None
             }
         orders_instance = Orders(); created_after = (datetime.utcnow() - timedelta(days=4)).isoformat()
         ord_resp = orders_instance.getOrders(CreatedAfter=created_after,OrderStatuses="Unshipped")
@@ -41,29 +44,35 @@ def home(request):
         scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Shipped",
                                 EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=from_timestamp(0))
         
-        if not scheduled_orders == None:
-            scheduled_dates = []
-            if len(scheduled_orders) > 0 :
-                context["scheduled_orders"] = len(scheduled_orders)
-            
+        # displaying content only while logged in
+        if request.user.is_authenticated:
+            user = request.user
+            context["user"] = user
+            if not scheduled_orders == None:
+                scheduled_dates = []
+                if len(scheduled_orders) > 0 :
+                    context["scheduled_orders"] = len(scheduled_orders)
+                
 
-            for order in scheduled_orders:
-                ship_date = order["LatestShipDate"]
-                if ship_date not in scheduled_dates:
-                    scheduled_dates.append(ship_date)
-            
-            if not scheduled_dates == None:
-                context["scheduled_dates"] = scheduled_dates
-            
+                for order in scheduled_orders:
+                    ship_date = order["LatestShipDate"]
+                    if ship_date not in scheduled_dates:
+                        scheduled_dates.append(ship_date)
+                
+                if not scheduled_dates == None:
+                    context["scheduled_dates"] = scheduled_dates
+                
 
-        
-        if ord_resp != None:
-            summary_dict = amazon_dashboard(response=ord_resp)
-            context["shipment_summary"] = summary_dict
-            color_text(message=summary_dict.keys(),color="blue")
-            color_text(context)
+            
+            if ord_resp != None:
+                summary_dict = amazon_dashboard(response=ord_resp)
+                context["shipment_summary"] = summary_dict
+                color_text(message=summary_dict.keys(),color="blue")
+                color_text(context)
+            else:
+                color_text(message="Empty response from getOrders",color="red")
         else:
-            color_text(message="Empty response from getOrders",color="red")
+            color_text("Not logged in..","red")
         
         
         return render(request,'home.html',context)

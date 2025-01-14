@@ -30,6 +30,7 @@
     <div class="sidebar">
         <h2 class="site-name">Shop Syncer</h2>
 
+        {% if user.is_authenticated %}
         <div class="nav-lists">
             <h6>Common</h6>
             <ul>
@@ -46,16 +47,22 @@
                 <li><a href="#home"> <i class="fa-brands fa-amazon"></i>Amazon</a></li>
             </ul>
         </div>
-        
+
+        <div class="nav-lists">
+            <h6>Authorization</h6>
+                <li><a href="{% url 'user:logout' %}">Signout</a></li>
+            </ul>
+        </div>
+        {% else %}
         <!-- Authorizatrion-->
         <div class="nav-lists">
             <h6>Authorization</h6>
             <ul>
                 <li><a href="{% url 'user:login' %}">Sign - in</a></li>
                 <li><a href="{% url 'user:register' %}">Sign - up</a></li>
-                <li><a href="#signout">Signout</a></li>
             </ul>
         </div>
+        {% endif %}
     </div>
 
     <div class="body">
@@ -81,7 +88,9 @@
                 </div>
                 
                 <div class="header-content">
-                    <h3>user</h3>
+                    {% if user %}
+                    <h3>user : {{user}}</h3>
+                    {% endif %}
                 </div>
                 
             </div>

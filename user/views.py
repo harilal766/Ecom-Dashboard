@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate,  login,  logout
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from user.forms import Userform
@@ -73,13 +75,26 @@ def register(request):
     # credentials : username, password, email, confirm password
     return render(request,"authorization/auth_form.html",auth_context)
 
-def login(request):
+def auth_login(request):
     purpose_text = "Sign-In"
     auth_context["purpose"] = purpose_text; 
     auth_context["button_text"] = "Login"
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request,username = username, password = password)
+        if not user == None:
+            login(request,user)
+            color_text(message=f"User : {user} signed in.")
+            return redirect("sales:home")
+        else:
+            color_text(message="unable to login",color="red")
+        
     return render(request,"authorization/auth_form.html",auth_context,)
     # credentials needed to login : username, password
 
-def logout(request):
-    pass
+def auth_logout(request):
+    logout(request)
+    return redirect("sales:home")
 
