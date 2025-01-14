@@ -16,7 +16,7 @@
                 {% if scheduled_dates %}
                 <form method="POST" action="{% url 'amazon:amazon_reports' %}">
                     {% csrf_token %}
-                        <h6 id="report">Report : </h6>
+                        <h6 id="report">Report : {{scheduled_orders}} </h6>
 
                     <select name = "report_choice" id="report_type">
                         {% for type in report_types %}

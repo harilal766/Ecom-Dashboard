@@ -42,8 +42,10 @@ def home(request):
                                 EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=from_timestamp(0))
         
         if not scheduled_orders == None:
-            context["scheduled_orders"] = True
             scheduled_dates = []
+            if len(scheduled_orders) > 0 :
+                context["scheduled_orders"] = len(scheduled_orders)
+            
 
             for order in scheduled_orders:
                 ship_date = order["LatestShipDate"]
