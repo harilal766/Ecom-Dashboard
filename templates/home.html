@@ -8,26 +8,37 @@
 <div class="parent-container">
     <!-- Child items for amazon -->
     <div class="child-container">
-        <h2>Amazon Dashboard {{status}}</h2>
+        <h2>Amazon Dashboard</h2>
+        <p>{{status}}</p>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
                 <!--Display shipment report option only when available-->
                 {% if scheduled_dates %}
                 <form method="POST" action="{% url 'amazon:amazon_reports' %}">
                     {% csrf_token %}
-                        <h6>Shipment Report :</h6>
-                        
+                        <h6 id="report">Report : {{scheduled_orders}} </h6>
+
+                    <select name = "report_choice" id="report_type">
+                        {% for type in report_types %}
+                        <option>{{type}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <script>
+                        const type = document.getElementById("report_type");
+                        console.log(type);
+                    </script>
+
                     <select name="date_choice" id="date_choice">
                         {% for date in scheduled_dates %}
                             <option>{{date}}</option>
                         {% endfor %}
                     </select>
                     
-                
                     {% if status %}
                     <p>{{status}}</p>
                     {% endif %}
-                    <button type="submit">Generate Report</button>
+                    <button class="btn btn-primary" type="submit">Generate Report</button>
                 </form>
                 {% endif %}
 

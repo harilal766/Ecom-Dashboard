@@ -33,29 +33,24 @@ from helpers.excel_ops import *
 
 
 def pivot_table(df,columns):
-    
-    pass
-
-excel = pd.read_excel(r"D:/5.Amazon/Mathew global/Scheduled report/Scheduled for 2024-12-20 - COD.xlsx",
+    """
+    columns = ["quantity","item_price",'item_tax','shipping_price', 'shipping_tax']
+    shipment_report_pivot_table(df=excel,grouping_column="product_name",pivot_columns=columns)
+    """
+    excel = pd.read_excel(r"D:/5.Amazon/Mathew global/Scheduled report/Scheduled for 2024-12-20 - COD.xlsx",
                       sheet_name="Sheet1")
 
-pivot = pd.read_excel(r"D:/Ecom-Dashboard/Test documents/pivot/pivot.xlsx",sheet_name="Sheet1")
+    pivot = pd.read_excel(r"D:/Ecom-Dashboard/Test documents/pivot/pivot.xlsx",sheet_name="Sheet1")
 
-out = r"D:/Ecom-Dashboard/Test documents/combined.xlsx"
+    out = r"D:/Ecom-Dashboard/Test documents/combined.xlsx"
 
-excel_appending(dataframes=[excel,pivot],out_path=out)
+    excel_appending(dataframes=[excel,pivot],out_path=out)
 
 
 
-import os,django
 
-def django_db_ops(operation):
-    # Set the environment variable for Django settings
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_manager.settings') 
-    # Initialize Django
-    django.setup()
-    if operation.lower() == "read":
-        pass
+
+
 
 
 
@@ -76,13 +71,6 @@ def similarity_count():
 
 
 
-es = EasyShip()
-
-sh = es.getScheduledPackage(amazonOrderId=
-                            "405-8922362-3421912"
-                            )
-
-print(sh)
 
 
 
@@ -90,7 +78,4 @@ print(sh)
 
 
 
-"""
-columns = ["quantity","item_price",'item_tax','shipping_price', 'shipping_tax']
-shipment_report_pivot_table(df=excel,grouping_column="product_name",pivot_columns=columns)
-"""
+

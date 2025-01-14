@@ -5,5 +5,5 @@ from sales.models import *
 
 
 admin.site.register(Configuration)
-admin.site.register(SPAPI_Credential)
+
     

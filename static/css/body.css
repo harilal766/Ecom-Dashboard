@@ -3,27 +3,25 @@
 body{
     margin: 0; padding: 0;
     display: flex; 
-    font-family: Helvetica, Arial, sans-serif;
     min-height: 100vh;
 }
 
 
-
-
-
-
 .body{
     flex: 1;
-
+    display: flex; flex-direction: column;s
 }
-
-
 
 .header{
     height: 50px;
     padding: 5px;
     display: flex; 
     justify-content: space-between;
+    background-color: #E6E6E3;
+}
+
+.left-header{
+    margin:0px; padding: 0px;
 }
 
 .right-header{
@@ -57,14 +55,43 @@ body{
 }
 
 
+.form-container form {
+    display: flex; flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+
+}
+
+.form-field  input {
+     height:30px; width: 500px;
+    border-radius: 5px;
+}
+
+.form-container button{
+    font-weight:bold;
+    font-family: Helvetica, Arial, sans-serif;
+}
 
 
+.form {
+    display: flex; flex-direction: column;
+    align-self: center;
+    gap: 8px;
+}
+
+.form-floating{
+    width: 700px;
+}
 
 
-
-
+.btn{
+    font-weight: 550;
+}
 /* Footer */
 .footer {
+    display: flex;
+    justify-content: center;
     text-align: center;
     background-color: gray;
 }

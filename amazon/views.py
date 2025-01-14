@@ -1,21 +1,42 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from amazon.response_manipulator import amazon_dashboard
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
 from amazon.sp_api_models import Orders,Reports
 
-from amazon.report_types import selected_types
+from amazon.report_types import selected_report_types
+
+from django.contrib.auth.models import User
+
+from amazon.models import SPAPI_Credential
 # Create your views here.
 
 
 
+
+
 def add_amazon_store(request):
-    return render(request,'amazon_store_form.html')
+    user = "Hari"
+    print(User.objects.all())
+    if request.method == "POST":
+        client_id = request.POST.get("client_id")
+        client_secret = request.POST.get("client_secret")
+        refresh_token = request.POST.get("refresh_token")
+
+        if client_id:
+            cred = SPAPI_Credential.objects.create(client_id = client_id, 
+                                                   client_secret = client_secret,
+                                    refresh_token = refresh_token, 
+                                    access_token = get_or_generate_access_token())
+            cred.save()
+            
+            return redirect("sales:home")
+    return render(request,'amazon_store_form.html', {"user" : user})
 
 
 def amazon_detail_page(request):
 
-    context = {"types" : selected_types.keys()}
+    context = {"types" : selected_report_types.keys()}
 
     """
     Select Report type
@@ -33,19 +54,18 @@ def amazon_detail_page(request):
         print(from_date,to_date)
     return render(request,"amazon_detail_page.html",context)
 
-from sales.views import amazon_context
-print(amazon_context)
 
 """
 Display types of reports on the amazon dashbaord.
 add the parameters based on the selected type.
 generate the report based on the selected type and its parameters.
 
-
 the current working model should be merged to main, there are for bugs in the new upcoming model.
 """
 
-def amazon_shipment_report(request):
+
+
+def amazon_report_generator(request):
     """"
     Step 1 - Order API access
         1. Access the order api and access the shipped (scheduled) and pending pickup orders.
@@ -69,6 +89,9 @@ def amazon_shipment_report(request):
 
         if request.method == 'POST':
             selected_ship_date = request.POST.get("date_choice")
+
+            report_type = request.POST.get("report_choice")
+
             color_text(selected_ship_date,color="red")
         
             # change it to the output got from front end
@@ -80,8 +103,10 @@ def amazon_shipment_report(request):
             if the scheduling report taking is being done after 11 am. 
             """
             
-            orders_details = order_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Shipped",
-                                    EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=selected_ship_date)
+            orders_details = order_instance.getOrders(CreatedAfter=from_timestamp(7),
+                                                      OrderStatuses="Shipped",
+                                    EasyShipShipmentStatuses="PendingPickUp",
+                                    LatestShipDate=selected_ship_date)
             space = " "*14
             if not orders_details == None:
                 color_text(message=f"Orders  Count : {len(orders_details)}")

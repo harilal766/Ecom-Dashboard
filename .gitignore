@@ -8,4 +8,4 @@ Test documents/
 sp_api_credentials.json
 # Ignore temporary files created by Excel
 ~$*.xlsx
-.sqlite3
+#.sqlite3
