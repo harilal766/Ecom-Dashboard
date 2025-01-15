@@ -75,7 +75,7 @@ def home(request):
             color_text("Not logged in..","red")
         
         
-        return render(request,'home.html',context)
+        return render(request,'dashboard.html',context)
     except Exception as e:
         better_error_handling(e)
 

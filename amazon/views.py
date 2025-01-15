@@ -198,7 +198,7 @@ def amazon_report_generator(request):
             else:
                 color_text(message="Empty order response",color="red")
         
-        return render(request,"home.html",amazon_context)
+        return render(request,"dashboard.html",amazon_context)
     except Exception as e:
         better_error_handling(e)
 
