@@ -243,7 +243,8 @@ class Orders(SPAPIBase):
                             "LastUpdatedAfter" : LastUpdatedAfter,
                             "PaymentMethods" : PaymentMethods,"FulfillmentChannels":FulfillmentChannels,
                             "EarliestShipDate" : EarliestShipDate, "LatestShipDate" : LatestShipDate,
-                            "EasyShipShipmentStatuses" : EasyShipShipmentStatuses}) 
+                            "EasyShipShipmentStatuses" : EasyShipShipmentStatuses,
+                            "NextToken" : None}) 
          
         #color_text(message=f"After update : {self.params}")
         """
@@ -261,19 +262,37 @@ class Orders(SPAPIBase):
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
                 # accomodate more than 100 orders using next token, which is included in th payload
                 order_responses = response.get("Orders",None)
-
                 next_token = response.get("NextToken",None)
 
                 if next_token == None:
-                    return response.get("Orders")
+                    return order_responses
                 else:
                     color_text(f"More than 100 orders detected, needs to paginate",'blue')
                     # pagination needs to be done 
                     # add next token to parameters
-                    self.params.update({"NextToken" : next_token})
-                    response = super().execute_request(endpoint=endpoint,params=self.params,
+                    
+
+                    # run a while loop till the nex token is emptied
+                    while True:
+                        page_number = 0
+                        if next_token != None:
+                            page_number += 1
+                            color_text(message=f"next token repeating, {page_number} requesting again..",color="red")
+                            print(self.params)
+                            self.params["NextToken"] = next_token
+                            print(self.params)
+                            next_response = super().execute_request(endpoint=endpoint,params=self.params,
                                                 payload='payload',method='get',burst=20)
-                    return response.get("Orders")
+                            
+                            if type(next_response) == dict:
+                                next_response = next_response.get("Orders",None)
+                                next_token = next_response.get("NextToken",None)
+
+                            if type(next_response) == list:
+                                combined_response = order_responses.append(next_response)
+                                
+                        return combined_response
+
                 
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
