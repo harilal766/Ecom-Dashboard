@@ -54,6 +54,7 @@ def pivot_table(df,columns):
 
 
 
+
 """
     Replacing .env with database for the storing of credentials.
     1. Add an option on the front end to add a new store/ ecommmerce platform account.
@@ -74,8 +75,11 @@ def similarity_count():
 
 
 
+orders_instance = Orders()
 
-
-
+scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Shipped",
+                                EasyShipShipmentStatuses="PendingPickUp",LatestShipDate=from_timestamp(0))
+print(scheduled_orders)
+print(len(scheduled_orders))
 
 

@@ -259,8 +259,22 @@ class Orders(SPAPIBase):
                                                 payload='payload',method='get',burst=20)
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
-                return response.get("Orders")
-            
+                # accomodate more than 100 orders using next token, which is included in th payload
+                order_responses = response.get("Orders",None)
+
+                next_token = response.get("NextToken",None)
+
+                if next_token == None:
+                    return response.get("Orders")
+                else:
+                    color_text(f"More than 100 orders detected, needs to paginate",'blue')
+                    # pagination needs to be done 
+                    # add next token to parameters
+                    self.params.update({"NextToken" : next_token})
+                    response = super().execute_request(endpoint=endpoint,params=self.params,
+                                                payload='payload',method='get',burst=20)
+                    return response.get("Orders")
+                
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
         elif CreatedAfter == None and LastUpdatedAfter == None:
