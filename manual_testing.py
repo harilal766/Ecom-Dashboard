@@ -81,7 +81,7 @@ scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),Orde
                                 EasyShipShipmentStatuses="PickedUp",LatestShipDate=from_timestamp(0))
 
 
-
-print(len(scheduled_orders))
+for i in range(len(scheduled_orders)):
+    print(f"{i}. {scheduled_orders[i]}")
 
 #"PendingPickUp"
