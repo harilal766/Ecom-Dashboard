@@ -243,7 +243,8 @@ class Orders(SPAPIBase):
                             "LastUpdatedAfter" : LastUpdatedAfter,
                             "PaymentMethods" : PaymentMethods,"FulfillmentChannels":FulfillmentChannels,
                             "EarliestShipDate" : EarliestShipDate, "LatestShipDate" : LatestShipDate,
-                            "EasyShipShipmentStatuses" : EasyShipShipmentStatuses}) 
+                            "EasyShipShipmentStatuses" : EasyShipShipmentStatuses,
+                            "NextToken" : None}) 
          
         #color_text(message=f"After update : {self.params}")
         """
@@ -259,8 +260,36 @@ class Orders(SPAPIBase):
                                                 payload='payload',method='get',burst=20)
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
-                return response.get("Orders")
-            
+                # accomodate more than 100 orders using next token, which is included in th payload
+                order_response_list = response.get("Orders",None)
+                next_token = response.get("NextToken",None)
+                if next_token == None:
+                    return order_response_list
+                else:
+                    color_text(f"Next token detected",'blue')
+                    total_orders_list = []
+                    total_orders_list = total_orders_list + order_response_list
+
+                    page = 0
+                    while next_token != None:
+                        page += 1
+                        print(f"Token {page} : {next_token}")
+                        self.params["NextToken"] = next_token
+                        
+                        next_response_page = super().execute_request(endpoint=endpoint,params=self.params,
+                                                method='get',burst=20)
+                        
+                        if type(next_response_page) == dict:
+                            payload = next_response_page['payload']
+                            orders_list = payload['Orders']
+                            total_orders_list += orders_list                    
+                            next_token = payload.get("NextToken",None)
+                        else:
+                            color_text("next response page is not dict now...",color="red")
+
+                    return total_orders_list
+
+                
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
         elif CreatedAfter == None and LastUpdatedAfter == None:

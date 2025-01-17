@@ -135,9 +135,9 @@ def amazon_report_generator(request):
                         else:
                             color_text(message=f"Not a dictionary but of type : {type(i)} ",color="red")
                     # Generate reports only if there are cod or prepaid orders
-                    if len(cod_orders) >0 or len(prepaid_orders)>0:
-                        shipment_report_df = sp_api_report_df(report_type="GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
-                                                                start_date=from_timestamp(5),end_date=todays_timestamp)
+                    if len(cod_orders) >0 or len(prepaid_orders) > 0:
+                        shipment_report_df = sp_api_report_df(report_type="GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL", #"GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL"
+                                                                start_date=from_timestamp(2),end_date=todays_timestamp)
                         # Filtering based on required columns.
                         fields = ["amazon_order_id","purchase_date","last_updated_date","order_status","product_name","item_status",
                             "quantity","item_price","item_tax","shipping_price","shipping_tax"]
@@ -198,7 +198,7 @@ def amazon_report_generator(request):
             else:
                 color_text(message="Empty order response",color="red")
         
-        return render(request,"home.html",amazon_context)
+        return render(request,"dashboard.html",amazon_context)
     except Exception as e:
         better_error_handling(e)
 
