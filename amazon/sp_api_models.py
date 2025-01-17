@@ -261,41 +261,33 @@ class Orders(SPAPIBase):
             if response != None:
                 #color_text(message=f"{response}\n+++++++++++++++++",color="blue")
                 # accomodate more than 100 orders using next token, which is included in th payload
-                order_response = response.get("Orders",None)
+                order_response_list = response.get("Orders",None)
                 next_token = response.get("NextToken",None)
-
-                
-                
                 if next_token == None:
-                    return order_response
+                    return order_response_list
                 else:
-                    color_text(f"More than 100 orders detected, needs to paginate",'blue')
-                    
-                  
+                    color_text(f"Next token detected",'blue')
+                    total_orders_list = []
+                    total_orders_list = total_orders_list + order_response_list
+
                     page = 0
-                    #While loop , next token is not none.
                     while next_token != None:
                         page += 1
-                        #Print the current next token.
-                        color_text(f"{page} - {next_token}.",'blue')
-                        #Empty total order list
-                        total_order_list = []
-                        #Append the current order lists
-                        total_order_list += order_response
-                        #Request new response with it, it shouldnt be filtered by payload.
-                        full_response = super().execute_request(endpoint=endpoint,params=self.params,
-                                                payload='payload',method='get',burst=20)
-                        order_response = full_response.get("Orders",None)
-                        #Find the new next token from it.
-                        if full_response:
-                            #Update the next token once new response is generated., 
-                            # It should be updated to the same remaining variable.
-                            next_token = full_response.get("NextToken",None)
+                        print(f"Token {page} : {next_token}")
+                        self.params["NextToken"] = next_token
                         
-                        return response.get("Orders",None) + total_order_list
-                
-                    
-              
+                        next_response_page = super().execute_request(endpoint=endpoint,params=self.params,
+                                                method='get',burst=20)
+                        
+                        if type(next_response_page) == dict:
+                            payload = next_response_page['payload']
+                            orders_list = payload['Orders']
+                            total_orders_list += orders_list                    
+                            next_token = payload.get("NextToken",None)
+                        else:
+                            color_text("next response page is not dict now...",color="red")
+
+                    return total_orders_list
 
                 
             else:

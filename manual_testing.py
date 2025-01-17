@@ -77,11 +77,10 @@ def similarity_count():
 
 orders_instance = Orders()
 
-scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Shipped",
-                                EasyShipShipmentStatuses="PickedUp",LatestShipDate=from_timestamp(0))
+scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
 
 
-for i in range(len(scheduled_orders)):
-    print(f"{i}. {scheduled_orders[i]}")
+print(len(scheduled_orders))
+
 
 #"PendingPickUp"

@@ -50,8 +50,7 @@ def home(request):
             context["user"] = user
             if not scheduled_orders == None:
                 scheduled_dates = []
-                if len(scheduled_orders) > 0 :
-                    context["scheduled_orders"] = len(scheduled_orders)
+                
                 
 
                 for order in scheduled_orders:
