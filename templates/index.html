@@ -26,7 +26,7 @@
 
    
 </head>
-<body id="index" class="index_body">
+<body id="index">
     <div class="sidebar">
         <h2 class="site-name">Shop Syncer</h2>
 
@@ -104,10 +104,13 @@
         </div>
 
         <div class="content"> 
-            
+            {% if user.is_authenticated %}
                 {% block content %}
                 {% endblock %} 
-            
+            {% else %}
+                {% block home %}
+                {% endblock %}
+            {% endif %}
             </div>
 
         <footer class="footer">
