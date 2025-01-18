@@ -20,6 +20,7 @@ from sales import views
 app_name = 'sales'
 
 urlpatterns = [
-    path('', views.home,name='home'),
+    path('',views.home,name='home'),
+    path('dashbaord/', views.dashboard,name='dashboard'),
     #path('amazon_reports',views.amazon_shipment_report,name='amazon_reports')
 ]
