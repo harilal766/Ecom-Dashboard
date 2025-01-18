@@ -1,5 +1,8 @@
-{% extends 'bootstrap.html' %}
-{% block bootstrap %}
+{% extends 'index.html' %}
+
+{% block title %} - {{purpose}} {% endblock %}
+
+{% block content %}
 <div class="form">
     <div>
         <h1 id="title">{{purpose}}</h1>
@@ -8,9 +11,8 @@
         {% endif %}
     </div>
     
-    <form class="form" method="POST">
+    <form class="form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
         <div class="form-floating">
             <input class="form-control" name="username" id="username" placeholder="Enter the username">
             <label for="floatingInput">Enter the username</label>
