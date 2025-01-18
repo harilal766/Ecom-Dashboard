@@ -1,7 +1,8 @@
 {% extends 'index.html' %}
+<!-- Amazon dashboard, need to be added via template inheritance for managing easily-->
 
 {% block title %} - Dashboard {% endblock %}
-<!-- Amazon dashboard, need to be added via template inheritance for managing easily-->
+
 {% block content %}
 <div class="graph-view">
     <h1>Sales Graph</h1>
@@ -10,6 +11,7 @@
     <!-- Child items for amazon -->
     <div class="child-container">
         <h2>Amazon Dashboard</h2>
+        <a href="{% url 'user:logout' %}">Signout</a>
         <p>{{status}}</p>
         {% if shipment_summary %}
             <h4>Total Unscheduled Orders : {{shipment_summary.total_orders}}</h4> 
