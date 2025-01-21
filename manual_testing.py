@@ -86,16 +86,23 @@ def similarity_count():
     this dedicated list should be made prior according to the listed products, also for the mixed items.
 
 """
+
+from PyPDF2 import PdfReader, PdfWriter
+
+
 def FBA_lable_sort():
     try:
         pdf_file_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-        filename = "21.1.25 cod.pdf"
+        input_filename = "16.10.24 cod.pdf"
 
-        pdf_file = os.path.join(pdf_file_path,filename)
+        pdf_file = os.path.join(pdf_file_path,input_filename)
 
         with pdfplumber.open(pdf_file) as pdf:
+            page_count = 0
+            label_summary_dict = {}
             for page in pdf.pages:
+                page_count += 1
                 # look out for pages without invoice and shipping label
                 table = page.extract_table()
                 if type(table) == list:
@@ -103,17 +110,54 @@ def FBA_lable_sort():
                     the table inside the invoice page is returned as a linked list
                         1. titles, 2. product name and other values, last two lists are the total and amount in words.
                     """
+
+                    
+
+                    invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
+                    heading = table[0]; 
+                    product_details = table[1]; 
+                    product_name = product_details[1]
+                    amount_in_words = table[-2]; signature = table[-1]
+
                     if len(table) > 5: # mixed items order
-                        color_text("multi item order","red")
+                        color_text(f"{page_count} - multi item order","red")
+                        label_summary_dict["Mixed"] = []
+                        label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
                     else: 
-                        heading = table[0]; 
-                        product_details = table[1]; 
-                        product_name = [product_details][1]
-                        amount_in_words = table[-2]; signature = table[-1]
-                        print(product_details)
+                        
+                        if product_name not in label_summary_dict:
+                            label_summary_dict[product_name] = []
+
+                        label_summary_dict[product_name] += [shipping_label_page_number,invoice_page_num]
+
+                        print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
                         color_text("-"*50)
+                        
+
+            # merge all the pdf files based on product name
+            for index in range(len(label_summary_dict)):
+
+                product_name = list(label_summary_dict.keys())[index]
+                page_nums = list(label_summary_dict.values())[index]
+
+                if len(page_nums) > 0:
+                    reader = PdfReader(pdf_file); writer = PdfWriter()
+
+                    for num in page_nums:
+                        writer.add_page(reader.pages[num-1])
+
+
+
+                    filtered_pdf_name = input_filename.split(".")[0]
+
+                    with open(product_name,"wb") as filtered_pdf:
+                        writer.write(filtered_pdf)
+                
+
+            print(label_summary_dict)
 
     except Exception as e:
         better_error_handling(e)
 
 FBA_lable_sort()
+
