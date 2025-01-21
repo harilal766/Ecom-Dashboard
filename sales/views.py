@@ -54,7 +54,6 @@ def dashboard(request):
             if not scheduled_orders == None:
                 scheduled_dates = []
                 
-                
 
                 for order in scheduled_orders:
                     ship_date = order["LatestShipDate"]
@@ -64,7 +63,6 @@ def dashboard(request):
                 if not scheduled_dates == None:
                     context["scheduled_dates"] = scheduled_dates
                 
-
             
             if ord_resp != None:
                 summary_dict = amazon_dashboard(response=ord_resp)
@@ -72,6 +70,7 @@ def dashboard(request):
                 color_text(message=summary_dict.keys(),color="blue")
                 color_text(context)
             else:
+                # Second reload issue 
                 color_text(message="Empty response from getOrders",color="red")
         else:
             color_text("Not logged in..","red")

@@ -73,14 +73,42 @@ def similarity_count():
 
 
 
-
-
-orders_instance = Orders()
-
-scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
-
-
-print(len(scheduled_orders))
-
-
 #"PendingPickUp"
+
+
+
+# FBA Lable sorting
+"""
+    loop through the pdf and split the qrcode page and invoice page of each order into individual units..
+
+    search for the product name and quantity on the invoice page, make sure its an invoice page
+    if the order is not mixed and if the order is single item,  add into the dedicated list, 
+    this dedicated list should be made prior according to the listed products, also for the mixed items.
+
+"""
+def FBA_lable_sort():
+    try:
+        pdf_file_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+
+        filename = "21.1.25 cod.pdf"
+
+        pdf_file = os.path.join(pdf_file_path,filename)
+
+        with pdfplumber.open(pdf_file) as pdf:
+            for page in pdf.pages:
+                # look out for pages without invoice and shipping label
+                table = page.extract_table()
+                if type(table) == list:
+                    """
+                    the table inside the invoice page is returned as a linked list
+                        1. titles, 2. product name and other values, last two lists are the total and amount in words.
+                    """
+                    if len(table) > 5: # mixed items order
+                        print(table)
+                        print(len(table))
+                        color_text("-"*50)
+
+    except Exception as e:
+        better_error_handling(e)
+
+FBA_lable_sort()
