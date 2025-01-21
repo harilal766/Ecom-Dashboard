@@ -104,8 +104,13 @@ def FBA_lable_sort():
                         1. titles, 2. product name and other values, last two lists are the total and amount in words.
                     """
                     if len(table) > 5: # mixed items order
-                        print(table)
-                        print(len(table))
+                        color_text("multi item order","red")
+                    else: 
+                        heading = table[0]; 
+                        product_details = table[1]; 
+                        product_name = [product_details][1]
+                        amount_in_words = table[-2]; signature = table[-1]
+                        print(product_details)
                         color_text("-"*50)
 
     except Exception as e:
