@@ -92,11 +92,11 @@ from PyPDF2 import PdfReader, PdfWriter
 
 def FBA_lable_sort():
     try:
-        pdf_file_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+        input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-        input_filename = "16.10.24 cod.pdf"
+        input_pdf_name = "16.10.24 cod.pdf"
 
-        pdf_file = os.path.join(pdf_file_path,input_filename)
+        pdf_file = os.path.join(input_pdf_path,input_pdf_name)
 
         with pdfplumber.open(pdf_file) as pdf:
             page_count = 0
@@ -147,10 +147,13 @@ def FBA_lable_sort():
                         writer.add_page(reader.pages[num-1])
 
 
+                    # Create a new folder for storing filtered pdf files
+                    new_folder_path = os.path.join(input_pdf_path,input_pdf_name.replace(".pdf"," folder")) # new directory path
+                    os.makedirs(new_folder_path,exist_ok=True) # creating new directory
+                    out_pdf_path = os.path.join(new_folder_path,product_name) # adding out pdf file to the path
 
-                    filtered_pdf_name = input_filename.split(".")[0]
-
-                    with open(product_name,"wb") as filtered_pdf:
+                    # writing the pages to the file.
+                    with open(f"{out_pdf_path} - {int(len(page_nums)/2)}","wb") as filtered_pdf:
                         writer.write(filtered_pdf)
                 
 
