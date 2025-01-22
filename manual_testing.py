@@ -90,15 +90,17 @@ def similarity_count():
 from PyPDF2 import PdfReader, PdfWriter
 
 
-def FBA_lable_sort():
+
+
+
+
+def FBA_lable_sort(input_pdf_name, input_pdf_path):
     try:
-        input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+        
 
         # Create a new folder for storing filtered pdf files
         todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
         todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
-
-        input_pdf_name = "16.10.24 cod.pdf"
 
         pdf_file = os.path.join(input_pdf_path,input_pdf_name)
 
@@ -168,5 +170,13 @@ def FBA_lable_sort():
     except Exception as e:
         better_error_handling(e)
 
-FBA_lable_sort()
+
+
+
+# both of these should be from front end in django
+input_pdf_name = "16.10.24 cod.pdf"
+input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+
+FBA_lable_sort(input_pdf_name=input_pdf_name, input_pdf_path=input_pdf_path)
+
 
