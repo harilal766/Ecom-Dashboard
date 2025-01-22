@@ -94,7 +94,9 @@ def FBA_lable_sort():
     try:
         input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-        input_pdf_name = "16.10.24 cod.pdf"
+        # todays date folder needs to be created
+
+        input_pdf_name = "22.1.25 prepaid-2.pdf"
 
         pdf_file = os.path.join(input_pdf_path,input_pdf_name)
 
@@ -116,7 +118,7 @@ def FBA_lable_sort():
                     invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
                     heading = table[0]; 
                     product_details = table[1]; 
-                    product_name = product_details[1]
+                    product_name = (product_details[1].split("|")[0]).replace("\n"," ")
                     amount_in_words = table[-2]; signature = table[-1]
 
                     if len(table) > 5: # mixed items order
