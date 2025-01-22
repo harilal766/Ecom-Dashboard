@@ -271,11 +271,12 @@ class Orders(SPAPIBase):
                     total_orders_list = total_orders_list + order_response_list
 
                     page = 0
+                    # to access the following pages with the help of next token...
                     while next_token != None:
                         page += 1
                         print(f"Token {page} : {next_token}")
                         self.params["NextToken"] = next_token
-                        
+
                         next_response_page = super().execute_request(endpoint=endpoint,params=self.params,
                                                 method='get',burst=20)
                         

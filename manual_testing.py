@@ -73,14 +73,96 @@ def similarity_count():
 
 
 
-
-
-orders_instance = Orders()
-
-scheduled_orders = orders_instance.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
-
-
-print(len(scheduled_orders))
-
-
 #"PendingPickUp"
+
+
+
+# FBA Lable sorting
+"""
+    loop through the pdf and split the qrcode page and invoice page of each order into individual units..
+
+    search for the product name and quantity on the invoice page, make sure its an invoice page
+    if the order is not mixed and if the order is single item,  add into the dedicated list, 
+    this dedicated list should be made prior according to the listed products, also for the mixed items.
+
+"""
+
+from PyPDF2 import PdfReader, PdfWriter
+
+
+def FBA_lable_sort():
+    try:
+        input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+
+        # todays date folder needs to be created
+
+        input_pdf_name = "22.1.25 prepaid-2.pdf"
+
+        pdf_file = os.path.join(input_pdf_path,input_pdf_name)
+
+        with pdfplumber.open(pdf_file) as pdf:
+            page_count = 0
+            label_summary_dict = {}
+            for page in pdf.pages:
+                page_count += 1
+                # look out for pages without invoice and shipping label
+                table = page.extract_table()
+                if type(table) == list:
+                    """
+                    the table inside the invoice page is returned as a linked list
+                        1. titles, 2. product name and other values, last two lists are the total and amount in words.
+                    """
+
+                    
+
+                    invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
+                    heading = table[0]; 
+                    product_details = table[1]; 
+                    product_name = (product_details[1].split("|")[0]).replace("\n"," ")
+                    amount_in_words = table[-2]; signature = table[-1]
+
+                    if len(table) > 5: # mixed items order
+                        color_text(f"{page_count} - multi item order","red")
+                        label_summary_dict["Mixed"] = []
+                        label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
+                    else: 
+                        
+                        if product_name not in label_summary_dict:
+                            label_summary_dict[product_name] = []
+
+                        label_summary_dict[product_name] += [shipping_label_page_number,invoice_page_num]
+
+                        print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
+                        color_text("-"*50)
+                        
+
+            # merge all the pdf files based on product name
+            for index in range(len(label_summary_dict)):
+
+                product_name = list(label_summary_dict.keys())[index]
+                page_nums = list(label_summary_dict.values())[index]
+
+                if len(page_nums) > 0:
+                    reader = PdfReader(pdf_file); writer = PdfWriter()
+
+                    for num in page_nums:
+                        writer.add_page(reader.pages[num-1])
+
+
+                    # Create a new folder for storing filtered pdf files
+                    new_folder_path = os.path.join(input_pdf_path,input_pdf_name.replace(".pdf"," folder")) # new directory path
+                    os.makedirs(new_folder_path,exist_ok=True) # creating new directory
+                    out_pdf_path = os.path.join(new_folder_path,product_name) # adding out pdf file to the path
+
+                    # writing the pages to the file.
+                    with open(f"{out_pdf_path} - {int(len(page_nums)/2)}","wb") as filtered_pdf:
+                        writer.write(filtered_pdf)
+                
+
+            print(label_summary_dict)
+
+    except Exception as e:
+        better_error_handling(e)
+
+FBA_lable_sort()
+

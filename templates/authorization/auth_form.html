@@ -1,4 +1,7 @@
 {% extends 'index.html' %}
+
+{% block title %} - {{purpose}} {% endblock %}
+
 {% block content %}
 <div class="form">
     <div>
@@ -8,9 +11,8 @@
         {% endif %}
     </div>
     
-    <form class="form" method="POST">
+    <form class="form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
         <div class="form-floating">
             <input class="form-control" name="username" id="username" placeholder="Enter the username">
             <label for="floatingInput">Enter the username</label>

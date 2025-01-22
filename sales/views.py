@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from amazon.response_manipulator import amazon_dashboard
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
@@ -8,6 +8,8 @@ from helpers.sql_scripts import *
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.    
@@ -30,7 +32,8 @@ amazon_context = {
         }
 
 
-def home(request):
+@login_required
+def dashboard(request):
     try:
         # initializing context with none, for handling errors 
         context = {
@@ -51,7 +54,6 @@ def home(request):
             if not scheduled_orders == None:
                 scheduled_dates = []
                 
-                
 
                 for order in scheduled_orders:
                     ship_date = order["LatestShipDate"]
@@ -61,7 +63,6 @@ def home(request):
                 if not scheduled_dates == None:
                     context["scheduled_dates"] = scheduled_dates
                 
-
             
             if ord_resp != None:
                 summary_dict = amazon_dashboard(response=ord_resp)
@@ -69,6 +70,7 @@ def home(request):
                 color_text(message=summary_dict.keys(),color="blue")
                 color_text(context)
             else:
+                # Second reload issue 
                 color_text(message="Empty response from getOrders",color="red")
         else:
             color_text("Not logged in..","red")
@@ -77,6 +79,14 @@ def home(request):
         return render(request,'dashboard.html',context)
     except Exception as e:
         better_error_handling(e)
+
+
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('sales:dashboard')
+    return render(request,'home.html')
+
+
 
 
 def df_filter(df,column_or_columns):
