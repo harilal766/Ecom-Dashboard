@@ -94,9 +94,11 @@ def FBA_lable_sort():
     try:
         input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-        # todays date folder needs to be created
+        # Create a new folder for storing filtered pdf files
+        todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
+        todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
 
-        input_pdf_name = "22.1.25 prepaid-2.pdf"
+        input_pdf_name = "16.10.24 cod.pdf"
 
         pdf_file = os.path.join(input_pdf_path,input_pdf_name)
 
@@ -125,8 +127,8 @@ def FBA_lable_sort():
                         color_text(f"{page_count} - multi item order","red")
                         label_summary_dict["Mixed"] = []
                         label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
-                    else: 
-                        
+
+                    elif len(table) == 5: 
                         if product_name not in label_summary_dict:
                             label_summary_dict[product_name] = []
 
@@ -134,6 +136,9 @@ def FBA_lable_sort():
 
                         print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
                         color_text("-"*50)
+                    else:
+                        # odd pages
+                        continue
                         
 
             # merge all the pdf files based on product name
@@ -149,8 +154,7 @@ def FBA_lable_sort():
                         writer.add_page(reader.pages[num-1])
 
 
-                    # Create a new folder for storing filtered pdf files
-                    new_folder_path = os.path.join(input_pdf_path,input_pdf_name.replace(".pdf"," folder")) # new directory path
+                    new_folder_path = os.path.join(todays_folder_path,input_pdf_name.replace(".pdf"," folder")) # new directory path
                     os.makedirs(new_folder_path,exist_ok=True) # creating new directory
                     out_pdf_path = os.path.join(new_folder_path,product_name) # adding out pdf file to the path
 
