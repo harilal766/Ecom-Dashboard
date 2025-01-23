@@ -88,16 +88,12 @@ def similarity_count():
 """
 
 from PyPDF2 import PdfReader, PdfWriter
+import re
 
 
 
-
-
-
-def FBA_lable_sort(input_pdf_name, input_pdf_path):
+def FBA_label_sort(input_pdf_name, input_pdf_path):
     try:
-        
-
         # Create a new folder for storing filtered pdf files
         todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
         todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
@@ -110,35 +106,46 @@ def FBA_lable_sort(input_pdf_name, input_pdf_path):
             for page in pdf.pages:
                 page_count += 1
                 # look out for pages without invoice and shipping label
+                
+                other_details = page.extract_text()
+
+                invoice_pattern = "Invoice Number : IN-6834"
+                # invoice length : between 4 to 10 
+
                 table = page.extract_table()
                 if type(table) == list:
                     """
                     the table inside the invoice page is returned as a linked list
                         1. titles, 2. product name and other values, last two lists are the total and amount in words.
                     """
-                    # Odd page avoiding condition
-                    if len(table) >= 2:
-                        invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
+                    if len(table) > 2: # if this condition succeeds, its not an odd page..
+                        # first row
+                        invoice_page_num = page_count; label_page_number = invoice_page_num -1
                         heading = table[0]; 
+                        # second row
                         product_details = table[1]; 
                         product_name = (product_details[1].split("|")[0]).replace("\n"," ")
+                        product_qty = product_details[3]
+
+
+                        # final row
                         amount_in_words = table[-2]; signature = table[-1]
 
                         if len(table) > 5: # mixed items order
                             color_text(f"{page_count} - multi item order","red")
                             label_summary_dict["Mixed"] = []
-                            label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
+                            label_summary_dict["Mixed"] +=  [label_page_number,invoice_page_num]
 
-                        else: 
+                        else: # single item order
                             if product_name not in label_summary_dict:
                                 label_summary_dict[product_name] = []
 
-                            label_summary_dict[product_name] += [shipping_label_page_number,invoice_page_num]
+                            label_summary_dict[product_name] += [label_page_number,invoice_page_num]
 
-                            print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
+                            print( f"{label_page_number} -> {page_count} : {product_name}, {product_qty} No.s")
                             color_text("-"*50)
-                    else:
-                        color_text("odd page detected","red")
+                    else: # odd page found.
+                        color_text(f"{label_page_number} odd page detected.","red")
 
                         
 
@@ -174,6 +181,6 @@ def FBA_lable_sort(input_pdf_name, input_pdf_path):
 input_pdf_name = "23.1.25 prepaid.pdf"
 input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-FBA_lable_sort(input_pdf_name=input_pdf_name, input_pdf_path=input_pdf_path)
+FBA_label_sort(input_pdf_name=input_pdf_name, input_pdf_path=input_pdf_path)
 
 
