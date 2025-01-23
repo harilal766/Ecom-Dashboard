@@ -116,31 +116,30 @@ def FBA_lable_sort(input_pdf_name, input_pdf_path):
                     the table inside the invoice page is returned as a linked list
                         1. titles, 2. product name and other values, last two lists are the total and amount in words.
                     """
+                    # Odd page avoiding condition
+                    if len(table) >= 2:
+                        invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
+                        heading = table[0]; 
+                        product_details = table[1]; 
+                        product_name = (product_details[1].split("|")[0]).replace("\n"," ")
+                        amount_in_words = table[-2]; signature = table[-1]
 
-                    
+                        if len(table) > 5: # mixed items order
+                            color_text(f"{page_count} - multi item order","red")
+                            label_summary_dict["Mixed"] = []
+                            label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
 
-                    invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
-                    heading = table[0]; 
-                    product_details = table[1]; 
-                    product_name = (product_details[1].split("|")[0]).replace("\n"," ")
-                    amount_in_words = table[-2]; signature = table[-1]
+                        else: 
+                            if product_name not in label_summary_dict:
+                                label_summary_dict[product_name] = []
 
-                    if len(table) > 5: # mixed items order
-                        color_text(f"{page_count} - multi item order","red")
-                        label_summary_dict["Mixed"] = []
-                        label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
+                            label_summary_dict[product_name] += [shipping_label_page_number,invoice_page_num]
 
-                    elif len(table) == 5: 
-                        if product_name not in label_summary_dict:
-                            label_summary_dict[product_name] = []
-
-                        label_summary_dict[product_name] += [shipping_label_page_number,invoice_page_num]
-
-                        print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
-                        color_text("-"*50)
+                            print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
+                            color_text("-"*50)
                     else:
-                        # odd pages
-                        continue
+                        color_text("odd page detected","red")
+
                         
 
             # merge all the pdf files based on product name
@@ -171,10 +170,8 @@ def FBA_lable_sort(input_pdf_name, input_pdf_path):
         better_error_handling(e)
 
 
-
-
 # both of these should be from front end in django
-input_pdf_name = "16.10.24 cod.pdf"
+input_pdf_name = "23.1.25 prepaid.pdf"
 input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
 FBA_lable_sort(input_pdf_name=input_pdf_name, input_pdf_path=input_pdf_path)
