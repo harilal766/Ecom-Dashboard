@@ -274,7 +274,7 @@ class Orders(SPAPIBase):
                     # to access the following pages with the help of next token...
                     while next_token != None:
                         page += 1
-                        print(f"Token {page} : {next_token}")
+                        print(f"Token {page}")
                         self.params["NextToken"] = next_token
 
                         next_response_page = super().execute_request(endpoint=endpoint,params=self.params,
@@ -286,11 +286,10 @@ class Orders(SPAPIBase):
                             total_orders_list += orders_list                    
                             next_token = payload.get("NextToken",None)
                         else:
-                            color_text("next response page is not dict now...",color="red")
+                            color_text("next response page is not dict.",color="red")
 
                     return total_orders_list
 
-                
             else:
                 color_text(message=f"getOrders response : {response},please check",color="red")
         elif CreatedAfter == None and LastUpdatedAfter == None:

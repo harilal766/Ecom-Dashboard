@@ -95,7 +95,8 @@ import re
 def FBA_label_sort(input_pdf_name, input_pdf_path):
     try:
         # Create a new folder for storing filtered pdf files
-        todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
+        #todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
+        todays_date_folder = "25.1.25 lable split"
         todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
 
         pdf_file = os.path.join(input_pdf_path,input_pdf_name)
@@ -148,12 +149,14 @@ def FBA_label_sort(input_pdf_name, input_pdf_path):
                         color_text(f"{label_page_number} odd page detected.","red")
 
                         
-
+            
             # merge all the pdf files based on product name
             for index in range(len(label_summary_dict)):
 
                 product_name = list(label_summary_dict.keys())[index]
                 page_nums = list(label_summary_dict.values())[index]
+
+                # def pdf_merger(out_filename,page_num_list):
 
                 if len(page_nums) > 0:
                     reader = PdfReader(pdf_file); writer = PdfWriter()
@@ -162,14 +165,13 @@ def FBA_label_sort(input_pdf_name, input_pdf_path):
                         writer.add_page(reader.pages[num-1])
 
 
-                    new_folder_path = os.path.join(todays_folder_path,input_pdf_name.replace(".pdf"," folder")) # new directory path
+                    new_folder_path = os.path.join(todays_folder_path,input_pdf_name.replace(".pdf","")) # new directory path by replacing the .pdf in the filename
                     os.makedirs(new_folder_path,exist_ok=True) # creating new directory
                     out_pdf_path = os.path.join(new_folder_path,product_name) # adding out pdf file to the path
 
                     # writing the pages to the file.
                     with open(f"{out_pdf_path} - {int(len(page_nums)/2)}","wb") as filtered_pdf:
                         writer.write(filtered_pdf)
-                
 
             print(label_summary_dict)
 
@@ -177,10 +179,53 @@ def FBA_label_sort(input_pdf_name, input_pdf_path):
         better_error_handling(e)
 
 
+"""
 # both of these should be from front end in django
-input_pdf_name = "23.1.25 prepaid.pdf"
+input_pdf_name = "25.1.25 cod-4.pdf"
 input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
 FBA_label_sort(input_pdf_name=input_pdf_name, input_pdf_path=input_pdf_path)
 
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def pppp():
+    from helpers.regex_patterns import post_track_id_pattern,post_order_id_pattern
+
+    pdf_route = r"D:\6.SPEED POST\4 split.pdf"
+
+    with pdfplumber.open(pdf_route) as pdf:
+        co = 0 
+        for page in pdf.pages:
+
+            text = page.extract_text_simple()
+
+            id = page.extract_text_simple()
+
+            id_match = re.match(post_order_id_pattern,text)
+            if id_match:
+                print(id_match[0],sep=",")
+
+
+
+
+pppp()
 
