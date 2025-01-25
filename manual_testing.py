@@ -151,11 +151,25 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                             
                             # label summary making
                             if product_name and product_qty:
-                                if product_name not in label_summary_dict:
-                                    label_summary_dict[product_name] = []
+
+                                 # first dict based on name
                                 
-                                label_summary_dict[product_name] += [page_number-1,page_number]
-                                print(label_summary_dict)
+                                if not product_name == "Mixed":
+                                    if product_name not in label_summary_dict:
+                                        label_summary_dict[product_name] = {}
+                                    if product_qty not in label_summary_dict[product_name]:
+                                        label_summary_dict[product_name][product_qty] = [] # nested dict based on qty
+                                    label_summary_dict[product_name][product_qty] += [page_number-1,page_number]
+                                # mixed orders shouldnt have a nested dict inside.
+                                else: 
+                                    if product_name not in label_summary_dict:
+                                        label_summary_dict[product_name] = []
+                                    label_summary_dict[product_name] += [page_number-1,page_number]
+
+                                
+                                
+                            # create seperate pages based on the sorting
+                            
                                     
                             
                                     
