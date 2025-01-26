@@ -104,7 +104,7 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
         todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
         #todays_date_folder = "25.1.25 lable split"
         todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
-        input_pdf_file = os.path.join(input_pdf_path,input_pdf_name)
+        input_pdf_path = os.path.join(input_pdf_path,input_pdf_name)
         """
             open the pdf only if the path exists
             check if the label is amazon or post
@@ -115,7 +115,7 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
             if not label_type:
                 color_text("specify the label type, Eg : Amazon, Post etc...","red")
             else:
-                with pdfplumber.open(input_pdf_file) as pdf:
+                with pdfplumber.open(input_pdf_path) as pdf:
                     # make sure the page is not empty
                     #Varible Initialization
                     page_number = 0; product_name = None; product_qty = None
@@ -146,14 +146,10 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                                         #color_text(product_row[1])
                                         color_text(f"{page_number} - {product_name} - {product_qty} qty.")
 
-
-
                             
                             # label summary making
                             if product_name and product_qty:
-
                                  # first dict based on name
-                                
                                 if not product_name == "Mixed":
                                     if product_name not in label_summary_dict:
                                         label_summary_dict[product_name] = {}
@@ -166,25 +162,64 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                                         label_summary_dict[product_name] = []
                                     label_summary_dict[product_name] += [page_number-1,page_number]
 
-                                
-                                
-                            # create seperate pages based on the sorting
-                            
-                                    
-                            
-                                    
 
-                                    
+                    # create a folder based on 
+                    # loop through the summary dictionary
+                    for product_name,values in label_summary_dict.items():
+                        out_pdf_path = os.path.join(todays_folder_path,input_pdf_name.replace(".pdf",""))
+                        # make the directory
+                        os.makedirs(out_pdf_path,exist_ok=True)
+                        # make add the pdf file to the path
+
+                        order_count = 0; page_numbers = []
+
+
+                        # find page numbers from single item and mixed orders
+                        
+                        if type(values) == dict:
+                            for quantity,page_nums in values.items():
+                                page_numbers = page_nums; order_count = int(len(page_nums)/2)
+                                pdf_merger(page_numbers,
+                                input_pdf_path,
+                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                                
+                        elif type(values) == list:
+                            page_numbers = values; order_count = int(len(values)/2)
+                            pdf_merger(page_numbers,
+                            input_pdf_path,
+                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                        
+                            
                     print(label_summary_dict)
-
-
-
-                            
-
             
     except Exception as e:
-                better_error_handling(e)
+        better_error_handling(e)
 
+
+
+def pdf_merger(pages,input_pdf,output_pdf):
+    try:
+        
+        #print(pages)
+    
+        if len(pages) > 0:
+            reader = PdfReader(input_pdf); writer = PdfWriter()
+            for page_num in pages:
+                writer.add_page(reader.pages[page_num-1])
+
+            
+            if not output_pdf == None:
+                with open(output_pdf,"wb") as output_pdf_file:
+                    writer.write(output_pdf_file)
+                
+                if output_pdf_file:
+                    color_text(f"Created {output_pdf_file} with the pages : {pages}")
+            else:
+                color_text("The out pdf directory  does not exist","red")
+            
+            
+    except Exception as e:
+        better_error_handling(e)
 
         
 
@@ -200,28 +235,3 @@ lin_post = r"/home/hari/Downloads/"
 
 FBA_label_sort(input_pdf_name="16.10.24 cod.pdf", 
     input_pdf_path = amazon,label_type='amazon')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
