@@ -89,7 +89,7 @@ def similarity_count():
 
 from PyPDF2 import PdfReader, PdfWriter
 import re
-from helpers.regex_patterns import post_track_id_pattern,post_order_id_pattern
+from helpers.regex_patterns import *
 
 
 
@@ -145,7 +145,13 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
 
                                         #color_text(product_row[1])
                                         color_text(f"{page_number} - {product_name} - {product_qty} qty.")
+                            
+                            elif label_type == "post":
+                                order_line = re.findall(post_product_line_pattern,page_text)
 
+                                
+                            else:
+                                color_text("unsupported label","red")
                             
                             # label summary making
                             if product_name and product_qty:
@@ -233,5 +239,5 @@ post = r"D:\6.SPEED POST"
 
 lin_post = r"/home/hari/Downloads/"
 
-FBA_label_sort(input_pdf_name="16.10.24 cod.pdf", 
-    input_pdf_path = amazon,label_type='amazon')
+FBA_label_sort(input_pdf_name="4 split.pdf", 
+    input_pdf_path = lin_post ,label_type='post')
