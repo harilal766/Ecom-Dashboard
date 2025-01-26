@@ -1,0 +1,19 @@
+
+
+.order-summary {
+    display: flex;
+}
+
+.horizontal {
+    display: flex;
+}
+
+
+
+/* horizontal form structure*/
+.horizontal-form {
+    display: flex;
+    gap: 5px;
+    width: 200px;
+}
+

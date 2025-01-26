@@ -88,81 +88,150 @@ def similarity_count():
 """
 
 from PyPDF2 import PdfReader, PdfWriter
+import re
+from helpers.regex_patterns import post_track_id_pattern,post_order_id_pattern
 
 
-def FBA_lable_sort():
+
+def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
+    """
+    Deal breakers 
+        Common : page should not be empty
+        Amazon : odd page
+    """
     try:
-        input_pdf_path = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+        # Create a new folder for storing filtered pdf files
+        todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
+        #todays_date_folder = "25.1.25 lable split"
+        todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
+        input_pdf_path = os.path.join(input_pdf_path,input_pdf_name)
+        """
+            open the pdf only if the path exists
+            check if the label is amazon or post
+        """
+        if not os.path.exists(input_pdf_path):
+            color_text("The file does not exist..","red")
+        else:
+            if not label_type:
+                color_text("specify the label type, Eg : Amazon, Post etc...","red")
+            else:
+                with pdfplumber.open(input_pdf_path) as pdf:
+                    # make sure the page is not empty
+                    #Varible Initialization
+                    page_number = 0; product_name = None; product_qty = None
+                    label_summary_dict = {}; post_product_line = r"Ref"
 
-        # todays date folder needs to be created
+                    for page in pdf.pages:
+                        page_number += 1
 
-        input_pdf_name = "22.1.25 prepaid-2.pdf"
+                        page_text = page.extract_text(); page_table = page.extract_table()
 
-        pdf_file = os.path.join(input_pdf_path,input_pdf_name)
+                        if page_text == "": # adding the deal breaker conditions first 
+                            color_text(f"{page_number} : Empty.","red")
+                        else:
+                            if label_type == "amazon":
+                                if len(page_table) <=2:
+                                    color_text("Odd page detected","red")
+                                else:
+                                    #color_text(page_table)
 
-        with pdfplumber.open(pdf_file) as pdf:
-            page_count = 0
-            label_summary_dict = {}
-            for page in pdf.pages:
-                page_count += 1
-                # look out for pages without invoice and shipping label
-                table = page.extract_table()
-                if type(table) == list:
-                    """
-                    the table inside the invoice page is returned as a linked list
-                        1. titles, 2. product name and other values, last two lists are the total and amount in words.
-                    """
+                                    if len(page_table) > 5: # mixed items order
+                                        color_text(f"{page_number} - multi item order","red")
+                                        product_name = "Mixed"
+                                    else: # single item order
+                                        product_row = page_table[1]
+                                        product_name = product_row[1].split("\n")[0].split("|")[0]
+                                        product_qty = product_row[3]
 
-                    
+                                        #color_text(product_row[1])
+                                        color_text(f"{page_number} - {product_name} - {product_qty} qty.")
 
-                    invoice_page_num = page_count; shipping_label_page_number = invoice_page_num -1
-                    heading = table[0]; 
-                    product_details = table[1]; 
-                    product_name = (product_details[1].split("|")[0]).replace("\n"," ")
-                    amount_in_words = table[-2]; signature = table[-1]
+                            
+                            # label summary making
+                            if product_name and product_qty:
+                                 # first dict based on name
+                                if not product_name == "Mixed":
+                                    if product_name not in label_summary_dict:
+                                        label_summary_dict[product_name] = {}
+                                    if product_qty not in label_summary_dict[product_name]:
+                                        label_summary_dict[product_name][product_qty] = [] # nested dict based on qty
+                                    label_summary_dict[product_name][product_qty] += [page_number-1,page_number]
+                                # mixed orders shouldnt have a nested dict inside.
+                                else: 
+                                    if product_name not in label_summary_dict:
+                                        label_summary_dict[product_name] = []
+                                    label_summary_dict[product_name] += [page_number-1,page_number]
 
-                    if len(table) > 5: # mixed items order
-                        color_text(f"{page_count} - multi item order","red")
-                        label_summary_dict["Mixed"] = []
-                        label_summary_dict["Mixed"] +=  [shipping_label_page_number,invoice_page_num]
-                    else: 
+
+                    # create a folder based on 
+                    # loop through the summary dictionary
+                    for product_name,values in label_summary_dict.items():
+                        out_pdf_path = os.path.join(todays_folder_path,input_pdf_name.replace(".pdf",""))
+                        # make the directory
+                        os.makedirs(out_pdf_path,exist_ok=True)
+                        # make add the pdf file to the path
+
+                        order_count = 0; page_numbers = []
+
+
+                        # find page numbers from single item and mixed orders
                         
-                        if product_name not in label_summary_dict:
-                            label_summary_dict[product_name] = []
-
-                        label_summary_dict[product_name] += [shipping_label_page_number,invoice_page_num]
-
-                        print( f"{shipping_label_page_number} -> {page_count} : {product_name}")
-                        color_text("-"*50)
+                        if type(values) == dict:
+                            for quantity,page_nums in values.items():
+                                page_numbers = page_nums; order_count = int(len(page_nums)/2)
+                                pdf_merger(page_numbers,
+                                input_pdf_path,
+                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                                
+                        elif type(values) == list:
+                            page_numbers = values; order_count = int(len(values)/2)
+                            pdf_merger(page_numbers,
+                            input_pdf_path,
+                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
                         
-
-            # merge all the pdf files based on product name
-            for index in range(len(label_summary_dict)):
-
-                product_name = list(label_summary_dict.keys())[index]
-                page_nums = list(label_summary_dict.values())[index]
-
-                if len(page_nums) > 0:
-                    reader = PdfReader(pdf_file); writer = PdfWriter()
-
-                    for num in page_nums:
-                        writer.add_page(reader.pages[num-1])
-
-
-                    # Create a new folder for storing filtered pdf files
-                    new_folder_path = os.path.join(input_pdf_path,input_pdf_name.replace(".pdf"," folder")) # new directory path
-                    os.makedirs(new_folder_path,exist_ok=True) # creating new directory
-                    out_pdf_path = os.path.join(new_folder_path,product_name) # adding out pdf file to the path
-
-                    # writing the pages to the file.
-                    with open(f"{out_pdf_path} - {int(len(page_nums)/2)}","wb") as filtered_pdf:
-                        writer.write(filtered_pdf)
-                
-
-            print(label_summary_dict)
-
+                            
+                    print(label_summary_dict)
+            
     except Exception as e:
         better_error_handling(e)
 
-FBA_lable_sort()
 
+
+def pdf_merger(pages,input_pdf,output_pdf):
+    try:
+        
+        #print(pages)
+    
+        if len(pages) > 0:
+            reader = PdfReader(input_pdf); writer = PdfWriter()
+            for page_num in pages:
+                writer.add_page(reader.pages[page_num-1])
+
+            
+            if not output_pdf == None:
+                with open(output_pdf,"wb") as output_pdf_file:
+                    writer.write(output_pdf_file)
+                
+                if output_pdf_file:
+                    color_text(f"Created {output_pdf_file} with the pages : {pages}")
+            else:
+                color_text("The out pdf directory  does not exist","red")
+            
+            
+    except Exception as e:
+        better_error_handling(e)
+
+        
+
+
+
+# both of these should be from front end in django
+amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
+
+
+post = r"D:\6.SPEED POST"
+
+lin_post = r"/home/hari/Downloads/"
+
+FBA_label_sort(input_pdf_name="16.10.24 cod.pdf", 
+    input_pdf_path = amazon,label_type='amazon')
