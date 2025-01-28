@@ -239,5 +239,5 @@ post = r"D:\6.SPEED POST"
 
 lin_post = r"/home/hari/Downloads/"
 
-FBA_label_sort(input_pdf_name="4 split.pdf", 
-    input_pdf_path = lin_post ,label_type='post')
+FBA_label_sort(input_pdf_name="28.1.25 prepaid - 2.pdf", 
+    input_pdf_path = amazon ,label_type='amazon')

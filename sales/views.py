@@ -67,7 +67,7 @@ def dashboard(request):
             if ord_resp != None:
                 summary_dict = amazon_dashboard(response=ord_resp)
                 context["shipment_summary"] = summary_dict
-                color_text(message=summary_dict.keys(),color="blue")
+                #color_text(message=summary_dict.keys(),color="blue")
                 color_text(context)
             else:
                 # Second reload issue 
