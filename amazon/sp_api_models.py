@@ -115,11 +115,12 @@ class SPAPIBase:
                 color_text(message="Burst Limit reached",color="red")
 
             # Hitting the limit
-            if response.status_code == 429:
+            if response.status_code == 403:
+                color_text("403","red")
+            elif response.status_code == 429:
                 delay *=2
-                time.sleep(delay)
                 color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red')
-            elif response.status_code >= 400:
+            elif response.status_code >= 400: #403
                 response.raise_for_status()
                 
             else:

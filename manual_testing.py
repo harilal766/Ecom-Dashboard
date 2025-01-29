@@ -93,7 +93,7 @@ from helpers.regex_patterns import *
 
 
 
-def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
+def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
     """
     Deal breakers 
         Common : page should not be empty
@@ -130,24 +130,29 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                             color_text(f"{page_number} : Empty.","red")
                         else:
                             if label_type == "amazon":
-                                if len(page_table) <=2:
-                                    color_text("Odd page detected","red")
+                                if type(page_table) == list:
+                                    if len(page_table) <= 2:
+                                        color_text("Odd page detected","red")
+                                    else:
+                                        #color_text(page_table)
+                                        if len(page_table) > 5: # mixed items order
+                                            color_text(f"{page_number} - multi item order","red")
+                                            product_name = "Mixed"
+                                        else: # single item order
+                                            product_row = page_table[1]
+                                            product_name = product_row[1].split("|")[0].replace("\n","")
+                                            product_qty = product_row[3]
+
+                                            #color_text(product_row[1])
+                                            color_text(f"{page_number} - {product_name} - {product_qty} qty.")
                                 else:
-                                    #color_text(page_table)
-
-                                    if len(page_table) > 5: # mixed items order
-                                        color_text(f"{page_number} - multi item order","red")
-                                        product_name = "Mixed"
-                                    else: # single item order
-                                        product_row = page_table[1]
-                                        product_name = product_row[1].split("\n")[0].split("|")[0]
-                                        product_qty = product_row[3]
-
-                                        #color_text(product_row[1])
-                                        color_text(f"{page_number} - {product_name} - {product_qty} qty.")
+                                    color_text("the table is not a list","red")
                             
                             elif label_type == "post":
-                                order_line = re.findall(post_product_line_pattern,page_text)
+                                for line in page_text.split("\n"):
+                                    color_text(line[::1])
+
+
 
                                 
                             else:
@@ -239,5 +244,9 @@ post = r"D:\6.SPEED POST"
 
 lin_post = r"/home/hari/Downloads/"
 
-FBA_label_sort(input_pdf_name="28.1.25 prepaid - 2.pdf", 
-    input_pdf_path = amazon ,label_type='amazon')
+
+
+shipping_label_sort(input_pdf_name="29.1.25 cod.pdf", input_pdf_path = amazon ,label_type='amazon')
+
+
+#shipping_label_sort(input_pdf_name="4 split.pdf", input_pdf_path = post ,label_type='post')

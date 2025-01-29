@@ -119,9 +119,9 @@ def amazon_report_generator(request):
                     for i in orders_details:
                         if isinstance(i,dict):
                             # order fields
-                            order_id = i["AmazonOrderId"]; 
-                            purchase_date = i["PurchaseDate"]; ship_date = i["LatestShipDate"]
-                            payment_method = i["PaymentMethod"]; status = i["EasyShipShipmentStatus"]
+                            order_id = i.get("AmazonOrderId",None); 
+                            purchase_date = i.get("PurchaseDate",None); ship_date = i.get("LatestShipDate",None)
+                            payment_method = i.get("PaymentMethod",None); status = i.get("EasyShipShipmentStatus",None)
                             # verify again to get orders for today only
 
                             if ship_date.split("T")[0] == selected_ship_date.split("T")[0]:

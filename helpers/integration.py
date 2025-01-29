@@ -37,5 +37,4 @@ def getOrders():
     except Exception as e:
         better_error_handling(e)
     
-   
 getOrders()
