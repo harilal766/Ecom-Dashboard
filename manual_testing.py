@@ -121,6 +121,8 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                     page_number = 0; product_name = None; product_qty = None
                     label_summary_dict = {}; post_product_line = r"Ref"
 
+                    order_pages = None
+
                     for page in pdf.pages:
                         page_number += 1
 
@@ -130,6 +132,8 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                             color_text(f"{page_number} : Empty.","red")
                         else:
                             if label_type == "amazon":
+                                order_pages = [page_number-1,page_number]
+                                color_text(order_pages,"blue")
                                 if type(page_table) == list:
                                     if len(page_table) <= 2:
                                         color_text("Odd page detected","red")
@@ -143,22 +147,21 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                             product_name = product_row[1].split("|")[0].replace("\n","")
                                             product_qty = product_row[3]
 
-                                            #color_text(product_row[1])
-                                            color_text(f"{page_number} - {product_name} - {product_qty} qty.")
                                 else:
                                     color_text("the table is not a list","red")
                             
                             elif label_type == "post":
+                                order_pages = [page_number]
                                 for line in page_text.split("\n"):
                                     color_text(line[::1])
 
-
-
-                                
                             else:
                                 color_text("unsupported label","red")
                             
-                            # label summary making
+                            #color_text(product_row[1])
+                            color_text(f"{order_pages} - {product_name} - {product_qty} qty.")
+                            
+                            # label summary making , needed parameteres : product_name and qty, an empty dict
                             if product_name and product_qty:
                                  # first dict based on name
                                 if not product_name == "Mixed":
@@ -166,13 +169,12 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                         label_summary_dict[product_name] = {}
                                     if product_qty not in label_summary_dict[product_name]:
                                         label_summary_dict[product_name][product_qty] = [] # nested dict based on qty
-                                    label_summary_dict[product_name][product_qty] += [page_number-1,page_number]
+                                    label_summary_dict[product_name][product_qty] += order_pages
                                 # mixed orders shouldnt have a nested dict inside.
                                 else: 
                                     if product_name not in label_summary_dict:
                                         label_summary_dict[product_name] = []
-                                    label_summary_dict[product_name] += [page_number-1,page_number]
-
+                                    label_summary_dict[product_name] += order_pages
 
                     # create a folder based on 
                     # loop through the summary dictionary
@@ -246,7 +248,7 @@ lin_post = r"/home/hari/Downloads/"
 
 
 
-shipping_label_sort(input_pdf_name="29.1.25 cod.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="29.1.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
 #shipping_label_sort(input_pdf_name="4 split.pdf", input_pdf_path = post ,label_type='post')
