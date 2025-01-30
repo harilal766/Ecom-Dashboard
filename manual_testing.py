@@ -152,8 +152,23 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                             
                             elif label_type == "post":
                                 order_pages = [page_number]
-                                for line in page_text.split("\n"):
-                                    color_text(line[::1])
+
+                                order_id = re.findall(post_order_id_pattern,page_text)
+                                # Updated pattern to capture full product name with variant and quantity separately
+                                pattern = r'([\w\s\(\)&%-]+-\s*\d+\s*(?:GM|ML))\s*-\s*(\d+)'
+                                matches = re.findall(pattern, page_text)
+
+                                # Convert matches to structured data
+                                products = [{'product_with_variant': match[0].strip().replace("\n"," "), 'quantity': int(match[1])} for match in matches]
+
+                                if not len(products) ==  1:
+                                    color_text("Mixed items","red")
+                                else:
+                                    product_name = products[0]["product_with_variant"]; product_qty = products[0]['quantity']
+
+                                
+
+
 
                             else:
                                 color_text("unsupported label","red")
@@ -200,7 +215,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                             page_numbers = values; order_count = int(len(values)/2)
                             pdf_merger(page_numbers,
                             input_pdf_path,
-                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} numbers"))
                         
                             
                     print(label_summary_dict)
@@ -248,7 +263,9 @@ lin_post = r"/home/hari/Downloads/"
 
 
 
-shipping_label_sort(input_pdf_name="29.1.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+#shipping_label_sort(input_pdf_name="30.1.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
-#shipping_label_sort(input_pdf_name="4 split.pdf", input_pdf_path = post ,label_type='post')
+shipping_label_sort(input_pdf_name="4 split.pdf", input_pdf_path = post ,label_type='post')
+
+
