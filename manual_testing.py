@@ -144,6 +144,8 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                             product_name = "Mixed"
                                         else: # single item order
                                             product_row = page_table[1]
+
+                                            
                                             product_name = product_row[1].split("|")[0].replace("\n","")
                                             product_qty = product_row[3]
 
@@ -163,6 +165,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
 
                                 if not len(products) ==  1:
                                     color_text("Mixed items","red")
+                                    product_name = "Mixed"
                                 else:
                                     product_name = products[0]["product_with_variant"]; product_qty = products[0]['quantity']
 
@@ -209,7 +212,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                 page_numbers = page_nums; order_count = int(len(page_nums)/2)
                                 pdf_merger(page_numbers,
                                 input_pdf_path,
-                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} numbers"))
                                 
                         elif type(values) == list:
                             page_numbers = values; order_count = int(len(values)/2)
@@ -224,7 +227,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
         better_error_handling(e)
 
 
-
+import platform
 def pdf_merger(pages,input_pdf,output_pdf):
     try:
         
@@ -237,8 +240,12 @@ def pdf_merger(pages,input_pdf,output_pdf):
 
             
             if not output_pdf == None:
+                operating_sys = (platform.system()).lower()
+                if operating_sys == "windows":
+                    output_pdf += ".pdf"
                 with open(output_pdf,"wb") as output_pdf_file:
                     writer.write(output_pdf_file)
+                    
                 
                 if output_pdf_file:
                     color_text(f"Created {output_pdf_file} with the pages : {pages}")
@@ -257,15 +264,15 @@ def pdf_merger(pages,input_pdf,output_pdf):
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
 
-post = r"D:\6.SPEED POST"
+post = r"D:\3.Shopify\Sholly ayurveda\labels"
 
 lin_post = r"/home/hari/Downloads/"
 
 
 
-#shipping_label_sort(input_pdf_name="30.1.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="31.1.25 cod-2.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
-shipping_label_sort(input_pdf_name="4 split.pdf", input_pdf_path = post ,label_type='post')
+#shipping_label_sort(input_pdf_name="30.1.25 - converted.pdf", input_pdf_path = post ,label_type='post')
 
 
