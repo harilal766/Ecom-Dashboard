@@ -133,7 +133,6 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                         else:
                             if label_type == "amazon":
                                 order_pages = [page_number-1,page_number]
-                                color_text(order_pages,"blue")
                                 if type(page_table) == list:
                                     if len(page_table) <= 2:
                                         color_text("Odd page detected","red")
@@ -144,8 +143,6 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                             product_name = "Mixed"
                                         else: # single item order
                                             product_row = page_table[1]
-
-                                            
                                             product_name = product_row[1].split("|")[0].replace("\n","")
                                             product_qty = product_row[3]
 
@@ -156,27 +153,27 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                 order_pages = [page_number]
 
                                 order_id = re.findall(post_order_id_pattern,page_text)
-                                # Updated pattern to capture full product name with variant and quantity separately
-                                pattern = r'([\w\s\(\)&%-]+-\s*\d+\s*(?:GM|ML))\s*-\s*(\d+)'
-                                matches = re.findall(pattern, page_text)
 
-                                # Convert matches to structured data
-                                products = [{'product_with_variant': match[0].strip().replace("\n"," "), 'quantity': int(match[1])} for match in matches]
+                                # to make sure only one order is in one page
+                                if len(order_id) == 1:
+                                    # Updated pattern to capture full product name with variant and quantity separately
+                                    pattern = r'([\w\s\(\)&%-]+-\s*\d+\s*(?:GM|ML))\s*-\s*(\d+)'
+                                    matches = re.findall(pattern, page_text)
 
-                                if not len(products) ==  1:
-                                    color_text("Mixed items","red")
-                                    product_name = "Mixed"
+                                    # Convert matches to structured data
+                                    products = [{'product_with_variant': match[0].strip().replace("\n"," "), 'quantity': int(match[1])} for match in matches]
+
+                                    if len(products) == 1:
+                                        product = products[0]
+                                        product_name = product["product_with_variant"]; product_qty = product["quantity"]
+                                    else:
+                                        color_text("Mixed order","red")
+                                        product_name = "Mixed"
                                 else:
-                                    product_name = products[0]["product_with_variant"]; product_qty = products[0]['quantity']
-
-                                
-
-
-
+                                    color_text("More than one order id detected at one page","red")
                             else:
                                 color_text("unsupported label","red")
                             
-                            #color_text(product_row[1])
                             color_text(f"{order_pages} - {product_name} - {product_qty} qty.")
                             
                             # label summary making , needed parameteres : product_name and qty, an empty dict
@@ -209,16 +206,22 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                         
                         if type(values) == dict:
                             for quantity,page_nums in values.items():
-                                page_numbers = page_nums; order_count = int(len(page_nums)/2)
+                                page_numbers = page_nums; 
+
+                                if label_type == 'amazon':
+                                    order_count = int(len(page_nums)/2)
+                                else:
+                                    order_count = len(page_nums)
+
                                 pdf_merger(page_numbers,
                                 input_pdf_path,
-                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} numbers"))
+                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} orders"))
                                 
                         elif type(values) == list:
                             page_numbers = values; order_count = int(len(values)/2)
                             pdf_merger(page_numbers,
                             input_pdf_path,
-                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} numbers"))
+                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} orders"))
                         
                             
                     print(label_summary_dict)
@@ -270,9 +273,9 @@ lin_post = r"/home/hari/Downloads/"
 
 
 
-shipping_label_sort(input_pdf_name="31.1.25 cod-2.pdf", input_pdf_path = amazon ,label_type='amazon')
+#shipping_label_sort(input_pdf_name="31.1.25 cod-2.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
-#shipping_label_sort(input_pdf_name="30.1.25 - converted.pdf", input_pdf_path = post ,label_type='post')
+shipping_label_sort(input_pdf_name="30.1.25_split.pdf", input_pdf_path = post ,label_type='post')
 
 
