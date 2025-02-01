@@ -156,6 +156,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
 
                                 # to make sure only one order is in one page
                                 if len(order_id) == 1:
+                                    
                                     # Updated pattern to capture full product name with variant and quantity separately
                                     pattern = r'([\w\s\(\)&%-]+-\s*\d+\s*(?:GM|ML))\s*-\s*(\d+)'
                                     matches = re.findall(pattern, page_text)
@@ -170,7 +171,9 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                         color_text("Mixed order","red")
                                         product_name = "Mixed"
                                 else:
+                                    color_text(order_id,"red")
                                     color_text("More than one order id detected at one page","red")
+                                    break
                             else:
                                 color_text("unsupported label","red")
                             
@@ -190,6 +193,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                     if product_name not in label_summary_dict:
                                         label_summary_dict[product_name] = []
                                     label_summary_dict[product_name] += order_pages
+                            
 
                     # create a folder based on 
                     # loop through the summary dictionary
@@ -200,7 +204,6 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                         # make add the pdf file to the path
 
                         order_count = 0; page_numbers = []
-
 
                         # find page numbers from single item and mixed orders
                         
@@ -228,6 +231,23 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
             
     except Exception as e:
         better_error_handling(e)
+
+
+def label_summary(product_name, product_qty,order_pages,label_summary_dict):
+    if product_name and product_qty:
+        # first dict based on name
+        if not product_name == "Mixed":
+            if product_name not in label_summary_dict:
+                label_summary_dict[product_name] = {}
+            if product_qty not in label_summary_dict[product_name]:
+                label_summary_dict[product_name][product_qty] = [] # nested dict based on qty
+                label_summary_dict[product_name][product_qty] += order_pages
+        # mixed orders shouldn't have a nested dict inside.
+        else: 
+            if product_name not in label_summary_dict:
+                label_summary_dict[product_name] = []
+                label_summary_dict[product_name] += order_pages
+        print(label_summary_dict)
 
 
 import platform
@@ -272,10 +292,7 @@ post = r"D:\3.Shopify\Sholly ayurveda\labels"
 lin_post = r"/home/hari/Downloads/"
 
 
-
-#shipping_label_sort(input_pdf_name="31.1.25 cod-2.pdf", input_pdf_path = amazon ,label_type='amazon')
-
-
-shipping_label_sort(input_pdf_name="30.1.25_split.pdf", input_pdf_path = post ,label_type='post')
+shipping_label_sort(input_pdf_name="1.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+#shipping_label_sort(input_pdf_name="31.1.25.pdf", input_pdf_path = post ,label_type='post')
 
 
