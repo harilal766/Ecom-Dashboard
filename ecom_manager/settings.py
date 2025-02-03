@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne','channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # custom apps
     'sales','user','amazon',
+
 ]
 
 MIDDLEWARE = [
@@ -70,7 +72,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ecom_manager.wsgi.application'
+#WSGI_APPLICATION = 'ecom_manager.wsgi.application'
+ASGI_APPLICATION = 'ecom_manager.asgi.application'
+
+
+CHANNEL_LAYERS = {
+    "default":{
+        "BACKEND" : "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 
 # Database
