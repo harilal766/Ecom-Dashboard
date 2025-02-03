@@ -151,12 +151,9 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                             
                             elif label_type == "post":
                                 order_pages = [page_number]
-
                                 order_id = re.findall(post_order_id_pattern,page_text)
-
                                 # to make sure only one order is in one page
                                 if len(order_id) == 1:
-                                    
                                     # Updated pattern to capture full product name with variant and quantity separately
                                     pattern = r'([\w\s\(\)&%-]+-\s*\d+\s*(?:GM|ML))\s*-\s*(\d+)'
                                     matches = re.findall(pattern, page_text)
@@ -253,46 +250,38 @@ def label_summary(product_name, product_qty,order_pages,label_summary_dict):
 import platform
 def pdf_merger(pages,input_pdf,output_pdf):
     try:
-        
         #print(pages)
-    
         if len(pages) > 0:
             reader = PdfReader(input_pdf); writer = PdfWriter()
             for page_num in pages:
                 writer.add_page(reader.pages[page_num-1])
-
-            
             if not output_pdf == None:
                 operating_sys = (platform.system()).lower()
                 if operating_sys == "windows":
                     output_pdf += ".pdf"
                 with open(output_pdf,"wb") as output_pdf_file:
                     writer.write(output_pdf_file)
-                    
-                
                 if output_pdf_file:
                     color_text(f"Created {output_pdf_file} with the pages : {pages}")
             else:
                 color_text("The out pdf directory  does not exist","red")
-            
-            
     except Exception as e:
         better_error_handling(e)
 
         
+def label_type_finder(input_pdf):
+    # read the pages and find the respected patterns
+    with pdfplumber.open(input_pdf) as pdf_file:
+        for page in pdf_file.pages():
+            print(page)
 
 
 
 # both of these should be from front end in django
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-
 post = r"D:\3.Shopify\Sholly ayurveda\labels"
-
 lin_post = r"/home/hari/Downloads/"
 
-
-shipping_label_sort(input_pdf_name="1.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
-#shipping_label_sort(input_pdf_name="31.1.25.pdf", input_pdf_path = post ,label_type='post')
-
-
+#shipping_label_sort(input_pdf_name=".2.25 cod.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="2.2.25 crop.pdf", input_pdf_path = post ,label_type='post')

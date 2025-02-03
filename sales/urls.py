@@ -17,9 +17,13 @@ Including another URLconf
 from django.urls import path
 from sales import views
 
+from .views import DashboardDataView
+
 app_name = 'sales'
 
+
 urlpatterns = [
+    path('api/dashboard-data',DashboardDataView.as_view(),name="dashboard-data"),
     path('',views.home,name='home'),
     path('dashboard/', views.dashboard,name='dashboard'),
     #path('amazon_reports',views.amazon_shipment_report,name='amazon_reports')

@@ -75,7 +75,6 @@ def dashboard(request):
         else:
             color_text("Not logged in..","red")
         
-        
         return render(request,'dashboard.html',context)
     except Exception as e:
         better_error_handling(e)
@@ -92,3 +91,28 @@ def home(request):
 def df_filter(df,column_or_columns):
     pass
 
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+#from .utils import Orders, amazon_dashboard, from_timestamp, better_error_handling
+from datetime import datetime, timedelta
+
+class DashboardDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_amzn_orders(self, request):
+        try:
+            orders_instance = Orders()
+            created_after = (datetime.utcnow() - timedelta(days=4)).isoformat()
+            ord_resp = orders_instance.getOrders(CreatedAfter=created_after, OrderStatuses="Unshipped")
+
+            shipment_summary = amazon_dashboard(response=ord_resp) if ord_resp else None
+            data = {
+                "shipment_summary": shipment_summary
+            }
+            return Response(data)
+        except Exception as e:
+            better_error_handling(e)
+            return Response({"error": str(e)}, status=500)

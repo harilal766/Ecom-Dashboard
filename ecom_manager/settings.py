@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # custom apps
     'sales','user','amazon',
+    #drf
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
