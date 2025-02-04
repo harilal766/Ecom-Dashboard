@@ -64,6 +64,8 @@ the current working model should be merged to main, there are for bugs in the ne
 """
 
 
+def amazon_report_generator_dynamic(request):
+    pass
 
 def amazon_report_generator(request):
     """"
@@ -156,11 +158,6 @@ def amazon_report_generator(request):
                             for type_key,type_value in types.items():
                                 if not len(type_key) == 0 :
                                     payment_type_filtered_orders_df = column_filtered_df[column_filtered_df['amazon_order_id'].isin(type_value)]
-
-                                    
-
-
-
                                     # Creating manual report for tallying
                                     shipment_manual_report(df=payment_type_filtered_orders_df,
                                         df_prod_name_col="product_name", df_item_price_col="item_price",df_qtys_column="quantity",

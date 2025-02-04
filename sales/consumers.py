@@ -8,7 +8,7 @@ class WebsocketBase(AsyncWebsocketConsumer):
     async def connect(self):
         color_text("Websocket connected...")
         await self.accept()
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now().strftime("%H:%M:%S")
         await self.send_time()
 
 
