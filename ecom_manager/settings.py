@@ -88,10 +88,11 @@ CHANNEL_LAYERS = {
 
 key = os.getenv("ENCRYPTION_KEY ")
 
+from helpers.file_ops import dir_switch,win_db,lin_db
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / f'{dir_switch(win=win_db,lin=lin_db)}', # db.sqlite3
     }
 }
 
