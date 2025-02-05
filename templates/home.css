@@ -1,0 +1,30 @@
+
+
+/* Nav bar*/
+.navbar{
+    background-color: aqua;
+    height: 50px;
+}
+
+
+
+
+
+/* Home page */
+.auth-div{
+    display: flex;
+}
+
+.left-auth, .right-auth{
+    width: 50%;
+    height: 100px;
+}
+
+
+.left-auth{
+    background-color: red;
+}
+
+.right-auth{
+    background-color: blue;
+}

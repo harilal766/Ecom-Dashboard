@@ -4,8 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopSyncer</title>
+
+    <link rel="stylesheet" href = "home.css">
 </head>
 <body>
-    {% include 'authorization/auth_form.html'%}
+    <nav class="navbar">
+        <div class="left-nav">
+            <h2>ShopSyncer</h2>
+        </div>
+        <div class="right-nav">
+
+        </div>
+    </nav>
+    <!-- introduction of the site with stock footages or something-->
+    <div class="intro">
+        <h1 class="title">One Dashboard. Total Control</h1>
+        <p class="description">Effortlessly manage orders, inventory, <br>
+            and sales across multiple platforms—all from one powerful dashboard.
+        </p>
+        
+    </div>
+    <!-- left and right div for auth-->
+    <div class="auth-div">
+        <div class="left-auth">
+            <h2>Join</h2>
+        </div>
+        <div class="right-auth">
+            {% include "authorization/auth_form.html" %}
+        </div>
+    </div>
 </body>
 </html>
