@@ -54,7 +54,8 @@ lin_python = ""
 win_main = r"d:/Ecom-Dashboard/main.py"
 lin_main = r"/home/hari/Desktop/Ecom-Dashboard/main.py"
 
-
+win_db = r"G:\My Drive\db.sqlite3"
+lin_db = ""
 
 
 def function_boundary(title):

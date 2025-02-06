@@ -30,8 +30,8 @@ def add_amazon_store(request):
                                     access_token = get_or_generate_access_token())
             cred.save()
             
-            return redirect("sales:home")
-    return render(request,'amazon_store_form.html', {"user" : user})
+            return redirect("dashbaord:home")
+    return render(request,'add_store_form.html', {"user" : user})
 
 
 def amazon_detail_page(request):
@@ -64,6 +64,8 @@ the current working model should be merged to main, there are for bugs in the ne
 """
 
 
+def amazon_report_generator_dynamic(request):
+    pass
 
 def amazon_report_generator(request):
     """"
@@ -119,9 +121,9 @@ def amazon_report_generator(request):
                     for i in orders_details:
                         if isinstance(i,dict):
                             # order fields
-                            order_id = i["AmazonOrderId"]; 
-                            purchase_date = i["PurchaseDate"]; ship_date = i["LatestShipDate"]
-                            payment_method = i["PaymentMethod"]; status = i["EasyShipShipmentStatus"]
+                            order_id = i.get("AmazonOrderId",None); 
+                            purchase_date = i.get("PurchaseDate",None); ship_date = i.get("LatestShipDate",None)
+                            payment_method = i.get("PaymentMethod",None); status = i.get("EasyShipShipmentStatus",None)
                             # verify again to get orders for today only
 
                             if ship_date.split("T")[0] == selected_ship_date.split("T")[0]:
@@ -156,11 +158,6 @@ def amazon_report_generator(request):
                             for type_key,type_value in types.items():
                                 if not len(type_key) == 0 :
                                     payment_type_filtered_orders_df = column_filtered_df[column_filtered_df['amazon_order_id'].isin(type_value)]
-
-                                    
-
-
-
                                     # Creating manual report for tallying
                                     shipment_manual_report(df=payment_type_filtered_orders_df,
                                         df_prod_name_col="product_name", df_item_price_col="item_price",df_qtys_column="quantity",

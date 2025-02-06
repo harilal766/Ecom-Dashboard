@@ -102,12 +102,12 @@ class SPAPIBase:
             response = self.make_request(endpoint=endpoint,method=method,params=params,
                                              json_input=json_input)
 
-            color_text(message=f"Headers : \n{response.headers}",color="red")
+            #color_text(message=f"Headers : \n{response.headers}",color="red")
 
             rate_limit = response.headers.get('x-amzn-RateLimit-Limit',None)
             remaining_rate_limit = response.headers.get('x-amzn-RateLimit-Remaining',None)
 
-            color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, {burst}")
+            #color_text(message=f"Limit : {rate_limit}, Remaining Limit : {remaining_rate_limit}, {burst}")
                 
             #color_text(message=response.headers,color="red")
             # if the request count is under burst, code should execute...
@@ -115,11 +115,12 @@ class SPAPIBase:
                 color_text(message="Burst Limit reached",color="red")
 
             # Hitting the limit
-            if response.status_code == 429:
+            if response.status_code == 403:
+                color_text("403","red")
+            elif response.status_code == 429:
                 delay *=2
-                time.sleep(delay)
                 color_text(message=f"Rate limit reached, retrying in {delay} seconds.",color='red')
-            elif response.status_code >= 400:
+            elif response.status_code >= 400: #403
                 response.raise_for_status()
                 
             else:

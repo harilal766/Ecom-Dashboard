@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne','channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # custom apps
-    'sales','user','amazon',
+    'dashboard','user','amazon',
+
 ]
 
 MIDDLEWARE = [
@@ -70,7 +72,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ecom_manager.wsgi.application'
+#WSGI_APPLICATION = 'ecom_manager.wsgi.application'
+ASGI_APPLICATION = 'ecom_manager.asgi.application'
+
+
+CHANNEL_LAYERS = {
+    "default":{
+        "BACKEND" : "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 
 # Database
@@ -78,10 +88,11 @@ WSGI_APPLICATION = 'ecom_manager.wsgi.application'
 
 key = os.getenv("ENCRYPTION_KEY ")
 
+from helpers.file_ops import dir_switch,win_db,lin_db
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / f'{dir_switch(win=win_db,lin=lin_db)}', # db.sqlite3
     }
 }
 

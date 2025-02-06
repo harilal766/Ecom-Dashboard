@@ -1,13 +1,10 @@
 <div class="sidebar">
     <h2 class="site-name">Shop Syncer </h2>
-
-    {% if user.is_authenticated %}
     <div class="nav-lists">
         <h6>Common</h6>
         <ul>
-            <li><a href="{% url 'sales:dashboard' %}">Dashboard</a></li>
-            
-            <li><a href="{% url 'amazon:add_store' %}">Add amazon store</a></li>
+            <li><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'amazon:add_store' %}">Add store</a></li>
         </ul>
     </div>
 
@@ -24,16 +21,6 @@
             <li style="list-style-type: none;"><a href="{% url 'user:logout' %}">Signout</a></li>
         </ul>
     </div>
-    {% else %}
-    <!-- Authorizatrion-->
-    <div class="nav-lists">
-        <h6>Authorization</h6>
-        <ul>
-            <li><a href="{% url 'user:login' %}">Sign - in</a></li>
-            <li><a href="{% url 'user:register' %}">Sign - up</a></li>
-        </ul>
-    </div>
-    {% endif %}
     <!-- Developer settings-->
     <div class="nav-lists">
         <h6>Developer</h6>

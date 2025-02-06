@@ -89,11 +89,11 @@ def similarity_count():
 
 from PyPDF2 import PdfReader, PdfWriter
 import re
-from helpers.regex_patterns import post_track_id_pattern,post_order_id_pattern
+from helpers.regex_patterns import *
 
 
 
-def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
+def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
     """
     Deal breakers 
         Common : page should not be empty
@@ -121,6 +121,8 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                     page_number = 0; product_name = None; product_qty = None
                     label_summary_dict = {}; post_product_line = r"Ref"
 
+                    order_pages = None
+
                     for page in pdf.pages:
                         page_number += 1
 
@@ -130,24 +132,54 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                             color_text(f"{page_number} : Empty.","red")
                         else:
                             if label_type == "amazon":
-                                if len(page_table) <=2:
-                                    color_text("Odd page detected","red")
+                                order_pages = [page_number-1,page_number]
+                                if type(page_table) == list:
+                                    if len(page_table) <= 2:
+                                        color_text("Odd page detected","red")
+                                    else:
+                                        #color_text(page_table)
+                                        if len(page_table) > 5: # mixed items order
+                                            color_text(f"{page_number} - multi item order","red")
+                                            product_name = "Mixed"
+                                        else: # single item order
+                                            product_row = page_table[1]
+                                            product_name = product_row[1].split("|")[0].replace("\n","")
+                                            product_qty = product_row[3]
+
                                 else:
-                                    #color_text(page_table)
-
-                                    if len(page_table) > 5: # mixed items order
-                                        color_text(f"{page_number} - multi item order","red")
-                                        product_name = "Mixed"
-                                    else: # single item order
-                                        product_row = page_table[1]
-                                        product_name = product_row[1].split("\n")[0].split("|")[0]
-                                        product_qty = product_row[3]
-
-                                        #color_text(product_row[1])
-                                        color_text(f"{page_number} - {product_name} - {product_qty} qty.")
-
+                                    color_text("the table is not a list","red")
                             
-                            # label summary making
+                            elif label_type == "post":
+                                order_pages = [page_number]
+
+                                order_id = re.findall(post_order_id_pattern,page_text)
+
+                                # to make sure only one order is in one page
+                                if len(order_id) == 1:
+                                    
+                                    # Updated pattern to capture full product name with variant and quantity separately
+                                    pattern = r'([\w\s\(\)&%-]+-\s*\d+\s*(?:GM|ML))\s*-\s*(\d+)'
+                                    matches = re.findall(pattern, page_text)
+
+                                    # Convert matches to structured data
+                                    products = [{'product_with_variant': match[0].strip().replace("\n"," "), 'quantity': int(match[1])} for match in matches]
+
+                                    if len(products) == 1:
+                                        product = products[0]
+                                        product_name = product["product_with_variant"]; product_qty = product["quantity"]
+                                    else:
+                                        color_text("Mixed order","red")
+                                        product_name = "Mixed"
+                                else:
+                                    color_text(order_id,"red")
+                                    color_text("More than one order id detected at one page","red")
+                                    break
+                            else:
+                                color_text("unsupported label","red")
+                            
+                            color_text(f"{order_pages} - {product_name} - {product_qty} qty.")
+                            
+                            # label summary making , needed parameteres : product_name and qty, an empty dict
                             if product_name and product_qty:
                                  # first dict based on name
                                 if not product_name == "Mixed":
@@ -155,13 +187,13 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
                                         label_summary_dict[product_name] = {}
                                     if product_qty not in label_summary_dict[product_name]:
                                         label_summary_dict[product_name][product_qty] = [] # nested dict based on qty
-                                    label_summary_dict[product_name][product_qty] += [page_number-1,page_number]
+                                    label_summary_dict[product_name][product_qty] += order_pages
                                 # mixed orders shouldnt have a nested dict inside.
                                 else: 
                                     if product_name not in label_summary_dict:
                                         label_summary_dict[product_name] = []
-                                    label_summary_dict[product_name] += [page_number-1,page_number]
-
+                                    label_summary_dict[product_name] += order_pages
+                            
 
                     # create a folder based on 
                     # loop through the summary dictionary
@@ -173,21 +205,26 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
 
                         order_count = 0; page_numbers = []
 
-
                         # find page numbers from single item and mixed orders
                         
                         if type(values) == dict:
                             for quantity,page_nums in values.items():
-                                page_numbers = page_nums; order_count = int(len(page_nums)/2)
+                                page_numbers = page_nums; 
+
+                                if label_type == 'amazon':
+                                    order_count = int(len(page_nums)/2)
+                                else:
+                                    order_count = len(page_nums)
+
                                 pdf_merger(page_numbers,
                                 input_pdf_path,
-                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} orders"))
                                 
                         elif type(values) == list:
                             page_numbers = values; order_count = int(len(values)/2)
                             pdf_merger(page_numbers,
                             input_pdf_path,
-                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} No.s"))
+                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} orders"))
                         
                             
                     print(label_summary_dict)
@@ -196,7 +233,24 @@ def FBA_label_sort(input_pdf_name, input_pdf_path,label_type):
         better_error_handling(e)
 
 
+def label_summary(product_name, product_qty,order_pages,label_summary_dict):
+    if product_name and product_qty:
+        # first dict based on name
+        if not product_name == "Mixed":
+            if product_name not in label_summary_dict:
+                label_summary_dict[product_name] = {}
+            if product_qty not in label_summary_dict[product_name]:
+                label_summary_dict[product_name][product_qty] = [] # nested dict based on qty
+                label_summary_dict[product_name][product_qty] += order_pages
+        # mixed orders shouldn't have a nested dict inside.
+        else: 
+            if product_name not in label_summary_dict:
+                label_summary_dict[product_name] = []
+                label_summary_dict[product_name] += order_pages
+        print(label_summary_dict)
 
+
+import platform
 def pdf_merger(pages,input_pdf,output_pdf):
     try:
         
@@ -209,8 +263,12 @@ def pdf_merger(pages,input_pdf,output_pdf):
 
             
             if not output_pdf == None:
+                operating_sys = (platform.system()).lower()
+                if operating_sys == "windows":
+                    output_pdf += ".pdf"
                 with open(output_pdf,"wb") as output_pdf_file:
                     writer.write(output_pdf_file)
+                    
                 
                 if output_pdf_file:
                     color_text(f"Created {output_pdf_file} with the pages : {pages}")
@@ -229,9 +287,12 @@ def pdf_merger(pages,input_pdf,output_pdf):
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
 
-post = r"D:\6.SPEED POST"
+post = r"D:\3.Shopify\Sholly ayurveda\labels"
 
 lin_post = r"/home/hari/Downloads/"
 
-FBA_label_sort(input_pdf_name="16.10.24 cod.pdf", 
-    input_pdf_path = amazon,label_type='amazon')
+
+shipping_label_sort(input_pdf_name="6.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+
+
+

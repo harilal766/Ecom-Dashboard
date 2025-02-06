@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate,  login,  logout
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
-from user.forms import Userform
-from sales.views import dashboard 
+from user.forms import Loginform
+from dashboard.views import dashboard 
 import re
 from helpers.messages import *
 
@@ -64,7 +64,7 @@ def register(request):
                 user = User.objects.create_user(username=username,password=password)
                 user.save()
                 color_text("User Created")
-                return redirect("sales:home")
+                return redirect("dashbaord:home")
                 #return home
             else:
                 color_text(message="The passwords doesn't match",color="red")
@@ -75,26 +75,36 @@ def register(request):
     # credentials : username, password, email, confirm password
     return render(request,"authorization/auth_form.html",auth_context)
 
-def auth_login(request):
-    purpose_text = "Sign-In"
-    auth_context["purpose"] = purpose_text; 
-    auth_context["button_text"] = "Login"
 
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request,username = username, password = password)
-        if not user == None:
-            login(request,user)
-            color_text(message=f"User : {user} signed in.")
-            return redirect("sales:home")
+
+def auth_login(request):
+    try:
+        if request.method == "POST":
+            form = Loginform(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data["username"]
+                password = form.cleaned_data["password"]
+
+                color_text(username,password)
+
+                user = authenticate(request,username = username,
+                                    password = password)
+                
+                if not user == None:
+                    login(request,user)
+                    return redirect('dashboard:home')
+                else:
+                    color_text(form.add_error(None,"Login failed"))
         else:
-            color_text(message="unable to login",color="red")
+            form = Loginform()
+    except Exception as e:
+        better_error_handling(e)
+
         
-    return render(request,"authorization/auth_form.html",auth_context,)
+    return render(request,"authorization/auth_form.html",{"form":form})
     # credentials needed to login : username, password
 
 def auth_logout(request):
     logout(request)
-    return redirect("sales:home")
+    return redirect("dashboard:home")
 

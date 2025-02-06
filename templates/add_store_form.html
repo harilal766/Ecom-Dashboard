@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Add store</h1>
+
+<form class="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-floating">
+        <h2>User : {{user}}</h2>
+    </div>
+    
+    <div class="form-floating">
+        <button type="submit" class="btn btn-primary">Submit Credentials</button>
+    </div>
+</form>
+
+{% endblock %}
