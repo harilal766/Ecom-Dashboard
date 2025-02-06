@@ -31,7 +31,7 @@ def add_amazon_store(request):
             cred.save()
             
             return redirect("dashbaord:home")
-    return render(request,'amazon_store_form.html', {"user" : user})
+    return render(request,'add_store_form.html', {"user" : user})
 
 
 def amazon_detail_page(request):
