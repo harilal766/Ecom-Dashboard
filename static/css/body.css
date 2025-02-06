@@ -55,39 +55,6 @@ body{
 }
 
 
-.form-container form {
-    display: flex; flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap:10px;
-
-}
-
-.form-field  input {
-     height:30px; width: 500px;
-    border-radius: 5px;
-}
-
-.form-container button{
-    font-weight:bold;
-    font-family: Helvetica, Arial, sans-serif;
-}
-
-
-.form {
-    display: flex; flex-direction: column;
-    align-self: center;
-    gap: 8px;
-}
-
-.form-floating{
-    width: 700px;
-}
-
-
-.btn{
-    font-weight: 550;
-}
 
 
 
@@ -96,11 +63,3 @@ body{
 
 
 
-
-/* Footer */
-.footer {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    background-color: gray;
-}

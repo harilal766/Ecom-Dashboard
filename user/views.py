@@ -85,12 +85,14 @@ def auth_login(request):
                 username = form.cleaned_data["username"]
                 password = form.cleaned_data["password"]
 
+                color_text(username,password)
+
                 user = authenticate(request,username = username,
-                                    password = password
-                                    )
+                                    password = password)
                 
                 if not user == None:
                     login(request,user)
+                    return redirect('sales:home')
                 else:
                     color_text(form.add_error(None,"Login failed"))
         else:

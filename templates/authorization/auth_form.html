@@ -1,25 +1,10 @@
-{% extends 'index.html' %}
 
-{% block title %} - {{purpose}} {% endblock %}
-
-{% block content %}
 <div class="form">
-    <div>
-        <h1 id="title">{{purpose}}</h1>
-        {% if auth_status %}
-        <h6>{{auth_status}} </h6>
-        {% endif %}
-    </div>
-    
-    <form class="form" method="POST" enctype="multipart/form-data">
+    <form class="form" method="POST" enctype="multipart/form-data" action="{% url 'user:login' %}">
         {% csrf_token %}
         {% for field in form %}
             {{field}}
         {% endfor %}
-        <button class="btn btn-primary" type="submit">Login</button>
-
-        
+        <button class="btn btn-secondary" type="submit">Login</button>        
     </form>
-    
 </div>
-{% endblock %}

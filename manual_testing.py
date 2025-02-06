@@ -292,7 +292,7 @@ post = r"D:\3.Shopify\Sholly ayurveda\labels"
 lin_post = r"/home/hari/Downloads/"
 
 
-shipping_label_sort(input_pdf_name="1.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
-#shipping_label_sort(input_pdf_name="31.1.25.pdf", input_pdf_path = post ,label_type='post')
+shipping_label_sort(input_pdf_name="6.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+
 
 

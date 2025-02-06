@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopSyncer</title>
 
-    <link rel="stylesheet" href = "home.css">
+    {% include "bs.html" %}
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body>
     <nav class="navbar">
@@ -20,7 +23,8 @@
     <div class="intro">
         <h1 class="title">One Dashboard. Total Control</h1>
         <p class="description">Effortlessly manage orders, inventory, <br>
-            and sales across multiple platforms—all from one powerful dashboard.
+            and sales across multiple platforms, <br>
+            all from one powerful dashboard.
         </p>
         
     </div>
@@ -33,5 +37,7 @@
             {% include "authorization/auth_form.html" %}
         </div>
     </div>
+
+    {% include "footer.html" %}
 </body>
 </html>

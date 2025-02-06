@@ -7,9 +7,6 @@
 }
 
 
-
-
-
 /* Home page */
 .auth-div{
     display: flex;
@@ -17,9 +14,8 @@
 
 .left-auth, .right-auth{
     width: 50%;
-    height: 100px;
+    height: 200px;
 }
-
 
 .left-auth{
     background-color: red;
@@ -28,3 +24,15 @@
 .right-auth{
     background-color: blue;
 }
+
+
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    background-color: gray;
+}
+
+

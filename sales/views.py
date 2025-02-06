@@ -34,11 +34,13 @@ def dashboard(request):
         better_error_handling(e)
     
 
-
+from user.forms import Loginform
 def home(request):
     if request.user.is_authenticated:
         return redirect('sales:dashboard')
-    return render(request,'home.html')
+    else:
+        form = Loginform(request.POST)
+        return render(request,'home.html',{"form":form})
 
 
 
