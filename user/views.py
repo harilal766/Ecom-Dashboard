@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from user.forms import Loginform
-from sales.views import dashboard 
+from dashboard.views import dashboard 
 import re
 from helpers.messages import *
 
@@ -64,7 +64,7 @@ def register(request):
                 user = User.objects.create_user(username=username,password=password)
                 user.save()
                 color_text("User Created")
-                return redirect("sales:home")
+                return redirect("dashbaord:home")
                 #return home
             else:
                 color_text(message="The passwords doesn't match",color="red")
@@ -92,7 +92,7 @@ def auth_login(request):
                 
                 if not user == None:
                     login(request,user)
-                    return redirect('sales:home')
+                    return redirect('dashboard:home')
                 else:
                     color_text(form.add_error(None,"Login failed"))
         else:
@@ -106,5 +106,5 @@ def auth_login(request):
 
 def auth_logout(request):
     logout(request)
-    return redirect("sales:home")
+    return redirect("dashboard:home")
 

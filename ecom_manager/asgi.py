@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
 import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
-from sales.routing import websocket_urlpatterns
+from dashboard.routing import websocket_urlpatterns
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_manager.settings')
 

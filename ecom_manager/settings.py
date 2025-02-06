@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # custom apps
-    'sales','user','amazon',
+    'dashboard','user','amazon',
 
 ]
 

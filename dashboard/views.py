@@ -37,7 +37,7 @@ def dashboard(request):
 from user.forms import Loginform
 def home(request):
     if request.user.is_authenticated:
-        return redirect('sales:dashboard')
+        return redirect('dashboard:dashboard')
     else:
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from sales.models import *
+from dashboard.models import *
 
 # Register your models here
 

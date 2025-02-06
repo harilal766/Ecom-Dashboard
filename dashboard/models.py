@@ -13,8 +13,8 @@ class Configuration(models.Model):
     
 
 class Store(models.Model):
-    platform = models.CharField(max_length=200,default="Ecom")
     store_name = models.CharField(max_length=400,unique=True,default="seller")
+    platform = models.CharField(max_length=200,default="Ecom")
     
 
     

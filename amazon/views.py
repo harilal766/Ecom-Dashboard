@@ -30,7 +30,7 @@ def add_amazon_store(request):
                                     access_token = get_or_generate_access_token())
             cred.save()
             
-            return redirect("sales:home")
+            return redirect("dashbaord:home")
     return render(request,'amazon_store_form.html', {"user" : user})
 
 
