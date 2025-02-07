@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # custom apps
     'dashboard','user','amazon',
-    'rest_framework',
+    'rest_framework','corsheaders'
 
 ]
 

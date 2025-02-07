@@ -21,13 +21,7 @@ document.addEventListener("DOMContentLoaded",function(){
     }
     
     
-    function storeName(){
-        const store = document.getElementById("storeName");
-        console.log(store.value);
-    }
     
-    const storeButton = document.getElementById("storeButton");
-    storeButton.addEventListener("click",storeName);
 });
 
 
