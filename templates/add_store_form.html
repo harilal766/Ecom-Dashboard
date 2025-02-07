@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1>Add store</h1>
+<h1>Add store</h1><span id="statusBar"></span>
 
 <form class="form" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:add_store' %}">
     {% csrf_token %}
