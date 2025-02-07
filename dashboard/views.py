@@ -92,3 +92,5 @@ def add_store(request):
     except Exception as e:
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
+
+

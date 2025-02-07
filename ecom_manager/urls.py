@@ -17,8 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+from drf.urls import router
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/',include(router.urls)),
     path('',include('dashboard.urls')),
     path('authorization/',include('user.urls')),
     path('amazon/',include('amazon.urls'))
