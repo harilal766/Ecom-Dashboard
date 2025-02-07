@@ -48,3 +48,47 @@ def home(request):
 def df_filter(df,column_or_columns):
     pass
 
+
+from dashboard.forms import Addstoreform
+from dashboard.models import Store 
+
+
+
+
+def stores():
+    stores = Store.objects.all()
+    stores_name_list = []
+    for store in stores:
+        stores_name_list.append(store.store_name)
+    return stores_name_list
+
+
+
+def add_store(request):
+    try:
+        if request.method == "POST":
+            form = Addstoreform(request.POST)
+            if form.is_valid():
+                store_name = form.cleaned_data["store_name"]
+                platform = form.cleaned_data["platform"]
+                
+                available_stores = stores()
+                color_text(f"Available stores{available_stores}")
+                if not store_name in available_stores:
+                    new_store_data = Store.objects.create(
+                        store_name=store_name,
+                        platform=platform
+                    )
+                    new_store_data.save()
+
+                    if platform == "Amazon":
+                        color_text("Amazon")
+                else:
+                    color_text(f"Store name : {store_name} already exists","red")
+            else:
+                color_text("Invalid form","red")
+        else:
+            form = Addstoreform
+    except Exception as e:
+        better_error_handling(e)
+    return render(request,"add_store_form.html",{"store_form":form})

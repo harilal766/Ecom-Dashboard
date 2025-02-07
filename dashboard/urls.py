@@ -22,5 +22,5 @@ app_name = 'dashboard'
 urlpatterns = [
     path('',views.home,name='home'),
     path('dashboard/', views.dashboard,name='dashboard'),
-    #path('amazon_reports',views.amazon_shipment_report,name='amazon_reports')
+    path("add_store/",views.add_store,name="add_store")
 ]

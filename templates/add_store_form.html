@@ -4,12 +4,11 @@
 {% block content %}
 <h1>Add store</h1>
 
-<form class="form" method="POST" enctype="multipart/form-data">
+<form class="form" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:add_store' %}">
     {% csrf_token %}
-    <div class="form-floating">
-        <h2>User : {{user}}</h2>
-    </div>
-    
+    {% for field in store_form %}
+        {{field}}
+    {% endfor %}
     <div class="form-floating">
         <button type="submit" class="btn btn-primary">Submit Credentials</button>
     </div>
