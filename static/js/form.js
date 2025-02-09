@@ -79,11 +79,11 @@ storeType.addEventListener("change",function(event){
         // make sure the fields does not exists already
         Object.entries(selectedDict).forEach(([key,value]) =>{
             let field = key; let id = value; 
-            value = document.createElement("input");
-            value.id = `${selectedType}-${id}`;
-            value.classList.add("form-control");
-            value.placeholder = `Enter ${field} for ${selectedType}`;
-            apiDiv.appendChild(value);
+            const inputField = document.createElement("input");
+            inputField.id = `${selectedType}-${id}`;
+            inputField.classList.add("form-control");
+            inputField.placeholder = `Enter ${field} for ${selectedType}`;
+            apiDiv.appendChild(inputField);
         });
         // button
         let button = document.createElement("button");
