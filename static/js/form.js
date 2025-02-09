@@ -1,8 +1,5 @@
-
-
-
 async function nameValidation(inputNameField,endpoint,key,statusId){
-    let inputName = ""; let status = "short";
+    let status = "short";
     let existingNames = []; let statusBar = document.getElementById(statusId);
     try{ 
         let response = await fetch(endpoint);
@@ -16,14 +13,14 @@ async function nameValidation(inputNameField,endpoint,key,statusId){
 
             console.log(existingNames);
 
-            inputNameField.addEventListener("keydown",event =>{
-                inputName += event.key;
-                let inputNames = inputName.split("Backspace");
-                if (inputName.length > 5 ){
+            inputNameField.addEventListener("blur",event =>{
+                let inputValue = inputNameField.value;
+
+                if (inputValue > 5 ){
                     status = "Strong";
                 }
                 //!existingNames.includes(inputName);
-                statusBar.innerText = `Input : ${inputName.at(-1)} - status ${status}`;
+                statusBar.innerText = `Input : ${inputValue} - status ${status}`;
             });
 
             
@@ -45,3 +42,5 @@ nameValidation(inputNameField = storeNameField,
     endpoint = "http://127.0.0.1:8000/api/stores/",key = "store_name", statusId = "statusBar"); 
 
 
+const storePlatform = document.getElementById("storePlatform");
+console.log(999);
