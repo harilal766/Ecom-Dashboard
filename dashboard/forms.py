@@ -7,6 +7,7 @@ css_attributes = {
 
 class Addstoreform(forms.Form):
     options = [
+        ("","Select a platform"),
         ("Amazon","Amazon"),
         ("Shopify","Shopify")
     ]

@@ -20,7 +20,7 @@ async function nameValidation(inputNameField,endpoint,key,statusId){
             // display status only if input value is present
             if (inputNameField.value) {
                 if (existingNames.includes(typedName)){
-                    statusBar.style.color = "green"
+                    statusBar.style.color = "red"
                     status = "Name already exists."
                 }
                 else {
@@ -40,21 +40,69 @@ async function nameValidation(inputNameField,endpoint,key,statusId){
     }
 }
 
+const apiDiv = document.getElementById("apiCreds"); 
 
-function storeFormBuilder (type){
-    console.log(type);
-    storeType.addEventListener("change",function(event){
-        const selectedType = event.target.value;
-        console.log(selectedType);
-    });
-}
+const form = document.getElementById("storeForm");
+const storeButton = document.getElementById("storeButton");
 
-let storeNameField = document.getElementById("storeName");
-const storeType = document.getElementById("storePlatform").value;
+const storeType = document.getElementById("storePlatform");
+
+storeType.addEventListener("change",function(event){
+    const selectedType = event.target.value;
+
+    const amazonArray = ["accessToken","refreshToken"]; 
+
+    const commonDict = {
+        "Access Token" : "accessToken",
+    }
+
+    const amazonDict = {...commonDict,
+        "Refresh Token" : "refreshToken",
+        "Client Id" : "clientId",
+        "Client Secret" : "clientSecret"
+    };
+
+    const ShopifyDict = {...commonDict,"API secret key" : "apiSecretKey"};
 
 
-nameValidation(inputNameField = storeNameField,
-    endpoint = "http://127.0.0.1:8000/api/stores/",key = "store_name", statusId = "statusBar"); 
+    let selectedDict = {};
+    if (selectedType){
+        if (selectedType === "Amazon") {
+            selectedDict = amazonDict;
+        }
+        else if (selectedType === "Shopify") {
+            selectedDict = ShopifyDict;
+        }
 
-storeFormBuilder(type = storeType);
+        apiDiv.innerHTML = "";
+        
+        // make sure the fields does not exists already
+        Object.entries(selectedDict).forEach(([key,value]) =>{
+            let field = key; let id = value; 
+            value = document.createElement("input");
+            value.id = `${selectedType}-${id}`;
+            value.classList.add("form-control");
+            value.placeholder = `Enter ${field} for ${selectedType}`;
+            apiDiv.appendChild(value);
+        });
+        // button
+        let button = document.createElement("button");
+        button.innerText = `Submit Credentials for ${selectedType} Store.`;
+        button.classList.add("btn","btn-primary");
+        apiDiv.appendChild(button)
+    }
+});
+
+
+
+
+
+document.addEventListener("DOMContentLoaded",function () {
+    let storeNameField = document.getElementById("storeName");
+    
+    // Name validation
+    nameValidation(inputNameField = storeNameField,
+        endpoint = "http://127.0.0.1:8000/api/stores/",key = "store_name", statusId = "statusBar"); 
+});
+
 
