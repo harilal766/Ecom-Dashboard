@@ -4,7 +4,6 @@ env/
 venv/
 Test documents/
 .pdf
-.txt
 sp_api_credentials.json
 # Ignore temporary files created by Excel
 ~$*.xlsx
