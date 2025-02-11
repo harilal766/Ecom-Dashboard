@@ -15,25 +15,6 @@ from amazon.models import SPAPI_Credential
 
 
 
-def add_amazon_store(request):
-    user = "Hari"
-    print(User.objects.all())
-    if request.method == "POST":
-        client_id = request.POST.get("client_id")
-        client_secret = request.POST.get("client_secret")
-        refresh_token = request.POST.get("refresh_token")
-
-        if client_id:
-            cred = SPAPI_Credential.objects.create(client_id = client_id, 
-                                                   client_secret = client_secret,
-                                    refresh_token = refresh_token, 
-                                    access_token = get_or_generate_access_token())
-            cred.save()
-            
-            return redirect("dashbaord:home")
-    return render(request,'add_store_form.html', {"user" : user})
-
-
 def amazon_detail_page(request):
 
     context = {"types" : selected_report_types.keys()}

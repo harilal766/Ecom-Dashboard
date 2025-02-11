@@ -215,16 +215,17 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
                                     order_count = int(len(page_nums)/2)
                                 else:
                                     order_count = len(page_nums)
-
+                                pieces = order_count*quantity
                                 pdf_merger(page_numbers,
                                 input_pdf_path,
-                                os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} orders"))
+                                
+                                os.path.join(out_pdf_path,f"{product_name} - {order_count} orders - {quantity} qty"))
                                 
                         elif type(values) == list:
                             page_numbers = values; order_count = int(len(values)/2)
                             pdf_merger(page_numbers,
                             input_pdf_path,
-                            os.path.join(out_pdf_path,f"{product_name} qty {quantity} - {order_count} orders"))
+                            os.path.join(out_pdf_path,f"{product_name} - {order_count} orders"))
                         
                             
                     print(label_summary_dict)
@@ -292,7 +293,7 @@ post = r"D:\3.Shopify\Sholly ayurveda\labels"
 lin_post = r"/home/hari/Downloads/"
 
 
-shipping_label_sort(input_pdf_name="6.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="8.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
 
