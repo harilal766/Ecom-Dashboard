@@ -108,3 +108,7 @@ def auth_logout(request):
     logout(request)
     return redirect("dashboard:home")
 
+
+
+
+

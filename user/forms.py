@@ -1,10 +1,8 @@
 from django import forms
+from dashboard.forms import css_attributes
 
 
 
-css_attributes = {
-    "class" : "form-control"
-    }
 
 class Loginform(forms.Form):
     username = forms.CharField(max_length=100,widget=forms.TextInput(attrs= {
