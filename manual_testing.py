@@ -92,7 +92,6 @@ import re
 from helpers.regex_patterns import *
 
 
-
 def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
     """
     Deal breakers 
@@ -287,13 +286,11 @@ def pdf_merger(pages,input_pdf,output_pdf):
 # both of these should be from front end in django
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 
-
 post = r"D:\3.Shopify\Sholly ayurveda\labels"
 
 lin_post = r"/home/hari/Downloads/"
 
-
-shipping_label_sort(input_pdf_name="8.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="11.2.25 prepaid-1-merged.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
 
