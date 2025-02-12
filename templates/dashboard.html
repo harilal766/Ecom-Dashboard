@@ -12,9 +12,8 @@
 <div class="parent-container">
     <div class="child-container">
         <h2>Dashboard</h2>
-        <p>Current Time: </p>
-        <h6 id="timeDisplay"></h6>
     </div>
+    <!-- Display available stores -->
     {% if added_stores %}
         {% for store in added_stores %}
             <button class="btn btn-primary">{{store}}</button>

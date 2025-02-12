@@ -32,16 +32,30 @@ def stores():
     return stores_name_list
 
 
-
+platform_logo_dict = {
+    "Amazon" : "A",
+    "Shopify" : "S"
+}
 @login_required
 def dashboard(request):
-    dashboard_context = {"amazon_report_types":None,"added_stores" : None}
+    dashboard_context = {"amazon_report_types":None,
+                         "added_stores" : None,
+                        }
     try:
         dashboard_context['amazon_report_types'] = selected_report_types
-        stores_list = stores()
-        if stores_list:
-            dashboard_context["added_stores"] = stores_list
-            
+        stores = Store.objects.all()
+        # loop through available plaforms
+        if stores:
+            dashboard_context["added_stores"] = {}
+            for store in stores:
+                dashboard_context["added_stores"][f"{store.store_name}"] = platform_logo_dict[store.platform] 
+
+            print(dashboard_context["added_stores"])
+                
+                
+            dashboard_context["added_stores"] = stores
+
+
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)

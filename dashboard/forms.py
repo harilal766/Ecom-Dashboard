@@ -5,15 +5,18 @@ css_attributes = {
     "class" : "form-control"
     }
 
-class Addstoreform(forms.Form):
-    options = [
+store_options = [
         ("","Select a platform"),
         ("Amazon","Amazon"),
         ("Shopify","Shopify")
     ]
+
+
+class Addstoreform(forms.Form):
+    
     store_name = forms.CharField(max_length=100,widget=forms.TextInput(attrs = 
         {**css_attributes,"id":"storeName","placeholder":"Enter the store name"}))
-    platform = forms.ChoiceField(choices=options,label="Select the platform",widget=forms.Select(attrs=
+    platform = forms.ChoiceField(choices=store_options,label="Select the platform",widget=forms.Select(attrs=
         {**css_attributes,"id":"storePlatform"}))
 
 
