@@ -15,6 +15,9 @@ class Configuration(models.Model):
 class Store(models.Model):
     store_name = models.CharField(max_length=400,unique=True,default="seller")
     platform = models.CharField(max_length=200,default="Ecom")
+
+    def __str__(self):
+        return self.store_name
     
 
     

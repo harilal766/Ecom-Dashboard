@@ -5,5 +5,6 @@ from dashboard.models import *
 
 
 admin.site.register(Configuration)
+admin.site.register(Store)
 
     

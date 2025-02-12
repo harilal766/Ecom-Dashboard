@@ -11,9 +11,17 @@
 <!-- Display the dashbaord if the store is added , else we should see the option to add it-->
 <div class="parent-container">
     <div class="child-container">
-        <h2>Amazon Dashboard</h2>
+        <h2>Dashboard</h2>
         <p>Current Time: </p>
         <h6 id="timeDisplay"></h6>
     </div>
-    {% include 'dashboards/amazon_dashboard.html' %}
+    {% if added_stores %}
+        {% for store in added_stores %}
+            <button class="btn btn-primary">{{store}}</button>
+        {% endfor %}
+    {% else %}
+        <h1>Add a store to continue</h1>
+    {% endif %}
+</div>
+    
 {% endblock %}

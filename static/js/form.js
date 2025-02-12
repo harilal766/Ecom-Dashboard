@@ -64,10 +64,9 @@ storeType.addEventListener("change",function(event){
         "Client Id" : "clientId",
         "Client Secret" : "clientSecret"
     };
-
     const ShopifyDict = {...commonDict,"API secret key" : "apiSecretKey"};
 
-
+    // choosing the field dictionary based on user choice
     let selectedDict = {};
     if (selectedType){
         if (selectedType === "Amazon") {
@@ -90,17 +89,14 @@ storeType.addEventListener("change",function(event){
             // append the label and input to the div
             fieldDiv.appendChild(label);
             fieldDiv.appendChild(inputField);
-            // later
-            
-
             
             inputField.id = `${selectedType}-${id}`;
             inputField.classList.add("form-control");
             inputField.placeholder = `Enter ${field} for ${selectedType}`;
 
-            
             apiDiv.appendChild(fieldDiv);
         });
+
         // button
         let button = document.createElement("button");
         button.innerText = `Create ${selectedType} Store`;
@@ -108,8 +104,6 @@ storeType.addEventListener("change",function(event){
         apiDiv.appendChild(button)
     }
 });
-
-
 
 
 

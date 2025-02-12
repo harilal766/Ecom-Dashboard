@@ -24,12 +24,25 @@ from django.contrib.auth.decorators import login_required
 # Current logged in user
 from amazon.report_types import selected_report_types
 
+def stores():
+    stores = Store.objects.all()
+    stores_name_list = []
+    for store in stores:
+        stores_name_list.append(store.store_name)
+    return stores_name_list
+
+
+
 @login_required
 def dashboard(request):
-    amazon_context = {"amazon_report_types":None}
+    dashboard_context = {"amazon_report_types":None,"added_stores" : None}
     try:
-        amazon_context['amazon_report_types'] = selected_report_types
-        return render(request,'dashboard.html',amazon_context)
+        dashboard_context['amazon_report_types'] = selected_report_types
+        stores_list = stores()
+        if stores_list:
+            dashboard_context["added_stores"] = stores_list
+            
+        return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)
     
@@ -55,12 +68,6 @@ from dashboard.models import Store
 
 
 
-def stores():
-    stores = Store.objects.all()
-    stores_name_list = []
-    for store in stores:
-        stores_name_list.append(store.store_name)
-    return stores_name_list
 
 
 
@@ -73,16 +80,19 @@ def add_store(request):
                 platform = form.cleaned_data["platform"]
                 
                 available_stores = stores()
-                color_text(f"Available stores{available_stores}")
+                if len(available_stores) == 0:
+                    color_text("No stores added","red")
+                else:
+                    color_text(f"Available stores{available_stores}")
+
+                
                 if not store_name in available_stores:
                     new_store_data = Store.objects.create(
                         store_name=store_name,
-                        platform=platform
-                    )
+                        platform=platform)
                     new_store_data.save()
 
-                    if platform == "Amazon":
-                        color_text("Amazon")
+                    return redirect("dashboard:home")
                 else:
                     color_text(f"Store name : {store_name} already exists","red")
             else:
