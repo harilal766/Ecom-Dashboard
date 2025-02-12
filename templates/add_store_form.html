@@ -7,7 +7,7 @@
 <form class="form" id = "storeForm" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:add_store' %}">
     {% csrf_token %}
     {% for field in store_form %}
-        {{field}}<br>
+        {{field}}
     {% endfor %}
     <div class="form-floating" id = "apiCreds">
 

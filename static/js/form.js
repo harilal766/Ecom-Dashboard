@@ -50,12 +50,15 @@ const storeType = document.getElementById("storePlatform");
 storeType.addEventListener("change",function(event){
     const selectedType = event.target.value;
 
-    const amazonArray = ["accessToken","refreshToken"]; 
-
+    // array that consists common fields
     const commonDict = {
         "Access Token" : "accessToken",
     }
 
+    // defining an array of fields needed for each platform
+    const amazonArray = ["accessToken","refreshToken"]; 
+
+    // field array for amazon
     const amazonDict = {...commonDict,
         "Refresh Token" : "refreshToken",
         "Client Id" : "clientId",
@@ -79,15 +82,28 @@ storeType.addEventListener("change",function(event){
         // make sure the fields does not exists already
         Object.entries(selectedDict).forEach(([key,value]) =>{
             let field = key; let id = value; 
+            // need seperate div for each field for accomodating the label and input
+            const fieldDiv = document.createElement("div");
+            // add label , then the input to it
+            const label = document.createElement("label");
             const inputField = document.createElement("input");
+            // append the label and input to the div
+            fieldDiv.appendChild(label);
+            fieldDiv.appendChild(inputField);
+            // later
+            
+
+            
             inputField.id = `${selectedType}-${id}`;
             inputField.classList.add("form-control");
             inputField.placeholder = `Enter ${field} for ${selectedType}`;
-            apiDiv.appendChild(inputField);
+
+            
+            apiDiv.appendChild(fieldDiv);
         });
         // button
         let button = document.createElement("button");
-        button.innerText = `Submit Credentials for ${selectedType} Store.`;
+        button.innerText = `Create ${selectedType} Store`;
         button.classList.add("btn","btn-primary");
         apiDiv.appendChild(button)
     }
