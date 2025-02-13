@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-from dashboard.models import Store
+from dashboard.d_models import Store
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store

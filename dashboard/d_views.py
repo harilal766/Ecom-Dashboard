@@ -36,6 +36,17 @@ platform_logo_dict = {
     "Amazon" : "A",
     "Shopify" : "S"
 }
+
+
+from user.forms import Loginform
+def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard:dashboard')
+    else:
+        form = Loginform(request.POST)
+        return render(request,'home.html',{"form":form})
+
+
 @login_required
 def dashboard(request):
     dashboard_context = {"amazon_report_types":None,
@@ -59,23 +70,16 @@ def dashboard(request):
         better_error_handling(e)
     
 
-from user.forms import Loginform
-def home(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard:dashboard')
-    else:
-        form = Loginform(request.POST)
-        return render(request,'home.html',{"form":form})
-
-
-
-
-def df_filter(df,column_or_columns):
-    pass
+def store_dash(request,selected_store_name):
+    selected_store = Store.objects.filter(store_name = selected_store_name)
+    
+    selected_platform = None
+    print(selected_store)
+    return render(request,'dashboard.html')
 
 
 from dashboard.forms import Addstoreform
-from dashboard.models import Store 
+from dashboard.d_models import Store 
 
 
 

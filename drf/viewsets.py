@@ -3,7 +3,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from django.contrib.auth.models import User
 from .serializers import UserSerializer,StoreSerializer
 
-from dashboard.models import Store
+from dashboard.d_models import Store
 
 # Create your views here.
 class UserViewSet(ReadOnlyModelViewSet):

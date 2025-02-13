@@ -7,7 +7,6 @@ function darkMode(){
 
 
 
-
 const addedStoresDiv = document.querySelector("#addedStores");
 const addedStoresButtons = addedStoresDiv.querySelectorAll(".store");
 const dashboardTitle = document.getElementById("dashboardTitle");
