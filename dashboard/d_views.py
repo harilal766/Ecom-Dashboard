@@ -52,9 +52,7 @@ def dashboard(request):
 
             print(dashboard_context["added_stores"])
                 
-                
             dashboard_context["added_stores"] = stores
-
 
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:

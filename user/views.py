@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from user.forms import Loginform
-from dashboard.views import dashboard 
+from dashboard.d_views import dashboard 
 import re
 from helpers.messages import *
 

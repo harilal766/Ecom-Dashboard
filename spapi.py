@@ -2,7 +2,7 @@ from amazon.authorization import *
 from amazon.sp_api_models import *
 from amazon.response_manipulator import *
 from helpers.sql_scripts import *
-from dashboard.views import *
+from dashboard.d_views import *
 
 
 

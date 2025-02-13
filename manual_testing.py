@@ -290,7 +290,7 @@ post = r"D:\3.Shopify\Sholly ayurveda\labels"
 
 lin_post = r"/home/hari/Downloads/"
 
-shipping_label_sort(input_pdf_name="12.2.25 cod.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="13.2.25 cod.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
 
