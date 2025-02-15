@@ -34,7 +34,7 @@ lin_amazon_invoice =r"/home/hari/Desktop/Ecom-Dashboard/Test documents/amazon sh
 win_amazon_scheduled_report = r"D:/5.Amazon/Mathew global/Scheduled report"
 lin_amazon_scheduled_report = r"/home/hari/Desktop/Ecom-Dashboard/Test documents/amazon scheduled report"
 
-win_sp_api_config = r"D:/Ecom-Dashboard/amazon/time_limits.json" 
+win_sp_api_config = r"D:/projects/Ecom-Dashboard/amazon/time_limits.json" 
 lin_sp_api_config = r"/home/hari/Desktop/Ecom-Dashboard/amazon/time_limits.json"
 
 win_amazon_return = r"D:/5.Amazon/Mathew global/Return"

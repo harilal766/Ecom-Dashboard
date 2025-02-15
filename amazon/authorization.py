@@ -21,10 +21,6 @@ from amazon.models import SPAPI_Credential
 creds = SPAPI_Credential.objects.filter(user__username="Hari")
 """
 
-
-
-
-
 REFRESH_TOKEN = os.getenv("REFRESH_TOKEN")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
@@ -82,12 +78,13 @@ def generate_access_token():
             env_access_token = file_handler(filepath='.env',operation='read')['ACCESS_TOKEN']
             #color_text(message="access token time -> json file",color='green')
             
-            if env_access_token != None:
-                color_text(message="New Access token generated.",color='green')
-                return env_access_token
-# ERRORS ---------------------------------------------------------------------------------
-            else:
+            if env_access_token == None:
                 color_text(message="Access Token is empty.",color='red')
+            else:
+                color_text(message="New Access token generated.",color='green')
+                print(env_access_token)
+                return env_access_token
+                
         else:
             color='red'
         color_text(f"Response Status Code: {response.status_code}\n{response.content}\nPaste the credentials directly from postman....",color=color)

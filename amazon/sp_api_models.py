@@ -18,7 +18,9 @@ class SPAPIBase:
     def __init__(self,base_url=production_endpoint,marketplace_id="A21TJRUUN4KGV"):
         color_text(message="Initializing SPAPIBase")
         access_token = get_or_generate_access_token()
-        if access_token != None:
+        if access_token == None:
+            color_text(message="Access token returned None, Please check",color="red")
+        else:
             self.access_token = access_token
             self.base_url = base_url
             self.marketplace_id = marketplace_id
@@ -35,8 +37,7 @@ class SPAPIBase:
             #color_text(message=status)
             self.success_codes = {200,201}
             self.rate_limit = {}
-        else:
-            color_text(message="Access token returned None, Please check",color="red")
+            
 
     def dynamic_request_delay():
         pass
@@ -330,24 +331,29 @@ class Orders(SPAPIBase):
         pass
     
 class EasyShip(SPAPIBase):
+    # https://developer-docs.amazon.com/sp-api/docs/easy-ship-api-v2022-03-23-reference#listhandoverslots
     """
     Operations
-
     listHandoverSlots - post
     getScheduledPackage
     createScheduledPackage
     updateScheduledPackages
-    createScheduledPackageBul
+    createScheduledPackageBulk
     """ 
-    def listHandoverSlots(self):
-        endpoint = "/easyShip/2022-03-23/timeSlot"
+    version = "2022-03-23"
+
+    def listHandoverSlots(self,ListHandoverSlotsRequest):
+        endpoint = f"/easyShip/{self.version}/timeSlot"
+        self.params.update(
+            {"ListHandoverSlotsRequest" : ListHandoverSlotsRequest}
+        )
         rate = 1
         burst = 5
         #self.params.update({"ListHandoverSlotsRequest" : 0})
         return super().execute_request(endpoint = endpoint,method='post',params=self.params,burst=5)
     
     def getScheduledPackage(self,amazonOrderId):
-        endpoint = "/easyShip/2022-03-23/package"
+        endpoint = f"/easyShip/{self.version}/package"
         self.params.update(
             { "amazonOrderId" : amazonOrderId }
         )
@@ -360,10 +366,7 @@ class EasyShip(SPAPIBase):
     def updateScheduledPackages(self):
         pass
     def createScheduledPackageBulk(self):
-        """
-
-        """
-        endpoint = "/easyShip/2022-03-23/packages/bulk"
+        endpoint = f"/easyShip/{self.version}/packages/bulk"
         
 
 class Reports(SPAPIBase):
