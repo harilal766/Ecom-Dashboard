@@ -50,20 +50,18 @@ const storeType = document.getElementById("storePlatform");
 storeType.addEventListener("change",function(event){
     const selectedType = event.target.value;
 
-    // array that consists common fields
+    // dict that consists common fields
     const commonDict = {
         "Access Token" : "accessToken",
     }
 
-    // defining an array of fields needed for each platform
-    const amazonArray = ["accessToken","refreshToken"]; 
-
     // field array for amazon
-    const amazonDict = {...commonDict,
+    const amazonDict = {
         "Refresh Token" : "refreshToken",
         "Client Id" : "clientId",
         "Client Secret" : "clientSecret"
     };
+    
     const ShopifyDict = {...commonDict,"API secret key" : "apiSecretKey"};
 
     // choosing the field dictionary based on user choice
@@ -86,16 +84,18 @@ storeType.addEventListener("change",function(event){
             // add label , then the input to it
             const label = document.createElement("label");
             const inputField = document.createElement("input");
-            // append the label and input to the div
-            fieldDiv.appendChild(label);
-            fieldDiv.appendChild(inputField);
             
             inputField.id = `${selectedType}-${id}`;
-            inputField.name = (field.toLowerCase()).replace(" ","_");
+            inputField.name = field.toLowerCase().replace(/\s+/g, "_");
             inputField.classList.add("form-control");
+            inputField.type = "text";
             inputField.placeholder = `Enter ${field} for ${selectedType}`;
 
+            fieldDiv.appendChild(label);
+            fieldDiv.appendChild(inputField);
             apiDiv.appendChild(fieldDiv);
+
+            console.log(inputField);
         });
 
         // button

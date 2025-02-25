@@ -74,7 +74,7 @@ def view_store(request,slug):
     selected_store = Store.objects.filter(slug = slug)
     selected_platform = None
     print(selected_store)
-    return render(request,'dash.html',{"d" : selected_store.id})
+    return render(request,'dash.html',{"d" : selected_store})
 
 
 from dashboard.forms import Addstoreform
@@ -88,34 +88,39 @@ def add_store(request):
         if request.method == "POST":
             form = Addstoreform(request.POST)
             if form.is_valid():
+                # created by forms.py
                 store_name = form.cleaned_data["store_name"]
                 platform = form.cleaned_data["platform"]
-                """
-                client_id = form.cleaned_data["client_id"]
-                client_secret = form.cleaned_data["client_secret"]
-                refresh_token = form.cleaned_data["refresh_token"]
-                """
+                
+                # these fields are created by javascript
+                client_id = request.POST.get("client_id")
+                client_secret = request.POST.get("client_secret")
+                refresh_token = request.POST.get("refresh_token")
+                
                 available_stores = stores()
                 if len(available_stores) == 0:
                     color_text("No stores added","red")
                 else:
                     color_text(f"Available stores{available_stores}")
+                    color_text(message=f"{client_id} \n {client_secret} \n {refresh_token}")
 
-                
+                # store creation
                 if not store_name in available_stores:
                     new_store_data = Store.objects.create(
                         user = request.user, store_name=store_name,
                         platform=platform)
                     new_store_data.save()
 
+                    # different api credential creation based on platform 
                     api_credentials = {
                         "Amazon" : SPAPI_Credential.objects.create(
                             user = request.user, store = new_store_data,
-                            client_id = 1, client_secret = 1,
-                            refresh_token = 1, access_token = get_or_generate_access_token()),
+                            client_id = client_id, client_secret = client_secret,
+                            refresh_token = refresh_token, access_token = get_or_generate_access_token()),
                         "Shopify" : 0
                         }
 
+                    # plafrom api details saving
                     api_creds = api_credentials.get(platform,None)
                     if api_creds:
                         api_creds.save()
