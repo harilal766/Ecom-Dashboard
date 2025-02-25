@@ -11,7 +11,7 @@ class Store(models.Model):
     platform = models.CharField(max_length=200,default="Ecom")
 
     def __str__(self):
-        return f"{self.store_name} - {self.platform}"
+        return f"{self.store_name} : {self.platform}"
     
     def save(self,*args, **kwargs):
         if not self.slug:

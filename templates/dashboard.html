@@ -15,12 +15,12 @@
     </div>
     <!-- Display available stores -->
     {% if added_stores %}
-        <div id = "addedStores">
-        {% for store in added_stores %}
-            <a href="{% url 'dashboard:store_dashboard' store.slug %}">
-                <button class="btn btn-primary store">{{store}}</button>
-            </a>
-        {% endfor %}
+        <div id = "addedStores" class="store-titles">
+            <ul class="store-titles">
+                {% for store in added_stores %}
+                <li><a class="store-title" href="#">{{store}}</a></li>
+                {% endfor %}
+            </ul>
         </div>
 
     {% else %}

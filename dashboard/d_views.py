@@ -65,11 +65,16 @@ def dashboard(request):
     except Exception as e:
         better_error_handling(e)
 
-
 def view_store(request,slug):
-    selected_store = Store.objects.get(slug = slug)
-    print(selected_store.platform == "Amazon")
-    return render(request,'dash.html',{"d" : selected_store})
+    try:
+        selected_store = Store.objects.get(slug = slug)
+        dashboard_data = {
+            "store_name" : selected_store.store_name,
+            "platform" : selected_store.platform
+            }
+        return JsonResponse(dashboard_data)
+    except Store.DoesNotExist:
+        return JsonResponse({"Error" : f"Store {slug} Not Found"},status=404)
 
 
 from dashboard.forms import Addstoreform

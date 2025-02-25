@@ -17,3 +17,15 @@
     width: 200px;
 }
 
+.store-titles{
+    display: flex; gap: 15px;
+}
+
+.store-title{
+    font-weight: bold;
+    color: black;
+}
+
+.active{
+    color: "green";
+}
