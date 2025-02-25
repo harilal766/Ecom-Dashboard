@@ -17,12 +17,11 @@
     {% if added_stores %}
         <div id = "addedStores">
         {% for store in added_stores %}
-            <a href="{% url 'dashboard:store_dashboard' store.store_name %}">
+            <a href="{% url 'dashboard:store_dashboard' store.slug %}">
                 <button class="btn btn-primary store">{{store}}</button>
             </a>
         {% endfor %}
         </div>
-
 
     {% else %}
         <h1>Add a store to continue</h1>
