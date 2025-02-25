@@ -12,4 +12,4 @@ class SPAPI_Credential(models.Model):
     access_token_updation_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.access_token_updation_time)
+        return f"{self.store} - updated at {str(self.access_token_updation_time)}"

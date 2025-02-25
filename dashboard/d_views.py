@@ -70,12 +70,11 @@ def dashboard(request):
         better_error_handling(e)
     
 
-def store_dash(request,selected_store_name):
-    selected_store = Store.objects.filter(store_name = selected_store_name)
-    
+def view_store(request,slug):
+    selected_store = Store.objects.filter(slug = slug)
     selected_platform = None
     print(selected_store)
-    return render(request,'dashboard.html')
+    return render(request,'dash.html',{"d" : selected_store.id})
 
 
 from dashboard.forms import Addstoreform
@@ -113,13 +112,13 @@ def add_store(request):
                         "Amazon" : SPAPI_Credential.objects.create(
                             user = request.user, store = new_store_data,
                             client_id = 1, client_secret = 1,
-                            refresh_token = 1,
-                            access_token = 1),
+                            refresh_token = 1, access_token = get_or_generate_access_token()),
                         "Shopify" : 0
                         }
 
-                    api_creds = api_credentials[platform]
-                    api_creds.save()
+                    api_creds = api_credentials.get(platform,None)
+                    if api_creds:
+                        api_creds.save()
 
                     return redirect("dashboard:home")
                 else:

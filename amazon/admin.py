@@ -1,4 +1,8 @@
 from django.contrib import admin
-from amazon.models import *
+from amazon.models import SPAPI_Credential
 # Register your models here.
-admin.site.register(SPAPI_Credential)
+
+class SPAPICredentialAdmin(admin.ModelAdmin):
+    readonly_fields = ("access_token_updation_time",)
+admin.site.register(SPAPI_Credential, SPAPICredentialAdmin)
+
