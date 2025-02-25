@@ -7,13 +7,10 @@ from datetime import datetime,timedelta
 from helpers.sql_scripts import *
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
-
 from django.contrib.auth.decorators import login_required
-
-
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
+
 
 """
     Home page will display the shipments summary.
@@ -67,12 +64,11 @@ def dashboard(request):
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)
-    
+
 
 def view_store(request,slug):
-    selected_store = Store.objects.filter(slug = slug)
-    selected_platform = None
-    print(selected_store)
+    selected_store = Store.objects.get(slug = slug)
+    print(selected_store.platform == "Amazon")
     return render(request,'dash.html',{"d" : selected_store})
 
 
@@ -134,5 +130,6 @@ def add_store(request):
     except Exception as e:
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
+
 
 

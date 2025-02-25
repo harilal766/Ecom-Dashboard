@@ -6,33 +6,27 @@ from dotenv import load_dotenv
 import os
 import time
 
-success_codes = [200,202]
-forbidden_codes = [403]
-error_codes = [400,401,404,415,429,500,503]
+"""
+1. Instead of .env, credentials need to be extracted from the stored ones in the database
+2. to identify the correct store and SPAPI Credential object that store the credentials 
+for the selected amazon store, the object need to be filtered based on the user and store
+
+find the current logged in user
+
+from amazon.models import SPAPI_Credential
+creds = SPAPI_Credential.objects.filter(user__username="")
+"""
 
 load_dotenv()
-
-# Replace these with your credentials
-
-# find the current user and filter the credentials based on the username, the username should be unique
-
-"""
-from amazon.models import SPAPI_Credential
-creds = SPAPI_Credential.objects.filter(user__username="Hari")
-"""
-
 REFRESH_TOKEN = os.getenv("REFRESH_TOKEN")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 SP_API_DEFAULT_MARKETPLACE = os.getenv("SP_API_DEFAULT_MARKETPLACE")
 
-#SELLER_ID = "ACJLZEYR3QZJFCQ77FO2CO36MSZQ"
-#DEVELOPER_ID = "-------"
+success_codes = [200,202]
+forbidden_codes = [403]
+error_codes = [400,401,404,415,429,500,503]
 
-#Oauth_authorization_URL = f"https://sellercentral.amazon.com/apps/authorize/consent?selling_partner_id={SELLER_ID}&developer_id={DEVELOPER_ID}&client_id={CLIENT_ID}"
-#print(Oauth_authorization_URL)
-
-#ORDER_ENDPOINT = "https://sandbox.sellingpartnerapi-eu.amazon.com/orders/v0/orders"
 
 def region_finder():
     pass
