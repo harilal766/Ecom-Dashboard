@@ -91,6 +91,7 @@ storeType.addEventListener("change",function(event){
             fieldDiv.appendChild(inputField);
             
             inputField.id = `${selectedType}-${id}`;
+            inputField.name = (field.toLowerCase()).replace(" ","_");
             inputField.classList.add("form-control");
             inputField.placeholder = `Enter ${field} for ${selectedType}`;
 

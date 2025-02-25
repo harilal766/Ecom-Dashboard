@@ -91,8 +91,11 @@ def add_store(request):
             if form.is_valid():
                 store_name = form.cleaned_data["store_name"]
                 platform = form.cleaned_data["platform"]
+                """
                 client_id = form.cleaned_data["client_id"]
-                
+                client_secret = form.cleaned_data["client_secret"]
+                refresh_token = form.cleaned_data["refresh_token"]
+                """
                 available_stores = stores()
                 if len(available_stores) == 0:
                     color_text("No stores added","red")
@@ -102,19 +105,21 @@ def add_store(request):
                 
                 if not store_name in available_stores:
                     new_store_data = Store.objects.create(
-                        store_name=store_name,
+                        user = request.user, store_name=store_name,
                         platform=platform)
                     new_store_data.save()
 
-                    if platform == "Amazon":
-                        #pass
-                        api_creds = SPAPI_Credential.objects.create(
-                            user = request.user,
-                            client_id = client_id,
-                            client_secret = 0,
-                            refresh_token = 0,
-                            access_token = get_or_generate_access_token()
-                        )
+                    api_credentials = {
+                        "Amazon" : SPAPI_Credential.objects.create(
+                            user = request.user, store = new_store_data,
+                            client_id = 1, client_secret = 1,
+                            refresh_token = 1,
+                            access_token = 1),
+                        "Shopify" : 0
+                        }
+
+                    api_creds = api_credentials[platform]
+                    api_creds.save()
 
                     return redirect("dashboard:home")
                 else:
