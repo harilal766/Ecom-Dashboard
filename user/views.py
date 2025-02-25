@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.forms import UserCreationForm
 from user.forms import Loginform
-from dashboard.d_views import dashboard 
 import re
 from helpers.messages import *
 
@@ -22,7 +21,6 @@ auth_context = {"purpose" : None,
                 }
 
 # make a temporary user and filter based on this.
-
 
 # finding created usernames for verification, email also should be verified this way
 def usernames():
