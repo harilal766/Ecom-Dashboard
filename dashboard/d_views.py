@@ -80,7 +80,7 @@ def store_dash(request,selected_store_name):
 
 from dashboard.forms import Addstoreform
 from dashboard.d_models import Store 
-
+from amazon.models import SPAPI_Credential
 
 
 
@@ -91,6 +91,7 @@ def add_store(request):
             if form.is_valid():
                 store_name = form.cleaned_data["store_name"]
                 platform = form.cleaned_data["platform"]
+                client_id = form.cleaned_data["client_id"]
                 
                 available_stores = stores()
                 if len(available_stores) == 0:
@@ -104,6 +105,16 @@ def add_store(request):
                         store_name=store_name,
                         platform=platform)
                     new_store_data.save()
+
+                    if platform == "Amazon":
+                        #pass
+                        api_creds = SPAPI_Credential.objects.create(
+                            user = request.user,
+                            client_id = client_id,
+                            client_secret = 0,
+                            refresh_token = 0,
+                            access_token = get_or_generate_access_token()
+                        )
 
                     return redirect("dashboard:home")
                 else:
