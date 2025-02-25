@@ -50,8 +50,7 @@ def home(request):
 @login_required
 def dashboard(request):
     dashboard_context = {"amazon_report_types":None,
-                         "added_stores" : None,
-                        }
+                         "added_stores" : None,}
     try:
         dashboard_context['amazon_report_types'] = selected_report_types
         stores = Store.objects.all()
@@ -59,7 +58,7 @@ def dashboard(request):
         if stores:
             dashboard_context["added_stores"] = {}
             for store in stores:
-                dashboard_context["added_stores"][f"{store.store_name}"] = platform_logo_dict[store.platform] 
+                dashboard_context["added_stores"] = Store.objects.all()
 
             print(dashboard_context["added_stores"])
                 

@@ -12,7 +12,9 @@
     <div class="nav-lists">
         <h6>Stores</h6>
         <ul class="nav-list">
-            <li style="list-style-type:none;"><a href="#home"> <i class="fa-brands fa-amazon"></i>Amazon</a></li>
+            {% for i in added_stores %}
+                <li style="list-style-type:none;"><a href="#home"> <i class="fa-brands fa-amazon"></i>{{i.store_name}}</a></li>
+            {% endfor %}
         </ul>
     </div>
 
