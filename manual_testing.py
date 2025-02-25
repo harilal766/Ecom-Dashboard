@@ -274,17 +274,13 @@ def pdf_merger(pages,input_pdf,output_pdf):
         
 
 
-"""
-both of these should be from front end in django
+
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 post = r"D:\3.Shopify\Sholly ayurveda\labels" ;lin_post = r"/home/hari/Downloads/"
-shipping_label_sort(input_pdf_name="15.2.25 cod-merged.pdf", input_pdf_path = amazon ,label_type='amazon')
-"""
+shipping_label_sort(input_pdf_name="25.2.25 prepaid-merged.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
-from amazon.sp_api_models import EasyShip
-es = EasyShip()
-es.listHandoverSlots()
+
 
 
 

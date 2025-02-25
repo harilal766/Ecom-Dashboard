@@ -20,14 +20,5 @@ class Migration(migrations.Migration):
                 ('total_orders', models.IntegerField(default=0)),
                 ('last_schedule', models.DateTimeField(default=None)),
             ],
-        ),
-        migrations.CreateModel(
-            name='Store',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('store_name', models.CharField(default='seller', max_length=400, unique=True)),
-                ('slug', models.SlugField(blank=True, default='<django.db.models.fields.CharField>', max_length=100, unique=True)),
-                ('platform', models.CharField(default='Ecom', max_length=200)),
-            ],
-        ),
+        )
     ]

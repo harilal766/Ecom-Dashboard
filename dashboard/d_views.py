@@ -84,9 +84,6 @@ from dashboard.d_models import Store
 
 
 
-
-
-
 def add_store(request):
     try:
         if request.method == "POST":
