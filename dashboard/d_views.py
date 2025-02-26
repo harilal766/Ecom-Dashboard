@@ -10,8 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
-
-
 """
     Home page will display the shipments summary.
     and it will contain the form whiich will trigger the 
@@ -56,9 +54,7 @@ def dashboard(request):
             dashboard_context["added_stores"] = {}
             for store in stores:
                 dashboard_context["added_stores"] = Store.objects.all()
-
             print(dashboard_context["added_stores"])
-                
             dashboard_context["added_stores"] = stores
 
         return render(request,'dashboard.html',dashboard_context)
@@ -68,11 +64,21 @@ def dashboard(request):
 def view_store(request,slug):
     try:
         selected_store = Store.objects.get(slug = slug)
-        dashboard_data = {
+        color_text(selected_store,"red")
+        common_fields = {
             "store_name" : selected_store.store_name,
-            "platform" : selected_store.platform
-            }
-        return JsonResponse(dashboard_data)
+            "platform" : selected_store.platform,
+        }
+        additional_fields = {}
+        if selected_store.platform == "Amazon":
+            spapi_credential = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
+            additional_fields["acess_token"] = spapi_credential.access_token
+        else:
+            additional_fields["api_Key"] = 0
+
+        common_fields.update(additional_fields)
+        
+        return JsonResponse(common_fields)
     except Store.DoesNotExist:
         return JsonResponse({"Error" : f"Store {slug} Not Found"},status=404)
 

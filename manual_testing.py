@@ -277,7 +277,7 @@ def pdf_merger(pages,input_pdf,output_pdf):
 
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 post = r"D:\3.Shopify\Sholly ayurveda\labels" ;lin_post = r"/home/hari/Downloads/"
-shipping_label_sort(input_pdf_name="25.2.25 prepaid-merged.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="26.2.25 prepaid.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
 
