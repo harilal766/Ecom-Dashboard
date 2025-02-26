@@ -1,12 +1,9 @@
 from django.shortcuts import render,redirect
-from amazon.response_manipulator import amazon_dashboard
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
-from amazon.sp_api_models import Orders,Reports
-from datetime import datetime,timedelta
+from amazon.sp_api_models import SPAPIBase,Orders,Reports
 from helpers.sql_scripts import *
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
@@ -25,13 +22,6 @@ def stores():
     for store in stores:
         stores_name_list.append(store.store_name)
     return stores_name_list
-
-
-platform_logo_dict = {
-    "Amazon" : "A",
-    "Shopify" : "S"
-}
-
 
 from user.forms import Loginform
 def home(request):
@@ -61,6 +51,7 @@ def dashboard(request):
     except Exception as e:
         better_error_handling(e)
 
+@login_required
 def view_store(request,slug):
     try:
         selected_store = Store.objects.get(slug = slug)
@@ -70,14 +61,24 @@ def view_store(request,slug):
             "platform" : selected_store.platform,
         }
         additional_fields = {}
+
         if selected_store.platform == "Amazon":
             spapi_credential = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
             additional_fields["acess_token"] = spapi_credential.access_token
+
+            print(SPAPIBase(access_token=spapi_credential.access_token))
+            print(spapi_credential.get_or_refresh_access_token())
+
+            """
+            order_inst = Orders()
+            orders = order_inst.getOrders(CreatedAfter=from_timestamp(7),
+                                                      OrderStatuses="Shipped",
+                                    EasyShipShipmentStatuses="PendingPickUp")
+            """
         else:
             additional_fields["api_Key"] = 0
 
         common_fields.update(additional_fields)
-        
         return JsonResponse(common_fields)
     except Store.DoesNotExist:
         return JsonResponse({"Error" : f"Store {slug} Not Found"},status=404)

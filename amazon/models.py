@@ -48,6 +48,7 @@ class SPAPI_Credential(models.Model):
             refreshed_access_token = response.get("access_token")
             self.access_token = refreshed_access_token
             self.access_token_updation_time = datetime.now()
+            print(self.access_token_updation_time)
             return refreshed_access_token
         except Exception as e:
             better_error_handling(e)

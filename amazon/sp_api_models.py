@@ -15,15 +15,14 @@ import logging
 import requests
 
 class SPAPIBase:
-    def __init__(self,base_url=production_endpoint,marketplace_id="A21TJRUUN4KGV"):
+    def __init__(self,access_token=None):
         color_text(message="Initializing SPAPIBase")
-        access_token = get_or_generate_access_token()
         if access_token == None:
             color_text(message="Access token returned None, Please check",color="red")
         else:
             self.access_token = access_token
-            self.base_url = base_url
-            self.marketplace_id = marketplace_id
+            self.base_url = production_endpoint
+            self.marketplace_id = "A21TJRUUN4KGV"
             self.headers = {
                 "Authorization" : "access token",
                 "x-amz-access-token": self.access_token,
@@ -34,9 +33,6 @@ class SPAPIBase:
             # Common parameters, individual ones will be added from the respective functions
             self.params = {"MarketplaceIds": self.marketplace_id}
             status = f"Params : {getattr(self,'params','Not Initialized')}"
-            #color_text(message=status)
-            self.success_codes = {200,201}
-            self.rate_limit = {}
             
 
     def dynamic_request_delay():

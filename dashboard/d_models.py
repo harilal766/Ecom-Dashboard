@@ -6,8 +6,8 @@ from django.utils.text import slugify
 
 class Store(models.Model):
     store_name = models.CharField(max_length=400,unique=True,default="seller")
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100,unique=True,blank=True)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     platform = models.CharField(max_length=200,default="Ecom")
 
     def __str__(self):
