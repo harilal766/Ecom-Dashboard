@@ -27,8 +27,8 @@ class SPAPI_Credential(models.Model):
         if self.access_token_updation_time:
             time_difference = current_time - self.access_token_updation_time.replace(tzinfo=None)
             difference_seconds = time_difference.total_seconds()
-            #return difference_seconds >= token_expiry
-            return self.access_token_updation_time
+            return difference_seconds >= token_expiry
+            #return self.access_token_updation_time
         else:
             return None
 
@@ -48,6 +48,7 @@ class SPAPI_Credential(models.Model):
             refreshed_access_token = response.get("access_token")
             self.access_token = refreshed_access_token
             self.access_token_updation_time = datetime.now()
+            self.save()
             print(self.access_token_updation_time)
             return refreshed_access_token
         except Exception as e:
@@ -56,6 +57,6 @@ class SPAPI_Credential(models.Model):
     
     def get_or_refresh_access_token(self):
         if self.is_access_token_expired():
-            return True
-        else:
             return self.generate_access_token()
+        else:
+            return self.access_token

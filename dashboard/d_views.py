@@ -5,6 +5,8 @@ from amazon.sp_api_models import SPAPIBase,Orders,Reports
 from helpers.sql_scripts import *
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from amazon.report_types import selected_report_types
+from user.forms import Loginform
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
 """
@@ -14,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 """
 
 # Current logged in user
-from amazon.report_types import selected_report_types
+
 
 def stores():
     stores = Store.objects.all()
@@ -23,14 +25,12 @@ def stores():
         stores_name_list.append(store.store_name)
     return stores_name_list
 
-from user.forms import Loginform
 def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard:dashboard')
     else:
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})
-
 
 @login_required
 def dashboard(request):
@@ -66,7 +66,7 @@ def view_store(request,slug):
             spapi_credential = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
             additional_fields["acess_token"] = spapi_credential.access_token
 
-            print(SPAPIBase(access_token=spapi_credential.access_token))
+            #SPAPIBase(access_token=spapi_credential.access_token)
             print(spapi_credential.get_or_refresh_access_token())
 
             """
@@ -86,7 +86,7 @@ def view_store(request,slug):
 
 from dashboard.forms import Addstoreform
 from dashboard.d_models import Store 
-from amazon.models import SPAPI_Credential
+from amazon.a_models import SPAPI_Credential
 
 
 

@@ -8,7 +8,7 @@ from amazon.report_types import selected_report_types
 
 from django.contrib.auth.models import User
 
-from amazon.models import SPAPI_Credential
+from amazon.a_models import SPAPI_Credential
 # Create your views here.
 
 
@@ -72,15 +72,10 @@ def amazon_report_generator(request):
 
         if request.method == 'POST':
             selected_ship_date = request.POST.get("date_choice")
-
             report_type = request.POST.get("report_choice")
-
             color_text(selected_ship_date,color="red")
-        
             # change it to the output got from front end
             #selected_ship_date = todays_ind_date
-            
-
             """
             last ship date needed to be stored in the database to avoid logical errors 
             if the scheduling report taking is being done after 11 am. 

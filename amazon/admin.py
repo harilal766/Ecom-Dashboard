@@ -1,5 +1,5 @@
 from django.contrib import admin
-from amazon.models import SPAPI_Credential
+from amazon.a_models import SPAPI_Credential
 # Register your models here.
 
 class SPAPICredentialAdmin(admin.ModelAdmin):
