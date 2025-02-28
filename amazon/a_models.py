@@ -5,6 +5,7 @@ from dashboard.d_models import Store
 from helpers.messages import better_error_handling
 from datetime import datetime
 import requests
+from helpers.messages import color_text
 # Create your models here.
 class SPAPI_Credential(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -55,6 +56,8 @@ class SPAPI_Credential(models.Model):
 
     def get_or_refresh_access_token(self):
         if self.is_access_token_expired() == True:
+            color_text("Access token expired, Refreshing....","red")
             return self.generate_access_token()
         else:
+            color_text("Reusing Access token","green")
             return self.access_token
