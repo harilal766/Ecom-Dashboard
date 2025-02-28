@@ -2,11 +2,9 @@ import requests
 from datetime import datetime, timedelta, timezone
 from helpers.messages import color_text
 from helpers.file_ops import *
-from amazon.authorization import *
 import time
 
 created_after = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
-
 
 production_endpoint = "https://sellingpartnerapi-eu.amazon.com"
 sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"

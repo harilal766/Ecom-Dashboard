@@ -14,8 +14,8 @@ class SPAPI_Credential(models.Model):
     client_secret = models.CharField(max_length=500)
     refresh_token = models.CharField(max_length=500)
     # the access token is generated with the 3 credentials given on top
-    access_token = models.CharField(max_length=500)
-    access_token_updation_time = models.DateTimeField(auto_now=True)
+    access_token = models.CharField(max_length=500,default=None)
+    access_token_updation_time = models.DateTimeField(default=None)
 
 
     def __str__(self):
@@ -31,7 +31,6 @@ class SPAPI_Credential(models.Model):
             #return self.access_token_updation_time
         else:
             return None
-
 
     def generate_access_token(self):
         url = "https://api.amazon.com/auth/o2/token"
@@ -54,7 +53,6 @@ class SPAPI_Credential(models.Model):
         except Exception as e:
             better_error_handling(e)
 
-    
     def get_or_refresh_access_token(self):
         if self.is_access_token_expired() == True:
             return self.generate_access_token()
