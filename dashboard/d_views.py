@@ -63,18 +63,13 @@ def view_store(request,slug):
         additional_fields = {}
 
         if selected_store.platform == "Amazon":
-            spapi_credential = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-            additional_fields["acess_token"] = spapi_credential.access_token
+            spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
+            additional_fields["acess_token"] = spapi_model.access_token
 
-            #SPAPIBase(access_token=spapi_credential.access_token)
-            print(spapi_credential.get_or_refresh_access_token())
-
-            """
-            order_inst = Orders()
-            orders = order_inst.getOrders(CreatedAfter=from_timestamp(7),
-                                                      OrderStatuses="Shipped",
-                                    EasyShipShipmentStatuses="PendingPickUp")
-            """
+            ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
+            rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
+            print(rep)
+            
         else:
             additional_fields["api_Key"] = 0
 

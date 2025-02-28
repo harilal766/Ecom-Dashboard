@@ -15,10 +15,11 @@ import logging
 import requests
 
 class SPAPIBase:
-    def __init__(self,access_token=None):
+    def __init__(self,access_token):
         color_text(message="Initializing SPAPIBase")
         if access_token == None:
             color_text(message="Access token returned None, Please check",color="red")
+            return
         else:
             self.access_token = access_token
             self.base_url = production_endpoint
@@ -34,9 +35,6 @@ class SPAPIBase:
             self.params = {"MarketplaceIds": self.marketplace_id}
             status = f"Params : {getattr(self,'params','Not Initialized')}"
             
-
-    def dynamic_request_delay():
-        pass
 
     def make_request(self,endpoint,method,params=None,json_input=None):
         url = self.base_url + endpoint 
@@ -191,10 +189,7 @@ class SPAPIBase:
                 break
         return None
 
-
-
 class Orders(SPAPIBase):
-
     def getOrders(self,CreatedAfter=None,CreatedBefore=None,
                   OrderStatuses=None,
                   LastUpdatedAfter=None,
@@ -364,7 +359,6 @@ class EasyShip(SPAPIBase):
     def createScheduledPackageBulk(self):
         endpoint = f"/easyShip/{self.version}/packages/bulk"
         
-
 class Reports(SPAPIBase):
     # https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-reference        
     def createReport(self,reportType,reportOptions=None,dataStartTime=None,dataEndTime=None):
@@ -426,13 +420,8 @@ class Reports(SPAPIBase):
         return super().execute_request(endpoint=endpoint,params=self.params,
                                        method='get',burst=15)
         
-
-
-
-
 class Shipping(SPAPIBase):
     pass
-
 
 class Finances(SPAPIBase):
     pass

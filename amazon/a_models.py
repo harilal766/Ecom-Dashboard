@@ -56,7 +56,7 @@ class SPAPI_Credential(models.Model):
 
     
     def get_or_refresh_access_token(self):
-        if self.is_access_token_expired():
+        if self.is_access_token_expired() == True:
             return self.generate_access_token()
         else:
             return self.access_token
