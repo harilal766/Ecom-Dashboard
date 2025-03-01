@@ -5,7 +5,7 @@ from drf.viewsets import UserViewSet,StoreViewSet
 
 router = DefaultRouter()
 router.register(r'users',UserViewSet)
-router.register(r'stores',StoreViewSet)
+router.register(r'store_profiles',StoreViewSet)
 
 
 urlpatterns =[

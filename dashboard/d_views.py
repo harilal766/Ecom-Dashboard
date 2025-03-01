@@ -8,8 +8,11 @@ from django.contrib.auth.decorators import login_required
 from amazon.report_types import selected_report_types
 from user.forms import Loginform
 from dashboard.forms import Addstoreform
-from dashboard.d_models import Store 
+from dashboard.d_models import *
 from amazon.a_models import SPAPI_Credential
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
 """
@@ -22,7 +25,7 @@ from amazon.a_models import SPAPI_Credential
 
 
 def stores():
-    stores = Store.objects.all()
+    stores = StoreProfile.objects.all()
     stores_name_list = []
     for store in stores:
         stores_name_list.append(store.store_name)
@@ -45,12 +48,12 @@ def dashboard(request):
                          "added_stores" : None,}
     try:
         dashboard_context['amazon_report_types'] = selected_report_types
-        added_stores = Store.objects.all()
+        added_stores = StoreProfile.objects.all()
         # loop through available plaforms
         if added_stores:
             dashboard_context["added_stores"] = {}
             default_store_id = added_stores.values_list("id",flat=True)[0]
-            default_store_slug = Store.objects.get(id=default_store_id).slug
+            default_store_slug = StoreProfile.objects.get(id=default_store_id).slug
 
             print(default_store_slug)
             dashboard_context["added_stores"] = added_stores
@@ -83,7 +86,7 @@ def add_store(request):
 
                 # store creation
                 if not store_name in available_stores:
-                    new_store_data = Store.objects.create(
+                    new_store_data = StoreProfile.objects.create(
                         user = request.user, store_name=store_name,
                         platform=platform)
                     new_store_data.save()
@@ -98,6 +101,9 @@ def add_store(request):
                         api_creds.access_token = api_creds.generate_access_token()
                         api_creds.save()
 
+                    if api_creds:
+                        selected_store_debrief= StoreDebrief.objects.create(store = api_creds)
+
 
                     return redirect("dashboard:home")
                 else:
@@ -110,30 +116,31 @@ def add_store(request):
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
 
-@login_required
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def view_store(request,slug):
     try:
-        selected_store = Store.objects.get(slug = slug)
-        color_text(selected_store,"red")
+        selected_store = StoreProfile.objects.get(slug = slug)
+        selected_store_debrief = StoreDebrief.objects.filter(store = selected_store)
+        if selected_store_debrief:
+            color_text(selected_store_debrief,"blue")
+            
         common_fields = {
-            "store_name" : selected_store.store_name,
-            "platform" : selected_store.platform,
-        }
-        
-        additional_fields = {
             "Unshipped Orders" : None,
         }
+        
+        unshipped = None; 
 
         if selected_store.platform == "Amazon":
             spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
             ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
             rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
-            additional_fields["Unshipped Orders"] = len(rep)
+            common_fields["Unshipped Orders"] = len(rep) if rep else 0
 
         elif selected_store.platform == "Shopify":
-            additional_fields["Unshipped Orders"] = 0
+            common_fields["Unshipped Orders"] = 0
 
-        common_fields.update(additional_fields)
-        return JsonResponse(common_fields)
-    except Store.DoesNotExist:
-        return JsonResponse({"Error" : f"Store {slug} Not Found"},status=404)
+        return Response(common_fields, status=200)
+    except Exception as e:
+        better_error_handling(e)
+        return Response({"error": str(e)}, status=500)

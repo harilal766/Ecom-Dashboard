@@ -11,7 +11,7 @@
 <!-- Display the dashbaord if the store is added , else we should see the option to add it-->
 <div class="parent-container">
     <div class="child-container">
-        <h2 id = "dashboardTitle">Dashboard</h2>
+        <h1 id = "dashboardTitle">Dashboard</h1>
     </div>
     <!-- Display available stores -->
     {% if added_stores %}
@@ -22,7 +22,9 @@
                 {% endfor %}
             </ul>
         </div>
-
+        <div>
+            <h5>Unshipped Orders : <span id="Unshipped"></span></h5>
+        </div>
     {% else %}
         <h1>Add a store to continue</h1>
     {% endif %}

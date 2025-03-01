@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User 
-from dashboard.d_models import Store
+from dashboard.d_models import StoreProfile
 from helpers.messages import better_error_handling
 from datetime import datetime
 import requests
@@ -9,7 +9,7 @@ from helpers.messages import color_text
 # Create your models here.
 class SPAPI_Credential(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    store = models.ForeignKey(Store,on_delete=models.CASCADE)
+    store = models.ForeignKey(StoreProfile,on_delete=models.CASCADE)
 
     client_id = models.CharField(max_length=500)
     client_secret = models.CharField(max_length=500)
