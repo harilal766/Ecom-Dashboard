@@ -41,10 +41,6 @@ def home(request):
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})
 
-
-
-
-
 @login_required
 def dashboard(request):
     dashboard_context = {"amazon_report_types":None,
@@ -57,13 +53,45 @@ def dashboard(request):
             dashboard_context["added_stores"] = {}
             default_store_id = added_stores.values_list("id",flat=True)[0]
             default_store_slug = StoreProfile.objects.get(id=default_store_id).slug
-
-            print(default_store_slug)
             dashboard_context["added_stores"] = added_stores
 
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_store(request,slug):
+    try:
+        selected_store = StoreProfile.objects.get(slug = slug)
+        selected_store_debrief = StoreDebrief.objects.get(store = selected_store)
+        if selected_store_debrief:
+            color_text(selected_store_debrief,"blue")
+            
+        common_fields = {
+            "Unshipped Orders" : None,
+        }
+        unshipped = None; 
+
+        if selected_store.platform == "Amazon":
+            spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
+            ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
+            rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
+
+            unshipped = len(rep) if rep else 0
+
+        elif selected_store.platform == "Shopify":
+            
+            unshipped = 0
+
+        # updating the fetched data to the table
+        selected_store_debrief.unshipped_orders = unshipped
+        selected_store_debrief.save()
+        serializer = StoreDebriefSerializer(selected_store_debrief)
+        return Response(serializer.data, status=200)
+    except Exception as e:
+        better_error_handling(e)
+        return Response({"error": str(e)}, status=500)
 
 @login_required
 def add_store(request):
@@ -118,39 +146,3 @@ def add_store(request):
     except Exception as e:
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def view_store(request,slug):
-    try:
-        selected_store = StoreProfile.objects.get(slug = slug)
-        selected_store_debrief = StoreDebrief.objects.get(store = selected_store)
-        if selected_store_debrief:
-            color_text(selected_store_debrief,"blue")
-            
-        common_fields = {
-            "Unshipped Orders" : None,
-        }
-        unshipped = None; 
-
-        if selected_store.platform == "Amazon":
-            spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-            ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
-            rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
-
-            unshipped = len(rep) if rep else 0
-
-        elif selected_store.platform == "Shopify":
-            
-            unshipped = 0
-
-         # updating the fetched data to the table
-        selected_store_debrief.unshipped_orders = unshipped
-        selected_store_debrief.save()
-
-        serializer = StoreDebriefSerializer(selected_store_debrief)
-
-        return Response(serializer.data, status=200)
-    except Exception as e:
-        better_error_handling(e)
-        return Response({"error": str(e)}, status=500)

@@ -3,7 +3,6 @@ async function nameValidation(inputNameField,endpoint,key,statusId){
     // name status
     let statusBar = document.getElementById(statusId);
     statusBar.style.color = "red"; let status = "";
-
     try{ 
         let response = await fetch(endpoint);
         let stores = await response.json();

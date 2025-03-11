@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path,include
 
 from drf.urls import router
+from debug_toolbar.toolbar import debug_toolbar_urls
+
 
 
 urlpatterns = [
@@ -26,4 +28,4 @@ urlpatterns = [
     path('',include('dashboard.urls')),
     path('authorization/',include('user.urls')),
     path('amazon/',include('amazon.urls'))
-]
+]+ debug_toolbar_urls()

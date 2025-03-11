@@ -1,3 +1,4 @@
+
 """
 Django settings for ecom_manager project.
 
@@ -41,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # custom apps
     'dashboard','user','amazon',
-    'rest_framework','corsheaders'
-
+    'rest_framework','corsheaders',
+    'debug_toolbar',
 ]
 
 
@@ -62,6 +63,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+]
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 ROOT_URLCONF = 'ecom_manager.urls'

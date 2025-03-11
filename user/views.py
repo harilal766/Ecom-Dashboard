@@ -14,11 +14,12 @@ username_pattern = r"^[a-zA-Z]{6-12}$"
 password_pattern = r"\d{8-15}"
 
 
-auth_context = {"purpose" : None, 
-                "form" : None,
-                "button_text": None,
-                "auth_status" : None,
-                }
+auth_context = {
+    "purpose" : None, 
+    "form" : None,
+    "button_text": None,
+    "auth_status" : None,
+}
 
 # make a temporary user and filter based on this.
 
