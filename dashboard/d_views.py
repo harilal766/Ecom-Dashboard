@@ -13,6 +13,9 @@ from amazon.a_models import SPAPI_Credential
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+
+
+from dashboard.serializers import StoreDebriefSerializer
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
 """
@@ -121,26 +124,33 @@ def add_store(request):
 def view_store(request,slug):
     try:
         selected_store = StoreProfile.objects.get(slug = slug)
-        selected_store_debrief = StoreDebrief.objects.filter(store = selected_store)
+        selected_store_debrief = StoreDebrief.objects.get(store = selected_store)
         if selected_store_debrief:
             color_text(selected_store_debrief,"blue")
             
         common_fields = {
             "Unshipped Orders" : None,
         }
-        
         unshipped = None; 
 
         if selected_store.platform == "Amazon":
             spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
             ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
             rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
-            common_fields["Unshipped Orders"] = len(rep) if rep else 0
+
+            unshipped = len(rep) if rep else 0
 
         elif selected_store.platform == "Shopify":
-            common_fields["Unshipped Orders"] = 0
+            
+            unshipped = 0
 
-        return Response(common_fields, status=200)
+         # updating the fetched data to the table
+        selected_store_debrief.unshipped_orders = unshipped
+        selected_store_debrief.save()
+
+        serializer = StoreDebriefSerializer(selected_store_debrief)
+
+        return Response(serializer.data, status=200)
     except Exception as e:
         better_error_handling(e)
         return Response({"error": str(e)}, status=500)
