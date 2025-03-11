@@ -8,10 +8,7 @@ class WebsocketBase(AsyncWebsocketConsumer):
     async def connect(self):
         color_text("Websocket connected...")
         await self.accept()
-        now = datetime.now().strftime("%H:%M:%S")
         await self.send_time()
-
-
         while True:
             await asyncio.sleep(1)  # Wait for 1 second
             await self.send_time()

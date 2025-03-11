@@ -1,6 +1,5 @@
 const socket = new WebSocket("ws://127.0.0.1:8000/ws/websocket/");
 
-/*
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const currentTime = data.time;  // The time from the server
@@ -19,4 +18,4 @@ socket.onclose = (event) => {
 socket.onerror = (error) => {
     console.error("WebSocket error:", error);
 };
-*/
+
