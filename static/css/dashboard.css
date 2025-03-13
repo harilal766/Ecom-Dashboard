@@ -27,8 +27,11 @@
 }
 
 .active{
-    color: "green";
-    background-color: aqua;
+    color:green;
+    text-decoration: underline;
     border-radius: 5px;
-    padding: 5px;
+}
+
+.store-title:hover{
+    color: "";
 }
