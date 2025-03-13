@@ -1,8 +1,16 @@
+
+
+
 async function nameValidation(inputNameField,endpoint,key,statusId){
     let existingNames = []
     // name status
-    let statusBar = document.getElementById(statusId);
-    statusBar.style.color = "red"; let status = "";
+    /*
+        Find
+    */
+    let statusBar = document.getElementById("statusBar");
+    statusBar.style.color = "red"; 
+
+    let status = "";
     try{ 
         let response = await fetch(endpoint);
         let stores = await response.json();
@@ -35,7 +43,7 @@ async function nameValidation(inputNameField,endpoint,key,statusId){
         });
     }
     catch (error){
-        console.log("Error",error);
+        console.log(error);
     }
 }
 
@@ -116,5 +124,4 @@ document.addEventListener("DOMContentLoaded",function () {
     nameValidation(inputNameField = storeNameField,
         endpoint = "http://127.0.0.1:8000/api/stores/",key = "store_name", statusId = "statusBar"); 
 });
-
 

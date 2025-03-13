@@ -1,9 +1,12 @@
 {% extends 'index.html' %}
+{% load static %}
 <!-- Amazon dashboard, need to be added via template inheritance for managing easily-->
 
 {% block title %} - Dashboard {% endblock %}
 
 {% block content %}
+<script src="{% static 'js/dashboard.js' %}" defer></script>
+<script src="{% static 'js/socket.js' %}" defer></script>
 <div class="graph-view">
     <h1>Sales Graph</h1>
 </div>

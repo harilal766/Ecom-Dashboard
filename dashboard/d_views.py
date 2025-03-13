@@ -7,8 +7,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from amazon.report_types import selected_report_types
 from user.forms import Loginform
-from dashboard.forms import Addstoreform
-from dashboard.d_models import *
+from .forms import Addstoreform
+from .d_models import *
 from amazon.a_models import SPAPI_Credential
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -55,6 +55,7 @@ def dashboard(request):
             default_store_slug = StoreProfile.objects.get(id=default_store_id).slug
             dashboard_context["added_stores"] = added_stores
 
+
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)
@@ -74,6 +75,7 @@ def view_store(request,slug):
         unshipped = None; 
 
         if selected_store.platform == "Amazon":
+            
             spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
             ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
             rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")

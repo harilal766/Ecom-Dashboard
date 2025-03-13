@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<script src="{% static 'js/form.js' %}" defer></script>
 <h1>Add store</h1><span id="statusBar"></span>
 
 <form class="form" id = "storeForm" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:add_store' %}">
@@ -13,5 +14,4 @@
 
     </div>
 </form>
-
 {% endblock %}

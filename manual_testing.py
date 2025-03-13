@@ -62,4 +62,4 @@ from helpers.label_sorter import *
 
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 post = r"D:\3.Shopify\Sholly ayurveda\labels" ;lin_post = r"/home/hari/Downloads/"
-shipping_label_sort(input_pdf_name="11.3.25 prepaid 67.pdf", input_pdf_path = amazon ,label_type='amazon')
+shipping_label_sort(input_pdf_name="12.3.25 cod 41.pdf", input_pdf_path = amazon ,label_type='amazon')

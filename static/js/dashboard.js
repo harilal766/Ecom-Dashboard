@@ -22,7 +22,3 @@ addedStoresTitles.forEach((title) => {
         selectedTitle.classList.add("active");
     });
 });
-
-// set the first data as the default selection
-console.log(addedStoresTitles[0].innerText);
-
