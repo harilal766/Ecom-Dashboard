@@ -28,4 +28,7 @@
 
 .active{
     color: "green";
+    background-color: aqua;
+    border-radius: 5px;
+    padding: 5px;
 }

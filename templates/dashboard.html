@@ -21,7 +21,8 @@
         <div id = "addedStores" class="store-titles">
             <ul class="store-titles">
                 {% for store in added_stores %}
-                <li><a class="store-title" href="{% url 'dashboard:dashboard' store.slug %}">{{store}}</a></li>
+                <!--{% url 'dashboard:dashboard' store.slug %}-->
+                <li><a class="store-title" href="#">{{store}}</a></li>
                 {% endfor %}
             </ul>
         </div>
