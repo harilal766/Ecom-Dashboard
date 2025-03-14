@@ -16,14 +16,15 @@ async function nameValidation(inputNameField,endpoint,key,statusId){
         let stores = await response.json();
         
         stores.forEach(store => {
-            existingNames.push(store[key]);
+            existingNames.push(store[key].toLowerCase());
         });
         console.log(existingNames);
 
         const StoreName = document.getElementById("storeName");
 
         StoreName.addEventListener("input",function(event){
-            const typedName = event.target.value;
+            let typedName = (event.target.value); 
+            typedName = typedName.toLowerCase();
             // display status only if input value is present
             if (inputNameField.value) {
                 if (existingNames.includes(typedName)){
@@ -122,6 +123,6 @@ document.addEventListener("DOMContentLoaded",function () {
     
     // Name validation
     nameValidation(inputNameField = storeNameField,
-        endpoint = "http://127.0.0.1:8000/api/stores/",key = "store_name", statusId = "statusBar"); 
+        endpoint = "http://127.0.0.1:8000/api/store_profiles/",key = "store_name", statusId = "statusBar"); 
 });
 

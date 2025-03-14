@@ -33,3 +33,20 @@ addedStoresTitles.forEach((title) =>{
 /*
 access the stores api and find its slugs
 */ 
+
+
+async function fetchEndpoint(endpoint){
+    try {
+        const response = await fetch(endpoint);
+        if (!response.ok){
+            throw new Error (`Response status : ${response.status}`);
+        }
+        const json = await response.json();
+        return json;
+    }
+    catch(error) {
+        console.log(error.message);
+    }
+}
+
+console.log(fetchEndpoint("/dashboard/mosle"));
