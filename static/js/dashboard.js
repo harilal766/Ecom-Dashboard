@@ -19,19 +19,8 @@ let selectedStore = addedStoresTitles[0];
 selectedStore.classList.add("active");
 console.log(`Default Store : ${selectedStore.innerHTML}`);
 
-/* while the page is loaded there should */
 
-addedStoresTitles.forEach((title) =>{
-    title.addEventListener("click", function(event){
-        // removing the highlighting from the preselected title
-        addedStoresTitles.forEach((preSelection) => preSelection.classList.remove("active"));
 
-        //event.target.classList.add("active");
-        selectedStore = event.target;
-        selectedStore.classList.add("active");
-        console.log(selectedStore.innerHTML);
-    });
-});
 
 
 /*
