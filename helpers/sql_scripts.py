@@ -61,7 +61,7 @@ def sql_to_excel(sql_cursor,query_result,out_excel_path,excel_filename=None):
         excel_sheet = pd.DataFrame(query_result,columns=column_list)
         # if the excel file already exists, a sheet should be created inside the file and the output should be stored there.
         if excel_filename == None:
-            excel_filename = input_checker(display_message="Enter the filename.")
+            excel_filename = file_input_checker(display_message="Enter the filename.")
         if excel_filename:
             # re initialization of the file path after getting the filename
             out_directory = out_excel_path
@@ -117,7 +117,7 @@ def sql_table_CR(dbname,tablename,replace_or_append,input_file_dir,filename=None
     try:
         connection = db_connection(dbname=dbname,db_system="sqlite")
         if filename != None:
-            filename = input_checker(display_message="Enter the input filename with extension :- ",filepath=input_file_dir)
+            filename = file_input_checker(display_message="Enter the input filename with extension :- ",filepath=input_file_dir)
         extension = str(filename.split(".")[-1]).lower()
         df = ""
         filepath = os.path.join(input_file_dir,filename)

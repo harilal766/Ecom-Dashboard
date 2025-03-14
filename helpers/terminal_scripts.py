@@ -12,6 +12,7 @@ def recompile():
         #python_path = str(sys.executable)
         python_path = dir_switch(win=sys.executable,lin="/bin/python3")
         script_path = dir_switch(win=win_main, lin=lin_main)
+        color_text(f"python : {python_path}\n main.py : {script_path}")
         command = f'"{python_path}" "{script_path}"'
         color_text(message=python_path,color='blue')
         color_text(message="Recompiling....",color='blue')
@@ -20,13 +21,3 @@ def recompile():
     except Exception as e:
         better_error_handling(e)
 
-        
-
-
-
-
-def bedtime_reminder(): 
-    # 
-    pass
-    
-        

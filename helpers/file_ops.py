@@ -81,7 +81,7 @@ def filepath_constructor(filepath,filename):
 
 
 # change to file_input_checker
-def input_checker(display_message,filepath):
+def file_input_checker(display_message,filepath):
     function_boundary(title='INPUT CHECK')
 
     # displaying the available files in a last in first out order
@@ -128,7 +128,7 @@ def pdf_pattern_finder(message,filepath,pattern):
     function_boundary(title="PDF PATTERN FINDER")
     pattern_list = []
     try:
-        filename = input_checker(display_message=f"{message} : ",filepath=filepath)
+        filename = file_input_checker(display_message=f"{message} : ",filepath=filepath)
         if filename:
             file_path = os.path.join(filepath, f"{filename}")
             success_status_msg("File Accessed.")
