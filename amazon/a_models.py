@@ -15,7 +15,7 @@ class SPAPI_Credential(models.Model):
     client_secret = models.CharField(max_length=500)
     refresh_token = models.CharField(max_length=500)
     # the access token is generated with the 3 credentials given on top
-    access_token = models.CharField(max_length=500,default=None)
+    access_token = models.CharField(max_length=500, null=True, blank=True)
     access_token_updation_time = models.DateTimeField(default=None)
 
 
