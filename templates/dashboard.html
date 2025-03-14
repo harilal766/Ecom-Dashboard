@@ -22,7 +22,7 @@
             <ul class="store-titles">
                 {% for store in added_stores %}
                 <!--{% url 'dashboard:dashboard' store.slug %}-->
-                <li><a class="store-title" href="#">{{store}}</a></li>
+                <li><a class="store-title" href="{% url 'dashboard:dashboard' store.slug %}">{{store}}</a></li>
                 {% endfor %}
             </ul>
         </div>

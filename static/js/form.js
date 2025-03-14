@@ -123,6 +123,6 @@ document.addEventListener("DOMContentLoaded",function () {
     
     // Name validation
     nameValidation(inputNameField = storeNameField,
-        endpoint = "http://127.0.0.1:8000/api/store_profiles/",key = "store_name", statusId = "statusBar"); 
+        endpoint = "/api/store_profiles/",key = "store_name", statusId = "statusBar"); 
 });
 

@@ -1,20 +1,19 @@
-from report_generator import report_driver
 from helpers.terminal_scripts import clear_terminal,recompile
 from helpers.file_ops import function_boundary
 from helpers.messages import *
-from post_tracking import post_tracking
-from api_driver import api_menus_driver
+from dashboard.utils import *
+
 
 
 # Menu4
 feature_menu = {
     0:("Clear Terminal",clear_terminal),
-    1:("Amazon shipment report", report_driver),
-    2:("Shopify shipment report",report_driver),
-    3:("Post Tracking",post_tracking),
-    4:("Amazon Todays Orders API",api_menus_driver),
-    5:("Amazon Order API",api_menus_driver),
-    6:("Amazon shipment report API",report_driver)
+    1:("Amazon shipment report",report_generator),
+    2:("Shopify shipment report",0),
+    3:("Post Tracking",0),
+    4:("Amazon Todays Orders API",0),
+    5:("Amazon Order API",0),
+    6:("Amazon shipment report API",0)
 }
 # Split into 2 menu dictionaries
 feat_last_key = list(feature_menu.keys())[-1]

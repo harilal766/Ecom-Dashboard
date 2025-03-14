@@ -3,6 +3,10 @@ function darkMode(){
     let dayAndNight = {
         "white" : "black",
     };
+    /*
+    find back ground colors by accessi
+    convert white background to black
+    */
 }
 
 
@@ -48,5 +52,3 @@ async function fetchEndpoint(endpoint){
         console.log(error.message);
     }
 }
-
-console.log(fetchEndpoint("/dashboard/mosle"));
