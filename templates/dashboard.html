@@ -13,26 +13,34 @@
 
 <!-- Display the dashbaord if the store is added , else we should see the option to add it-->
 <div class="parent-container">
-    <div class="child-container">
-        <h1 id = "dashboardTitle">Dashboard</h1>
-    </div>
     <!-- Display available stores -->
     {% if added_stores %}
-        <div id = "addedStores" class="store-titles">
-            <ul class="store-titles">
-                {% for store in added_stores %}
-                <!--{% url 'dashboard:dashboard' store.slug %}-->
-                <li><a class="store-title" href="{% url 'dashboard:dashboard' store.slug %}">{{store}}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
+    <div id = "addedStores" class="store-titles">
+        <h1 id = "dashboardTitle">Dashboard</h1>
+        <ul class="store-titles">
+            {% for store in added_stores %}
+            <li><a class="store-title" href="">{{store}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <h5>Websocket testing</h5>
+        <h5 id="timeDisplay"></h5>
+    </div>
+    <div>
+        <h5>Unshipped Orders : <span id="Unshipped">{{unshipped}}</span</h5>
+        <h6>Report generator</h6>
         <div>
-            <h5>Unshipped Orders : <span id="Unshipped"></span></h5>
-            <h5 id="timeDisplay"></h5>
-           
+            <select>
+                <option>dd</option>
+            </select>
         </div>
+    </div>
     {% else %}
+    <div class="add-store">
         <h1>Add a store to continue</h1>
+        <a href="{% url 'dashboard:add_store' %}">Add store</a>
+    </div>
     {% endif %}
 </div>
     
