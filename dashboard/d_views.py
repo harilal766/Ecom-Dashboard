@@ -27,12 +27,7 @@ from dashboard.serializers import StoreDebriefSerializer
 # Current logged in user
 
 
-def stores():
-    stores = StoreProfile.objects.all()
-    stores_name_list = []
-    for store in stores:
-        stores_name_list.append(store.store_name)
-    return stores_name_list
+
 
 def home(request):
     if request.user.is_authenticated:
@@ -41,16 +36,19 @@ def home(request):
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})
 
+
+stores = StoreProfile.objects.all()
 dashboard_context = {
-    "amazon_report_types":None,
-    "added_stores" : StoreProfile.objects.all(),
-    "unshipped" : StoreProfile.objects.all()[0]
+    "amazon_report_types": 0,
+    "added_stores" : stores,
+    "unshipped" : 0
 }
+
 
 @login_required
 def dashboard(request):
     try:
-        pass
+        color_text(dashboard_context)
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)
@@ -62,6 +60,21 @@ def view_store(request,slug):
         selected_store = StoreProfile.objects.get(slug = slug)
         selected_store_debrief = StoreDebrief.objects.get_or_create(store = selected_store)
         color_text(selected_store_debrief)
+
+        unshipped_orders = 0; 
+        if selected_store.platform == "Amazon":
+            sp = SPAPI_Credential.objects.get(user = request.user,store = selected_store)
+            sp.access_token = sp.get_or_refresh_access_token()
+            sp.save()
+
+            ord_ins = Orders(access_token=sp.access_token)
+            unshipped_orders = len(ord_ins.getOrders(CreatedAfter=from_timestamp(5),OrderStatuses="Unshipped"))
+
+        elif selected_store.platform == "Shopify":
+            unshipped_orders = 0
+
+        dashboard_context["unshipped"] = unshipped_orders
+            
 
         return render(request,"dashboard.html",dashboard_context)
 
@@ -82,13 +95,16 @@ def add_store(request):
                 client_id = request.POST.get("client_id")
                 client_secret = request.POST.get("client_secret")
                 refresh_token = request.POST.get("refresh_token")
+
+                available_stores = []
+                for store in StoreProfile.objects.get(user = request.user):
+                    available_stores.append(store.store_name)
                 
-                available_stores = stores()
+                
                 if len(available_stores) == 0:
                     color_text("No stores added","red")
                 else:
                     color_text(f"Available stores{available_stores}")
-                    color_text(message=f"{client_id} \n {client_secret} \n {refresh_token}")
 
                 # store creation
                 if not store_name in available_stores:
@@ -104,7 +120,8 @@ def add_store(request):
                             client_id = client_id, client_secret = client_secret,
                             refresh_token = refresh_token)
                         api_creds.save()
-
+                    else:
+                        pass
 
                     return redirect("dashboard:home")
                 else:

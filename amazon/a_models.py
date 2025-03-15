@@ -38,24 +38,24 @@ class SPAPI_Credential(models.Model):
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         data = {
             "grant_type": "refresh_token",
-            "refresh_token": self.refresh_token,
             "client_id": self.client_id,
             "client_secret": self.client_secret,
+            "refresh_token" : self.refresh_token
         }
         try:
             response = requests.post(url, headers= headers, data=data)
             response = response.json()
+            
             refreshed_access_token = response.get("access_token")
             self.access_token = refreshed_access_token
             self.access_token_updation_time = datetime.now()
             self.save()
-            print(self.access_token_updation_time)
             return refreshed_access_token
         except Exception as e:
             better_error_handling(e)
 
     def get_or_refresh_access_token(self):
-        if self.is_access_token_expired() == True:
+        if (self.access_token == None) or self.is_access_token_expired() == True :
             color_text("Access token expired, Refreshing....","red")
             return self.generate_access_token()
         else:
