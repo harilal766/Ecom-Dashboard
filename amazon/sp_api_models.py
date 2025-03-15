@@ -228,14 +228,20 @@ class Orders(SPAPIBase):
         """
         endpoint = "/orders/v0/orders"
         #color_text(message=f"Before update : {self.params}",color="red")
-        self.params.update({"CreatedAfter" : CreatedAfter,
-                            "CreatedBefore" : CreatedBefore,
-                            "OrderStatuses": OrderStatuses,
-                            "LastUpdatedAfter" : LastUpdatedAfter,
-                            "PaymentMethods" : PaymentMethods,"FulfillmentChannels":FulfillmentChannels,
-                            "EarliestShipDate" : EarliestShipDate, "LatestShipDate" : LatestShipDate,
-                            "EasyShipShipmentStatuses" : EasyShipShipmentStatuses,
-                            "NextToken" : None}) 
+        self.params.update(
+            {
+                "CreatedAfter" : CreatedAfter,
+                "CreatedBefore" : CreatedBefore,
+                "OrderStatuses": OrderStatuses,
+                "LastUpdatedAfter" : LastUpdatedAfter,
+                "PaymentMethods" : PaymentMethods,
+                "FulfillmentChannels":FulfillmentChannels,
+                "EarliestShipDate" : EarliestShipDate, 
+                "LatestShipDate" : LatestShipDate,
+                "EasyShipShipmentStatuses" : EasyShipShipmentStatuses,
+                "NextToken" : None
+            }
+        ) 
          
         #color_text(message=f"After update : {self.params}")
         """
@@ -245,7 +251,8 @@ class Orders(SPAPIBase):
         if (CreatedAfter != None) or (LastUpdatedAfter != None):
             # Verification conditions.
             if OrderStatuses not in order_statuses:
-                return color_text(message="The order status you gave is not available in sp api",color="red")
+                pass
+                #return color_text(message="The order status you gave is not available in sp api",color="red")
             #breakpoint()
             response = super().execute_request(endpoint=endpoint,params=self.params,
                                                 payload='payload',method='get',burst=20)

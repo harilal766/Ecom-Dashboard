@@ -62,8 +62,10 @@ def view_store(request,slug):
                 sp.save()
 
             ord_ins = Orders(access_token=sp.access_token)
-            
-            order_count = ord_ins.getOrders(CreatedAfter=from_timestamp(5),OrderStatuses="Unshipped")
+
+            order_count = ord_ins.getOrders(
+                CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
+            )
 
             if not order_count == None:
                 unshipped_orders = len(order_count)
@@ -98,7 +100,7 @@ def add_store(request):
                 refresh_token = request.POST.get("refresh_token")
 
                 available_stores = []
-                for store in StoreProfile.objects.get(user = request.user):
+                for store in StoreProfile.objects.filter(user = request.user):
                     available_stores.append(store.store_name)
                 
                 
