@@ -31,31 +31,23 @@ from dashboard.serializers import StoreDebriefSerializer
 
 def home(request):
     if request.user.is_authenticated:
-        return dashboard(request)
+        def_slug = StoreProfile.objects.filter(user = request.user)[0].slug
+        return view_store(request,def_slug)
+        #return dashboard(request)
     else:
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})
 
 
-stores = StoreProfile.objects.all()
-dashboard_context = {
-    "amazon_report_types": 0,
-    "added_stores" : stores,
-    "unshipped" : 0
-}
-
-
-@login_required
-def dashboard(request):
-    try:
-        color_text(dashboard_context)
-        return render(request,'dashboard.html',dashboard_context)
-    except Exception as e:
-        better_error_handling(e)
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def view_store(request,slug):
+    stores = StoreProfile.objects.filter(user = request.user)
+    dashboard_context = {
+        "amazon_report_types": 0,
+        "added_stores" : stores,
+        "unshipped" : 0
+    }
     try:
         selected_store = StoreProfile.objects.get(slug = slug)
         selected_store_debrief = StoreDebrief.objects.get_or_create(store = selected_store)
