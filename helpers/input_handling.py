@@ -2,12 +2,11 @@ from helpers.file_ops import function_boundary
 from helpers.messages import *
 
 
-
-def menu_processor(menu_dict,choice_text):
+def menu_processor(menu_dict,choice_text,menu_heading):
     space = "-"*15
     while True:
         # Prompting the user for an option
-        function_boundary(title="MENU")
+        function_boundary(title=menu_heading)
         for option in menu_dict:
             color_text(message=f"{option}. {menu_dict[option][0]}",color='green')
         print(f"{space}-----{space}")
@@ -22,14 +21,18 @@ def menu_processor(menu_dict,choice_text):
 
         # Processing the selected input
         if (selection in menu_dict):
-            print(f"You have selected : {menu_dict[selection][0]}")
-            argument = menu_dict[selection][0].lower()
+
+            selection_text = menu_dict[selection][0]
+            selection_function = menu_dict[selection][1]
+
+            print(f"You have selected : {selection_text}")
+            argument = selection_text.lower()
             # selectin api and report functions
             color_text(message=f"{space}Execution Log{space}",color='blue')
             if "api" in argument:
-                menu_dict[selection][1](argument)
+                selection_function(argument)
             else:
-                menu_dict[selection][1]()
+                selection_function()
             if selection:
                 color_text(message=f"{space}END{space}",color='red')
         else:

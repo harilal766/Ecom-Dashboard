@@ -124,20 +124,13 @@ def add_store(request):
                         platform=platform)
                     new_store_data.save()
 
-                    # different api credential creation based on platform 
+                    # Create store profile
                     if platform == "Amazon":
-                        
                         api_creds = SPAPI_Credential.objects.create(
                             user = request.user, store = new_store_data,
                             client_id = client_id, client_secret = client_secret,
                             refresh_token = refresh_token)
                         api_creds.save()
-                        api_creds.access_token = api_creds.generate_access_token()
-                        api_creds.save()
-                        
-
-                    if api_creds:
-                        selected_store_debrief= StoreDebrief.objects.create(store = new_store_data)
 
 
                     return redirect("dashboard:home")
