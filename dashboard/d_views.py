@@ -46,7 +46,8 @@ def view_store(request,slug):
     dashboard_context = {
         "amazon_report_types": 0,
         "added_stores" : stores,
-        "unshipped" : 0
+        "unshipped" : 0,
+        "report_types" : None
     }
     try:
         selected_store = StoreProfile.objects.get(slug = slug)
@@ -56,16 +57,24 @@ def view_store(request,slug):
         unshipped_orders = 0; 
         if selected_store.platform == "Amazon":
             sp = SPAPI_Credential.objects.get(user = request.user,store = selected_store)
-            sp.access_token = sp.get_or_refresh_access_token()
-            sp.save()
+            if sp.access_token == None:
+                sp.access_token = sp.get_or_refresh_access_token()
+                sp.save()
 
             ord_ins = Orders(access_token=sp.access_token)
-            unshipped_orders = len(ord_ins.getOrders(CreatedAfter=from_timestamp(5),OrderStatuses="Unshipped"))
+            
+            order_count = ord_ins.getOrders(CreatedAfter=from_timestamp(5),OrderStatuses="Unshipped")
 
+            if not order_count == None:
+                unshipped_orders = len(order_count)
+
+            dashboard_context["report_types"] = selected_report_types
         elif selected_store.platform == "Shopify":
             unshipped_orders = 0
 
+
         dashboard_context["unshipped"] = unshipped_orders
+        
             
 
         return render(request,"dashboard.html",dashboard_context)

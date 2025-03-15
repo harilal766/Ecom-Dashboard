@@ -28,13 +28,22 @@
         <h5 id="timeDisplay"></h5>
     </div>
     <div>
+        {% if unshipped %}
         <h5>Unshipped Orders : <span id="Unshipped">{{unshipped}}</span</h5>
+        {% endif %}
+        
+
+        {% if report_types %}
         <h6>Report generator</h6>
         <div>
             <select>
-                <option>dd</option>
+                {% for type in report_types %}
+                <option>{{type}}</option>
+                {% endfor %}
             </select>
         </div>
+        {% endif %}
+        
     </div>
     {% else %}
     <div class="add-store">
