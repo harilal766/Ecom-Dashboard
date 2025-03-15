@@ -36,26 +36,21 @@ def stores():
 
 def home(request):
     if request.user.is_authenticated:
-        return redirect('dashboard:dashboard')
+        return dashboard(request)
     else:
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})
 
+dashboard_context = {
+    "amazon_report_types":None,
+    "added_stores" : StoreProfile.objects.all(),
+    "unshipped" : StoreProfile.objects.all()[0]
+}
+
 @login_required
 def dashboard(request):
-    dashboard_context = {"amazon_report_types":None,
-                         "added_stores" : None,}
     try:
-        dashboard_context['amazon_report_types'] = selected_report_types
-        added_stores = StoreProfile.objects.all()
-        # loop through available plaforms
-        if added_stores:
-            dashboard_context["added_stores"] = {}
-            default_store_id = added_stores.values_list("id",flat=True)[0]
-            default_store_slug = StoreProfile.objects.get(id=default_store_id).slug
-            dashboard_context["added_stores"] = added_stores
-
-
+        pass
         return render(request,'dashboard.html',dashboard_context)
     except Exception as e:
         better_error_handling(e)
@@ -65,35 +60,13 @@ def dashboard(request):
 def view_store(request,slug):
     try:
         selected_store = StoreProfile.objects.get(slug = slug)
-        selected_store_debrief = StoreDebrief.objects.get(store = selected_store)
-        if selected_store_debrief:
-            color_text(selected_store_debrief,"blue")
-            
-        common_fields = {
-            "Unshipped Orders" : None,
-        }
-        unshipped = None; 
+        selected_store_debrief = StoreDebrief.objects.get_or_create(store = selected_store)
+        color_text(selected_store_debrief)
 
-        if selected_store.platform == "Amazon":
-            
-            spapi_model = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-            ord_ins = Orders(access_token=spapi_model.get_or_refresh_access_token()) 
-            rep = ord_ins.getOrders(CreatedAfter=from_timestamp(7),OrderStatuses="Unshipped")
+        return render(request,"dashboard.html",dashboard_context)
 
-            unshipped = len(rep) if rep else 0
-
-        elif selected_store.platform == "Shopify":
-            
-            unshipped = 0
-
-        # updating the fetched data to the table
-        selected_store_debrief.unshipped_orders = unshipped
-        selected_store_debrief.save()
-        serializer = StoreDebriefSerializer(selected_store_debrief)
-        return Response(serializer.data, status=200)
     except Exception as e:
         better_error_handling(e)
-        return Response({"error": str(e)}, status=500)
 
 @login_required
 def add_store(request):
