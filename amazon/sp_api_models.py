@@ -36,22 +36,20 @@ class SPAPIBase:
 
     def make_request(self,endpoint,method,params=None,json_input=None):
         url = self.base_url + endpoint 
+        method_dict = {
+            "get" : requests.get(url, headers=self.headers,params = params,timeout=10),
+            "post" : requests.post(url, headers=self.headers,json = json_input,timeout=10),
+            "delete" : requests.delete(url, headers=self.headers,timeout=10)
+        }
         try: 
-            if method.lower() == 'get':
-                    response = requests.get(url, headers=self.headers,params = params,timeout=10)
-            elif method.lower() == 'post':
-                    response = requests.post(url, headers=self.headers,json = json_input,timeout=10)
-            elif method.lower() == 'delete':
-                response = requests.delete(url, headers=self.headers,timeout=10)
-            else:
-                raise ValueError(f"Unsupported HTTP method: {method}")
-            
+            operation = method_dict.get(method.lower(),None)
+            if not operation == None:
+                response = operation
             if response != None :
                 return response
             else:
                 color_text(message="Response Error",color="red")
                 return None
-            
         except Exception as e:
             better_error_handling(e)
     
@@ -425,9 +423,3 @@ class Reports(SPAPIBase):
         return super().execute_request(endpoint=endpoint,params=self.params,
                                        method='get',burst=15)
         
-class Shipping(SPAPIBase):
-    pass
-
-class Finances(SPAPIBase):
-    pass
-

@@ -58,10 +58,10 @@ def view_store(request,slug):
         if selected_store.platform == "Amazon":
             sp = SPAPI_Credential.objects.get(user = request.user,store = selected_store)
             if sp.access_token == None:
-                sp.access_token = sp.get_or_refresh_access_token()
+                sp.access_token = sp.generate_access_token()
                 sp.save()
 
-            ord_ins = Orders(access_token=sp.access_token)
+            ord_ins = Orders(access_token=sp.get_or_refresh_access_token())
 
             order_count = ord_ins.getOrders(
                 CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
