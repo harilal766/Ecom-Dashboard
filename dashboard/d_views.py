@@ -57,10 +57,7 @@ def view_store(request,slug):
         unshipped_orders = 0; 
         if selected_store.platform == "Amazon":
             sp = SPAPI_Credential.objects.get(user = request.user,store = selected_store)
-            if sp.access_token == None:
-                sp.access_token = sp.generate_access_token()
-                sp.save()
-
+            
             ord_ins = Orders(access_token=sp.get_or_refresh_access_token())
 
             order_count = ord_ins.getOrders(
@@ -71,6 +68,7 @@ def view_store(request,slug):
                 unshipped_orders = len(order_count)
 
             dashboard_context["report_types"] = selected_report_types
+            
         elif selected_store.platform == "Shopify":
             unshipped_orders = 0
 
