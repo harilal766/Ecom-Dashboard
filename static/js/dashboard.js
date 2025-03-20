@@ -32,38 +32,25 @@ async function fetchEndpoint(endpoint){
 }
 
 
-
-
-
-const addedStoresDiv = document.querySelector("#addedStores");
+const container = document.getElementById("container");
+const addedStoresDiv = container.querySelector("#addedStores");
 const addedStoresTitles = addedStoresDiv.querySelectorAll(".store-title");
 const dashboardTitle = document.getElementById("dashboardTitle");
-
-// click the title and return the store name from it
+/* 
+once the document is loaded, the program should change color of the first store,
+when another store is clicked, the selection should change to it.
+*/
 let selectedTitle = addedStoresTitles[0];
-selectedTitle.classList.add("active");
-
+selectedTitle.classList.add('active');
 addedStoresTitles.forEach((title) => {
     title.addEventListener("click",function(event){
-        selectedTitle.style.color = "";
-        console.log(title);
-        selectedTitle = event.target;
+        if (selectedTitle){
+            selectedTitle.classList.remove('active');
+        }
+        selectedTitle = event;
+        console.log(selectedTitle);
         selectedTitle.classList.add("active");
     });
 });
-
-
-
-
-
-
-reportTypes = document.getElementById("reportTypes");
-generatorButton = document.getElementById("generatorButton");
-generatorButton.innerText = `Create ${reportTypes.value}`;
-reportTypes.addEventListener("change",function(event){
-    let selection = event.target.value;
-    generatorButton.innerText = `Create ${selection}`
-});
-
 
 

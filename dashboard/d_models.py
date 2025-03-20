@@ -11,7 +11,7 @@ class StoreProfile(models.Model):
     platform = models.CharField(max_length=200,default="Ecom")
 
     def __str__(self):
-        return f"{self.store_name} : {self.platform}"
+        return self.store_name
     
     def save(self,*args, **kwargs):
         if not self.slug:
