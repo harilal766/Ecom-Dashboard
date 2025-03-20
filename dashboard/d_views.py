@@ -3,7 +3,7 @@ from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
 from amazon.sp_api_models import SPAPIBase,Orders,Reports
 from helpers.sql_scripts import *
-from django.http import JsonResponse
+from django.http import FileResponse
 from django.contrib.auth.decorators import login_required
 from amazon.report_types import selected_report_types
 from user.forms import Loginform
@@ -13,6 +13,7 @@ from amazon.a_models import SPAPI_Credential
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+
 
 
 from dashboard.serializers import StoreDebriefSerializer
@@ -134,3 +135,12 @@ def add_store(request):
     except Exception as e:
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
+
+
+
+def generate_report(request):
+    file_location = ""
+    if request.method == "POST":
+        color_text("Report")
+        response = FileResponse()
+    return response

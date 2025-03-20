@@ -32,13 +32,18 @@
         
         {% if report_types %}
         <h6>Report generator</h6>
-        <div>
-            <select>
-                {% for type in report_types %}
-                <option>{{type}}</option>
-                {% endfor %}
-            </select>
-        </div>
+        <form class="two-side-form" method="POST" enctype="multipart/form-data">
+            <div  class="left-form">
+                <select id="reportTypes">
+                    {% for type in report_types %}
+                    <option>{{type}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="right-form">
+                <button id="generatorButton" class="btn btn-primary" type="submit">Create report</button>
+            </div>
+        </form>
         {% endif %}
         
     </div>

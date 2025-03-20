@@ -57,6 +57,13 @@ addedStoresTitles.forEach((title) => {
 
 
 
+reportTypes = document.getElementById("reportTypes");
+generatorButton = document.getElementById("generatorButton");
+generatorButton.innerText = `Create ${reportTypes.value}`;
+reportTypes.addEventListener("change",function(event){
+    let selection = event.target.value;
+    generatorButton.innerText = `Create ${selection}`
+});
 
 
 
