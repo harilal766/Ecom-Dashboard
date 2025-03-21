@@ -8,17 +8,7 @@ from io import StringIO
 from amazon.sp_api_utilities import *
 
 
-def spapi_report_df_creator(report_type,start_date,end_date,access_token):
-    try:
-        instance = Reports(access_token=access_token)
-        create_report = instance.createReport(
-            reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
-        )
-        return create_report
-    except AttributeError as ae:
-        color_text(f"Attribute Error found :\n {ae}")
-    except Exception as e:
-        better_error_handling(e)
+
 
 def rep_doc_id_generator(report_id,access_token):
     retries =0 ; max_retries = 100 ; delay = 2

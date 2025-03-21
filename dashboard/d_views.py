@@ -144,20 +144,23 @@ def generate_report(request,slug):
     try:
         if request.method == "POST":
             report_type = request.POST.get("type")
+            selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
+            start_date = from_timestamp(5); end_date = from_timestamp(0)
+
+            sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
+
+            report_df = None
+            if selected_store.platform == "Amazon":
+                rep = Reports(access_token=sp.handle_access_token())
+                report_df = rep.spapi_report_df_creator(report_type,start_date,end_date)
+            else:
+                pass
+
+            if report_df:
+                color_text(report_df)
+                
     except Exception as e:
         better_error_handling(e)
     else:
-        selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
-        start_date = from_timestamp(5); end_date = from_timestamp(0)
-
-        sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-
-        report_dict = {
-            "Amazon" : spapi_report_df_creator(report_type,start_date,end_date,access_token = sp.handle_access_token()),
-            "Shopify" : 0
-        }
-        report_df = report_dict.get(selected_store.platform,None)
-        if report_df:
-            color_text(report_df)
-            return redirect("dashboard:dashboard", slug=slug)
+        pass
     return render(request,"dashboard.html")

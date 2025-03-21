@@ -368,3 +368,15 @@ class Reports(SPAPIBase):
         return super().execute_request(endpoint=endpoint,params=self.params,
                                        method='get',burst=15)
         
+
+    # Report Df creator
+    def spapi_report_df_creator(self,report_type,start_date,end_date):
+        try:
+            df = self.createReport(
+                reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
+            )
+            return df
+        except AttributeError as ae:
+            color_text(f"Attribute Error found :\n {ae}")
+        except Exception as e:
+            better_error_handling(e)
