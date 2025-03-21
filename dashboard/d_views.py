@@ -3,7 +3,7 @@ from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
 from amazon.sp_api_models import SPAPIBase,Orders,Reports
 from helpers.sql_scripts import *
-from django.http import FileResponse
+from django.http import FileResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
 from amazon.report_types import selected_report_types
 from user.forms import Loginform
@@ -48,7 +48,8 @@ def view_store(request,slug):
         "amazon_report_types": 0,
         "added_stores" : stores,
         "unshipped" : 0,
-        "report_types" : None
+        "report_types" : None,
+        "selected_store" : slug
     }
     try:
         selected_store = StoreProfile.objects.get(slug = slug)
@@ -136,11 +137,18 @@ def add_store(request):
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
 
-
-
 def generate_report(request):
-    file_location = ""
-    if request.method == "POST":
-        color_text("Report")
-        response = FileResponse()
-    return response
+    """
+    create the suitable dataframe based on the selection
+    """
+    try:
+        if request.method == "POST":
+            report_type = request.POST.get("type")
+        else:
+            color_text("method")
+    except Exception as e:
+        better_error_handling(e)
+    else:
+        color_text(report_type)
+        return HttpResponse("Hello")
+    return render(request,"dashboard.html")

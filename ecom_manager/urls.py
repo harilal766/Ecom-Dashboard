@@ -26,5 +26,4 @@ urlpatterns = [
     path('api/',include(router.urls)),
     path('',include('dashboard.urls')),
     path('authorization/',include('user.urls')),
-    path('amazon/',include('amazon.urls'))
 ]+ debug_toolbar_urls()

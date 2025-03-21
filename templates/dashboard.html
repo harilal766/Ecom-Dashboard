@@ -32,9 +32,10 @@
         
         {% if report_types %}
         <h6>Report generator</h6>
-        <form class="two-side-form" method="POST" enctype="multipart/form-data">
+        <form class="form two-side-form" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:generate_report' %}">
+            {% csrf_token %}
             <div  class="left-form">
-                <select id="reportTypes">
+                <select id="reportTypes" name="type" required="">
                     {% for type in report_types %}
                     <option>{{type}}</option>
                     {% endfor %}
@@ -54,5 +55,4 @@
     </div>
     {% endif %}
 </div>
-    
 {% endblock %}

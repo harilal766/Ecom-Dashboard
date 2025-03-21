@@ -31,7 +31,6 @@ async function fetchEndpoint(endpoint){
     }
 }
 
-
 const container = document.getElementById("container");
 const addedStoresDiv = container.querySelector("#addedStores");
 const addedStoresTitles = addedStoresDiv.querySelectorAll(".store-title");
@@ -47,10 +46,20 @@ addedStoresTitles.forEach((title) => {
         if (selectedTitle){
             selectedTitle.classList.remove('active');
         }
-        selectedTitle = event;
+        selectedTitle = event.target;
         console.log(selectedTitle);
         selectedTitle.classList.add("active");
     });
 });
 
 
+
+ 
+
+reportTypes = document.getElementById("reportTypes");
+generatorButton = document.getElementById("generatorButton");
+generatorButton.innerText = `Create ${reportTypes.value}`;
+reportTypes.addEventListener("change",function(event){
+    let selection = event.target.value;
+    generatorButton.innerText = `Create ${selection}`
+});
