@@ -49,7 +49,7 @@ def view_store(request,slug):
         "added_stores" : stores,
         "unshipped" : 0,
         "report_types" : None,
-        "selected_store" : slug
+        "selected_slug" : slug
     }
     try:
         selected_store = StoreProfile.objects.get(slug = slug)
@@ -60,7 +60,7 @@ def view_store(request,slug):
         if selected_store.platform == "Amazon":
             sp = SPAPI_Credential.objects.get(user = request.user,store = selected_store)
             
-            ord_ins = Orders(access_token=sp.get_or_refresh_access_token())
+            ord_ins = Orders(access_token=sp.handle_access_token())
 
             order_count = ord_ins.getOrders(
                 CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
@@ -137,18 +137,33 @@ def add_store(request):
         better_error_handling(e)
     return render(request,"add_store_form.html",{"store_form":form})
 
-def generate_report(request):
+def generate_report(request,slug):
     """
     create the suitable dataframe based on the selection
     """
     try:
         if request.method == "POST":
             report_type = request.POST.get("type")
-        else:
-            color_text("method")
     except Exception as e:
         better_error_handling(e)
     else:
-        color_text(report_type)
-        return HttpResponse("Hello")
+        selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
+        start_date = from_timestamp(5); end_date = from_timestamp(0)
+
+        sp = SPAPI_Credential.objects.get(
+            user=request.user,
+            store=selected_store
+        )
+
+        report_dict = {
+            "Shipment Report" : {
+                "Amazon" : spapi_report_df_creator(
+                    report_type,start_date,end_date,access_token = sp.handle_access_token()
+                ),
+                "Shopify" : 0
+            },
+            "Return Report" : 0
+        }
+        color_text(report_dict[report_type][selected_store.platform])
+        return redirect("dashboard:dashboard", slug=slug)
     return render(request,"dashboard.html")

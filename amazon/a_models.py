@@ -54,7 +54,7 @@ class SPAPI_Credential(models.Model):
         except Exception as e:
             better_error_handling(e)
 
-    def get_or_refresh_access_token(self):
+    def handle_access_token(self):
         if (self.access_token == None) or self.is_access_token_expired() == True :
             color_text("Access token expired, Refreshing....","red")
             return self.generate_access_token()
