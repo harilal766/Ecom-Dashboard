@@ -150,20 +150,14 @@ def generate_report(request,slug):
         selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
         start_date = from_timestamp(5); end_date = from_timestamp(0)
 
-        sp = SPAPI_Credential.objects.get(
-            user=request.user,
-            store=selected_store
-        )
+        sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
 
         report_dict = {
-            "Shipment Report" : {
-                "Amazon" : spapi_report_df_creator(
-                    report_type,start_date,end_date,access_token = sp.handle_access_token()
-                ),
-                "Shopify" : 0
-            },
-            "Return Report" : 0
+            "Amazon" : spapi_report_df_creator(report_type,start_date,end_date,access_token = sp.handle_access_token()),
+            "Shopify" : 0
         }
-        color_text(report_dict[report_type][selected_store.platform])
-        return redirect("dashboard:dashboard", slug=slug)
+        report_df = report_dict.get(selected_store.platform,None)
+        if report_df:
+            color_text(report_df)
+            return redirect("dashboard:dashboard", slug=slug)
     return render(request,"dashboard.html")

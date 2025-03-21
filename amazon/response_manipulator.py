@@ -14,46 +14,11 @@ def spapi_report_df_creator(report_type,start_date,end_date,access_token):
         create_report = instance.createReport(
             reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
         )
+        return create_report
     except AttributeError as ae:
         color_text(f"Attribute Error found :\n {ae}")
     except Exception as e:
         better_error_handling(e)
-    else:
-        if create_report:
-            report_id = report_id.get('reportId')
-            color_text(message=f"Report Id Created : {report_id}")
-            # Report document id generation.
-            rep_doc_id = rep_doc_id_generator(report_id=report_id,access_token=access_token)
-            if rep_doc_id:
-                color_text(message=f"Report document Id generated : {rep_doc_id}")
-                report_document = instance.getReportDocument(reportDocumentId=rep_doc_id)
-                document_url = report_document['url']
-                document_response = requests.get(document_url)
-                print(f"Status code - {document_response.status_code}")
-                if document_response.status_code == 200:
-                    byte_string = document_response.content
-                    decoded_data = byte_string.decode("utf-8") # Decoding the response into utf-8
-
-                   # Returning the dataframe
-                    data_io = StringIO(decoded_data) # converting the decode data into a file simulation
-                    df = pd.read_csv(data_io,sep = '\t')
-
-                    new_headers = []
-                    if not df.empty:
-                        # making sure column have underscore word seperator
-                        for column in  df.columns.tolist():
-                            underscore = column.replace("-","_")
-                            new_headers.append(underscore)
-                        df.columns = new_headers
-                        return df
-                    else : 
-                        color_text(message="There was an error in generating the dataframe",color='red')
-                else:
-                    color_text(message="Unable to generate report, status code is not 200",color='red')
-            else:
-                color_text(message="Report document Id failed,",color='red')
-        else:
-            color_text(message="Report id failed",color='red')
 
 def rep_doc_id_generator(report_id,access_token):
     retries =0 ; max_retries = 100 ; delay = 2
