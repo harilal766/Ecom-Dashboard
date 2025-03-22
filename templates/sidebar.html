@@ -3,7 +3,7 @@
     <div class="nav-lists">
         <h6>Common</h6>
         <ul>
-            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'dashboard:home' %}">Dashboard</a></li>
             <li><a href="{% url 'dashboard:add_store' %}">Add store</a></li>
         </ul>
     </div>
@@ -13,7 +13,7 @@
         <h6>Stores</h6>
         <ul class="nav-list">
             {% for i in added_stores %}
-                <li style="list-style-type:none;"><a href="#home"> <i class="fa-brands fa-amazon"></i>{{i.store_name}}</a></li>
+                <li style="list-style-type:none;"><a href="#"><i class="fa-brands fa-amazon"></i>{{i.store_name}}</a></li>
             {% endfor %}
         </ul>
     </div>

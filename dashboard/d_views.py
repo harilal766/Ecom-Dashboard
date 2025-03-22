@@ -65,9 +65,11 @@ def view_store(request,slug):
             order_count = ord_ins.getOrders(
                 CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
             )
+            color_text(order_count)
+            
 
-            if not order_count == None:
-                unshipped_orders = len(order_count)
+            if not order_count:
+                unshipped_orders = 100
 
             dashboard_context["report_types"] = selected_report_types
             
@@ -152,7 +154,7 @@ def generate_report(request,slug):
             report_df = None
             if selected_store.platform == "Amazon":
                 rep = Reports(access_token=sp.handle_access_token())
-                report_df = rep.spapi_report_df_creator(report_type,start_date,end_date)
+                report_df = rep.report_df_creator(report_type,start_date,end_date)
             else:
                 pass
 
