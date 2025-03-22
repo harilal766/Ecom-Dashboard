@@ -2,22 +2,20 @@ import requests
 from datetime import datetime, timedelta, timezone
 from helpers.messages import color_text
 from helpers.file_ops import *
-import time
+import sys
+import requests
+
 
 created_after = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
 
 production_endpoint = "https://sellingpartnerapi-eu.amazon.com"
 sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"
 
-import requests
+
 
 class SPAPIBase:
     def __init__(self,access_token):
-        color_text(message="Initializing SPAPIBase")
-        if access_token == None:
-            color_text(message="Access token returned None, Please check",color="red")
-            return
-        else:
+        if access_token:
             self.access_token = access_token
             self.base_url = production_endpoint
             self.marketplace_id = "A21TJRUUN4KGV"
@@ -30,9 +28,9 @@ class SPAPIBase:
                 }
             # Common parameters, individual ones will be added from the respective functions
             self.params = {"MarketplaceIds": self.marketplace_id}
-            status = f"Params : {getattr(self,'params','Not Initialized')}"
             
     def make_request(self,endpoint,method,params=None):
+        status_code = 400
         url = self.base_url + endpoint 
         request_dict = {
             "get" : requests.get(url, headers=self.headers, params = params,timeout=10),
@@ -41,23 +39,24 @@ class SPAPIBase:
         }
         try: 
             response = request_dict.get(method.lower(),None)
-            if 200 <= response.status_code < 400:
-                color_text(response)
-                return response
-            else:
-                color_text(message="Response Error",color="red")
-                return None
+        except requests.exceptions.TooManyRedirects:
+            color_text("429")
         except Exception as e:
-            better_error_handling(e)  
+            better_error_handling(e)
+        else:
+            response = response.json().get('payload',None)
+            next_token = response.get("NextToken",None) if response else None
+            color_text(next_token)
+            if response:
+                return response 
 
 
 class Orders(SPAPIBase):
-    def getOrders(self,CreatedAfter=None,CreatedBefore=None,
-                  OrderStatuses=None,
-                  LastUpdatedAfter=None,
-                  PaymentMethods=None,EasyShipShipmentStatuses=None,
-                  EarliestShipDate=None,LatestShipDate=None,
-                  FulfillmentChannels=None):
+    def getOrders(
+            self,CreatedAfter=None,CreatedBefore=None,OrderStatuses=None,LastUpdatedAfter=None,
+            PaymentMethods=None,EasyShipShipmentStatuses=None,EarliestShipDate=None,
+            LatestShipDate=None,FulfillmentChannels=None
+        ):
         
         order_statuses = [
         "PendingAvailability","Pending","Unshipped",
@@ -66,6 +65,7 @@ class Orders(SPAPIBase):
     ]
         endpoint = "/orders/v0/orders"
         #color_text(message=f"Before update : {self.params}",color="red")
+        color_text(sys.argv)
         self.params.update(
             {
                 "CreatedAfter" : CreatedAfter,
@@ -76,34 +76,25 @@ class Orders(SPAPIBase):
                 "FulfillmentChannels":FulfillmentChannels,
                 "EarliestShipDate" : EarliestShipDate, 
                 "LatestShipDate" : LatestShipDate,
-                "EasyShipShipmentStatuses" : EasyShipShipmentStatuses,
-                "NextToken" : None
+                "EasyShipShipmentStatuses" : EasyShipShipmentStatuses
             }
         ) 
-         
-        #color_text(message=f"After update : {self.params}")
-        """
-        Note: Either the CreatedAfter parameter or the LastUpdatedAfter parameter is required.
-        Both cannot be empty. CreatedAfter or CreatedBefore cannot be set when LastUpdatedAfter is set.
-        """
-        if not CreatedAfter or  LastUpdatedAfter:
+        if not (CreatedAfter or  LastUpdatedAfter):
             color_text(message="Either the CreatedAfter or the LastUpdatedAfter parameter is required,\nBoth cannot be empty",color="red")
             return None
         else:
-            return self.make_request(endpoint=endpoint,method="get",params=self.params)
+            if OrderStatuses in order_statuses:
+                response_payload = self.make_request(endpoint=endpoint,method="get",params=self.params)
+                return response_payload.get("Orders",None) if response_payload else None
             
-            
-
     def getOrder(self,orderId):
         endpoint = f"/orders/v0/orders/{orderId}"
         self.params.update ({"orderId" : orderId})
         
-    
     def getOrderBuyerInfo(self,orderId):
         endpoint = f"/orders/v0/orders/{orderId}/buyerInfo"
         self.params.update ({"orderId" : orderId})
 
-    
     def getOrderAddress(self,):
         pass 
 
@@ -169,11 +160,13 @@ class Reports(SPAPIBase):
     # https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-reference        
     def createReport(self,reportType,reportOptions=None,dataStartTime=None,dataEndTime=None):
         endpoint = '/reports/2021-06-30/reports'
-        data = {"reportType":reportType,
-                "reportOptions" : reportOptions,
-                "marketplaceIds" : [self.marketplace_id],
-                "dataStartTime" : dataStartTime,
-                "dataEndTime" : dataEndTime}
+        data = {
+            "reportType":reportType,
+            "reportOptions" : reportOptions,
+            "marketplaceIds" : [self.marketplace_id],
+            "dataStartTime" : dataStartTime,
+            "dataEndTime" : dataEndTime
+        }
     
     def getReports(self,reportTypes=None,processingStatuses=None,marketplaceIds=None,
                    pageSize=None,createdSince=None,CreatedUntil=None,nextToken=None):
@@ -186,7 +179,7 @@ class Reports(SPAPIBase):
             "cretedSince" : createdSince,
             "createdUntil" : CreatedUntil,
             "nextToken" : nextToken
-            })
+        })
         
     
     def getReport(self,reportId):

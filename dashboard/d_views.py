@@ -49,42 +49,40 @@ def view_store(request,slug):
         "added_stores" : stores,
         "unshipped" : 0,
         "report_types" : None,
-        "selected_slug" : slug
+        "selected_slug" : slug,
+        "api_limit" : False
     }
     try:
-        selected_store = StoreProfile.objects.get(slug = slug)
-        selected_store_debrief = StoreDebrief.objects.get_or_create(store = selected_store)
-        color_text(selected_store_debrief)
+        selected_store = StoreProfile.objects.get(slug = slug,user = request.user, )
 
-        unshipped_orders = 0; 
-        if selected_store.platform == "Amazon":
-            sp = SPAPI_Credential.objects.get(user = request.user,store = selected_store)
-            
-            ord_ins = Orders(access_token=sp.handle_access_token())
-
-            order_count = ord_ins.getOrders(
-                CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
-            )
-            color_text(order_count)
-            
-
-            if not order_count:
-                unshipped_orders = 100
-
-            dashboard_context["report_types"] = selected_report_types
-            
-        elif selected_store.platform == "Shopify":
-            unshipped_orders = 0
-
-
-        dashboard_context["unshipped"] = unshipped_orders
+        store_debrief = StoreDebrief.objects.get_or_create(store = selected_store,user = request.user)
         
-            
+        store_debrief = store_debrief[0]
+        color_text(store_debrief)
+        if store_debrief:
+            color_text(store_debrief)
+            unshipped_ord = None
 
-        return render(request,"dashboard.html",dashboard_context)
+            if selected_store.platform == "Amazon":
+                sp = SPAPI_Credential.objects.get(store = selected_store,user = request.user )
+                ord_ins = Orders(sp.handle_access_token())
+                order_list = ord_ins.getOrders(
+                    CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
+                )
+                unshipped_ord = len(order_list) if order_list else 0
+                dashboard_context["report_types"] = selected_report_types
+            elif selected_store.platform == "Shopify":
+                unshipped_ord = 0
+
+            store_debrief.unshipped_orders = unshipped_ord
+            store_debrief.save()
+
+            dashboard_context["unshipped"] = unshipped_ord if unshipped_ord else store_debrief.unshipped_orders
+            return render(request,"dashboard.html",dashboard_context)
 
     except Exception as e:
         better_error_handling(e)
+    
 
 @login_required
 def add_store(request):

@@ -22,6 +22,7 @@ class StoreProfile(models.Model):
     
 class StoreDebrief(models.Model):
     store = models.ForeignKey(StoreProfile,on_delete=models.CASCADE)
+    user = user = models.ForeignKey(User,on_delete=models.CASCADE,blank=True,null=True)
     unshipped_orders = models.IntegerField(default=None,null=True,blank=True)
     last_updation = models.DateTimeField(auto_now_add=True)
 
