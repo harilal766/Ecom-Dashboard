@@ -31,12 +31,6 @@ class SPAPIBase:
     
             
     def make_request(self,endpoint,method,params=None):
-        """
-        if next token is not present in the request, 
-            add the response to a list and return it.
-        if next token is present
-            store the token to a variable and call the request function again using it.
-        """
         status_code = 400
         url = self.base_url + endpoint 
         request_dict = {
@@ -73,26 +67,24 @@ class SPAPIBase:
                         if next_token != None:
                             self.params["NextToken"] = next_token
                             # requesting the next page and get the payload from it
-                            next_page = request_dict.get(method.lower(),None)
+                            next_page = requests.get(
+                                url, headers=self.headers, params = self.params,timeout=10
+                            )
                             next_payload = next_page.json().get('payload',None)
 
-                            color_text(len(next_payload))
+                            color_text(next_payload.keys())
 
                             # adding the next page to the list the moment next page is received
                             pages.append(next_payload)
 
                             # updating the next token to a value or None if unavailable
                             next_token = next_payload.get("NextToken",None)
-                            color_text(next_token,"red")
+                            color_text(f"NT : {next_token}","red")
                         
 
                     return pages
                 else:
-                    return response_payload
-
-
-                        
-
+                    return response.json()
 
 
 class Orders(SPAPIBase):
