@@ -28,13 +28,20 @@ class SPAPIBase:
                 }
             # Common parameters, individual ones will be added from the respective functions
             self.params = {"MarketplaceIds": self.marketplace_id}
+    
             
     def make_request(self,endpoint,method,params=None):
+        """
+        if next token is not present in the request, 
+            add the response to a list and return it.
+        if next token is present
+            store the token to a variable and call the request function again using it.
+        """
         status_code = 400
         url = self.base_url + endpoint 
         request_dict = {
-            "get" : requests.get(url, headers=self.headers, params = params,timeout=10),
-            "post" : requests.post(url, headers=self.headers, params= params,timeout=10),
+            "get" : requests.get(url, headers=self.headers, params = self.params,timeout=10),
+            "post" : requests.post(url, headers=self.headers, params= self.params,timeout=10),
             "delete" : requests.delete(url, headers=self.headers,timeout=10)
         }
         try: 
@@ -44,11 +51,48 @@ class SPAPIBase:
         except Exception as e:
             better_error_handling(e)
         else:
-            response = response.json().get('payload',None)
-            next_token = response.get("NextToken",None) if response else None
-            color_text(next_token)
-            if response:
-                return response 
+            """
+            for the moment, assume NextToken will be only applied for get method only
+            so 
+            """
+            if method.lower() != "get" and response:
+                return response
+            else:
+                """
+                pagination can happen only in get responses
+                """
+                pages = []
+                response_payload = response.json().get('payload',None)
+                next_token = response_payload.get("NextToken",None) if response else None
+                if next_token:
+                    color_text(response_payload.keys(),"red")
+                    pages.append(response_payload)
+                    while next_token:
+                        # the payload is added to the pages list
+                        # now we need to request the next page by updating the params first
+                        if next_token != None:
+                            self.params["NextToken"] = next_token
+                            # requesting the next page and get the payload from it
+                            next_page = request_dict.get(method.lower(),None)
+                            next_payload = next_page.json().get('payload',None)
+
+                            color_text(len(next_payload))
+
+                            # adding the next page to the list the moment next page is received
+                            pages.append(next_payload)
+
+                            # updating the next token to a value or None if unavailable
+                            next_token = next_payload.get("NextToken",None)
+                            color_text(next_token,"red")
+                        
+
+                    return pages
+                else:
+                    return response_payload
+
+
+                        
+
 
 
 class Orders(SPAPIBase):
@@ -85,8 +129,10 @@ class Orders(SPAPIBase):
         else:
             if OrderStatuses in order_statuses:
                 response_payload = self.make_request(endpoint=endpoint,method="get",params=self.params)
-                return response_payload.get("Orders",None) if response_payload else None
-            
+                if response_payload:
+                    return response_payload
+
+
     def getOrder(self,orderId):
         endpoint = f"/orders/v0/orders/{orderId}"
         self.params.update ({"orderId" : orderId})

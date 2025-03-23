@@ -69,15 +69,19 @@ def view_store(request,slug):
                 order_list = ord_ins.getOrders(
                     CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
                 )
-                unshipped_ord = len(order_list) if order_list else 0
+
+                if order_list:
+                    unshipped_ord = 100
+
                 dashboard_context["report_types"] = selected_report_types
             elif selected_store.platform == "Shopify":
                 unshipped_ord = 0
 
-            store_debrief.unshipped_orders = unshipped_ord
-            store_debrief.save()
+            if order_list:
+                store_debrief.unshipped_orders = unshipped_ord
+                store_debrief.save()
 
-            dashboard_context["unshipped"] = unshipped_ord if unshipped_ord else store_debrief.unshipped_orders
+            dashboard_context["unshipped"] = store_debrief.unshipped_orders
             return render(request,"dashboard.html",dashboard_context)
 
     except Exception as e:
