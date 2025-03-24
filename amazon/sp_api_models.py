@@ -52,7 +52,7 @@ class SPAPIBase:
             a while loop should look for if the status code is 429
             """
         except requests.exceptions.RequestException as e: 
-            color_text(f"Request Error : {e} ")
+            better_error_handling(e)
         except Exception as e:
             better_error_handling(e)
         else:
@@ -215,8 +215,10 @@ class Reports(SPAPIBase):
             "dataEndTime" : dataEndTime
         }
         created_report = self.make_request(endpoint=endpoint,method="post",params=self.params, data = data)
-        report_id = created_report.get("reportId",None)
-        return report_id if report_id else None
+        color_text(created_report)
+        if created_report:
+            report_id = created_report.get("reportId",None)
+            return report_id if report_id else None
 
     def getReport(self,reportId):
         endpoint = f"/reports/2021-06-30/reports/{reportId}"
@@ -243,13 +245,17 @@ class Reports(SPAPIBase):
                 report_status = (rep_processing.get("processingStatus"))
                 
                 if report_status == "DONE":
-                    print(doc_resp)
                     rep_doc_id = rep_processing.get("reportDocumentId")
-                    document_response = self.getReportDocument(reportDocumentId = rep_doc_id)
-                    df_url = document_response.get("url")
-                    rep_df = requests.get(df_url)
-                    color_text(rep_df)
-                    return rep_df
+                    color_text(f"report doc id : {rep_doc_id}")
+                    if rep_doc_id:
+                        document_response = self.getReportDocument(reportDocumentId = rep_doc_id).json()
+                        color_text(document_response)
+                        if document_response:
+                            color(document_response)
+                            df_url = document_response.get("url")
+                            rep_df = requests.get(df_url)
+                            color_text(rep_df)
+                            return rep_df
 
                 elif report_status in  ("CANCELLED","FATAL"):
                     return None
@@ -301,5 +307,6 @@ class Reports(SPAPIBase):
     def getReportDocument(self,reportDocumentId):
         endpoint = f"/reports/2021-06-30/documents/{reportDocumentId}"
         self.params.update({"reportDocumentId" : reportDocumentId})
-        return super().make_request(endpoint=endpoint,params=self.params,method='get'
+        return super().make_request(
+            endpoint=endpoint,params=self.params,method='get'
         )
