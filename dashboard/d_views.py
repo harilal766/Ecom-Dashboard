@@ -58,9 +58,7 @@ def view_store(request,slug):
         store_debrief = StoreDebrief.objects.get_or_create(store = selected_store,user = request.user)
         
         store_debrief = store_debrief[0]
-        color_text(store_debrief)
         if store_debrief:
-            color_text(store_debrief)
             unshipped_ord = None
 
             if selected_store.platform == "Amazon":

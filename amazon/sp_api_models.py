@@ -43,37 +43,32 @@ class SPAPIBase:
         }
         try: 
             response = request_dict.get(method.lower(),None)
+            codes = {
+                200 : "green", 429 : "red"
+            }
+            color_text(response.status_code,codes[response.status_code])
+            
+            """
+            a while loop should look for if the status code is 429
+            """
         except requests.exceptions.TooManyRedirects:
             color_text("429")
         except Exception as e:
             better_error_handling(e)
         else:
-            """
-            for the moment, assume NextToken will be only applied for get method only
-            so 
-            """
             if method.lower() != "get" and response:
                 return response
             else:
-                """
-                pagination can happen only in get responses
-                """
                 pages = []
                 response_payload = response.json().get('payload',None)
                 next_token = response_payload.get("NextToken",None) if response else None
                 if next_token:
-
-                    """
-                    need to filter further and add Orders / Reports etc
-                    """
-
+                    # need to filter further and add Orders / Reports etc
                     if requested_key:
-                        color_text(requested_key,"blue")
                         pages += (response_payload.get(requested_key))
                     else:
                         pages += response_payload
                         
-
                     while next_token:
                         # the payload is added to the pages list
                         # now we need to request the next page by updating the params first
@@ -83,18 +78,17 @@ class SPAPIBase:
                             next_page = requests.get(
                                 url, headers=self.headers, params = self.params,timeout=10
                             )
-                            next_payload = next_page.json().get('payload',None)
-
-                            # adding the next page to the list the moment next page is received
-                            if requested_key:
-                                pages += (next_payload.get(requested_key))
-                            else:
-                                pages += (next_payload)
-                           
-
-                            # updating the next token to a value or None if unavailable
-                            next_token = next_payload.get("NextToken",None)
-                        
+                            if next_page:
+                                next_payload = next_page.json().get('payload',None)
+                                if next_payload:
+                                    # adding the next page to the list the moment next page is received
+                                    if requested_key:
+                                        pages += (next_payload.get(requested_key))
+                                    else:
+                                        pages += (next_payload)
+                                    # updating the next token to a value or None if unavailable
+                                    next_token = next_payload.get("NextToken",None)
+                    color_text(f"Requested Key : {requested_key}, Data length : {len(pages)}")
                     return pages
                 else:
                     return response.json()
@@ -114,7 +108,6 @@ class Orders(SPAPIBase):
     ]
         endpoint = "/orders/v0/orders"
         #color_text(message=f"Before update : {self.params}",color="red")
-        color_text(sys.argv)
         self.params.update(
             {
                 "CreatedAfter" : CreatedAfter,
