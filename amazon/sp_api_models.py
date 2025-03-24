@@ -12,7 +12,6 @@ production_endpoint = "https://sellingpartnerapi-eu.amazon.com"
 sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"
 
 
-
 class SPAPIBase:
     def __init__(self,access_token):
         if access_token:
@@ -30,34 +29,34 @@ class SPAPIBase:
             self.params = {"MarketplaceIds": self.marketplace_id}
     
             
-    def make_request(self,endpoint,method,params=None,requested_key=None):
+    def make_request(self,endpoint,method,params=None,requested_key=None,data=None):
         """
         lets assign status code as 429 in the beginning and let it update once 200 is obtained
         """
-        status_code = 400
+        status_code = None
         url = self.base_url + endpoint 
         request_dict = {
             "get" : requests.get(url, headers=self.headers, params = self.params,timeout=10),
-            "post" : requests.post(url, headers=self.headers, params= self.params,timeout=10),
+            "post" : requests.post(url, headers=self.headers, params= self.params,json=data,timeout=10),
             "delete" : requests.delete(url, headers=self.headers,timeout=10)
         }
         try: 
             response = request_dict.get(method.lower(),None)
-            codes = {
-                200 : "green", 429 : "red"
-            }
-            color_text(response.status_code,codes[response.status_code])
+            
+            status_code = response.status_code
+            
+            color_text(f"Status code : {status_code}","green" if 200 <= status_code < 400 else "red")
             
             """
             a while loop should look for if the status code is 429
             """
-        except requests.exceptions.TooManyRedirects:
-            color_text("429")
+        except requests.exceptions.RequestException as e: 
+            color_text(f"Request Error : {e} ")
         except Exception as e:
             better_error_handling(e)
         else:
             if method.lower() != "get" and response:
-                return response
+                return response.json()
             else:
                 pages = []
                 response_payload = response.json().get('payload',None)
@@ -207,22 +206,24 @@ class Reports(SPAPIBase):
     def createReport(self,reportType,reportOptions=None,dataStartTime=None,dataEndTime=None):
         endpoint = '/reports/2021-06-30/reports'
         data = {
-            "reportType":reportType,
+            "reportType": reportType,
             "reportOptions" : reportOptions,
             "marketplaceIds" : [self.marketplace_id],
             "dataStartTime" : dataStartTime,
             "dataEndTime" : dataEndTime
         }
+        return self.make_request(endpoint=endpoint,method="post",params=self.params, data = data)
     
     def getReports(self,reportTypes=None,processingStatuses=None,marketplaceIds=None,
-                   pageSize=None,createdSince=None,CreatedUntil=None,nextToken=None):
+            pageSize=None,createdSince=None,CreatedUntil=None,nextToken=None
+        ):
         endpoint = "/reports/2021-06-30/reports"
         self.params.update({ 
             "reportTypes" : reportTypes,
             "processingStatuses" : processingStatuses,
             "marketplaceIds" : marketplaceIds,
             "pageSize" : pageSize,
-            "cretedSince" : createdSince,
+            "createdSince" : createdSince,
             "createdUntil" : CreatedUntil,
             "nextToken" : nextToken
         })
@@ -255,8 +256,8 @@ class Reports(SPAPIBase):
     def getReportDocument(self,reportDocumentId):
         endpoint = f"/reports/2021-06-30/documents/{reportDocumentId}"
         self.params.update({"reportDocumentId" : reportDocumentId})
-        return super().execute_request(endpoint=endpoint,params=self.params,
-                                       method='get',burst=15)
+        return super().execute_request(endpoint=endpoint,params=self.params,method='get',burst=15
+        )
         
 
     # Report Df creator

@@ -53,7 +53,7 @@ def color_text(message,color=None,end=None,bold=None):
     if bold == "yes":
 	    message_string = Style.BRIGHT+message_string
 
-    print(message_string,end=end or '\n')
+    print(message_string,end=end)
 
 
 

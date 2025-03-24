@@ -64,11 +64,11 @@ def view_store(request,slug):
             if selected_store.platform == "Amazon":
                 sp = SPAPI_Credential.objects.get(store = selected_store,user = request.user )
                 ord_ins = Orders(sp.handle_access_token())
+                
                 order_list = ord_ins.getOrders(
                     CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
                 )
-
-                if order_list:
+                if order_list and "BuyerInfo" in order_list[0]:
                     unshipped_ord = len(order_list)
 
                 dashboard_context["report_types"] = selected_report_types
@@ -146,6 +146,7 @@ def generate_report(request,slug):
     try:
         if request.method == "POST":
             report_type = request.POST.get("type")
+            color_text(f"Generating {report_type}")
             selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
             start_date = from_timestamp(5); end_date = from_timestamp(0)
 
@@ -154,7 +155,7 @@ def generate_report(request,slug):
             report_df = None
             if selected_store.platform == "Amazon":
                 rep = Reports(access_token=sp.handle_access_token())
-                report_df = rep.report_df_creator(report_type,start_date,end_date)
+                report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
             else:
                 pass
 
