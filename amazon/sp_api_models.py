@@ -30,7 +30,10 @@ class SPAPIBase:
             self.params = {"MarketplaceIds": self.marketplace_id}
     
             
-    def make_request(self,endpoint,method,params=None):
+    def make_request(self,endpoint,method,params=None,requested_key=None):
+        """
+        lets assign status code as 429 in the beginning and let it update once 200 is obtained
+        """
         status_code = 400
         url = self.base_url + endpoint 
         request_dict = {
@@ -59,8 +62,18 @@ class SPAPIBase:
                 response_payload = response.json().get('payload',None)
                 next_token = response_payload.get("NextToken",None) if response else None
                 if next_token:
-                    color_text(response_payload.keys(),"red")
-                    pages.append(response_payload)
+
+                    """
+                    need to filter further and add Orders / Reports etc
+                    """
+
+                    if requested_key:
+                        color_text(requested_key,"blue")
+                        pages += (response_payload.get(requested_key))
+                    else:
+                        pages += response_payload
+                        
+
                     while next_token:
                         # the payload is added to the pages list
                         # now we need to request the next page by updating the params first
@@ -72,16 +85,16 @@ class SPAPIBase:
                             )
                             next_payload = next_page.json().get('payload',None)
 
-                            color_text(next_payload.keys())
-
                             # adding the next page to the list the moment next page is received
-                            pages.append(next_payload)
+                            if requested_key:
+                                pages += (next_payload.get(requested_key))
+                            else:
+                                pages += (next_payload)
+                           
 
                             # updating the next token to a value or None if unavailable
                             next_token = next_payload.get("NextToken",None)
-                            color_text(f"NT : {next_token}","red")
                         
-
                     return pages
                 else:
                     return response.json()
@@ -120,7 +133,9 @@ class Orders(SPAPIBase):
             return None
         else:
             if OrderStatuses in order_statuses:
-                response_payload = self.make_request(endpoint=endpoint,method="get",params=self.params)
+                response_payload = self.make_request(
+                    endpoint=endpoint,method="get",params=self.params,requested_key="Orders"
+                )
                 if response_payload:
                     return response_payload
 

@@ -71,7 +71,7 @@ def view_store(request,slug):
                 )
 
                 if order_list:
-                    unshipped_ord = 100
+                    unshipped_ord = len(order_list)
 
                 dashboard_context["report_types"] = selected_report_types
             elif selected_store.platform == "Shopify":
