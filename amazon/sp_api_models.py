@@ -4,6 +4,7 @@ from helpers.messages import color_text
 from helpers.file_ops import *
 import sys
 import requests
+import time
 
 
 created_after = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
@@ -56,41 +57,43 @@ class SPAPIBase:
             better_error_handling(e)
         else:
             if method.lower() != "get" and response:
+                color_text(response.json(),"blue")
                 return response.json()
             else:
                 pages = []
                 response_payload = response.json().get('payload',None)
-                next_token = response_payload.get("NextToken",None) if response else None
-                if next_token:
-                    # need to filter further and add Orders / Reports etc
-                    if requested_key:
-                        pages += (response_payload.get(requested_key))
-                    else:
-                        pages += response_payload
-                        
-                    while next_token:
-                        # the payload is added to the pages list
-                        # now we need to request the next page by updating the params first
-                        if next_token != None:
-                            self.params["NextToken"] = next_token
-                            # requesting the next page and get the payload from it
-                            next_page = requests.get(
-                                url, headers=self.headers, params = self.params,timeout=10
-                            )
-                            if next_page:
-                                next_payload = next_page.json().get('payload',None)
-                                if next_payload:
-                                    # adding the next page to the list the moment next page is received
-                                    if requested_key:
-                                        pages += (next_payload.get(requested_key))
-                                    else:
-                                        pages += (next_payload)
-                                    # updating the next token to a value or None if unavailable
-                                    next_token = next_payload.get("NextToken",None)
+                if response_payload:
+                    next_token = response_payload.get("NextToken",None) if response else None
+                    if next_token:
+                        # need to filter further and add Orders / Reports etc
+                        if requested_key:
+                            pages += (response_payload.get(requested_key))
+                        else:
+                            pages += response_payload
+                            
+                        while next_token:
+                            # the payload is added to the pages list
+                            # now we need to request the next page by updating the params first
+                            if next_token != None:
+                                self.params["NextToken"] = next_token
+                                # requesting the next page and get the payload from it
+                                next_page = requests.get(
+                                    url, headers=self.headers, params = self.params,timeout=10
+                                )
+                                if next_page:
+                                    next_payload = next_page.json().get('payload',None)
+                                    if next_payload:
+                                        # adding the next page to the list the moment next page is received
+                                        if requested_key:
+                                            pages += (next_payload.get(requested_key))
+                                        else:
+                                            pages += (next_payload)
+                                        # updating the next token to a value or None if unavailable
+                                        next_token = next_payload.get("NextToken",None)
                     color_text(f"Requested Key : {requested_key}, Data length : {len(pages)}")
                     return pages
                 else:
-                    return response.json()
+                    return response
 
 
 class Orders(SPAPIBase):
@@ -212,8 +215,33 @@ class Reports(SPAPIBase):
             "dataStartTime" : dataStartTime,
             "dataEndTime" : dataEndTime
         }
-        return self.make_request(endpoint=endpoint,method="post",params=self.params, data = data)
+        created_report = self.make_request(endpoint=endpoint,method="post",params=self.params, data = data)
+        report_id = created_report.get("reportId",None)
+        return report_id if report_id else None
     
+    # Report Df creator
+    def report_df_creator(self,report_type,start_date,end_date):
+        try:
+            report_id = self.createReport(
+                reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
+            )
+            doc_resp =  self.getReport(reportId=report_id)
+        except AttributeError as ae:
+            #color_text(f"Attribute Error found :\n {ae}")
+            better_error_handling(ae)
+        except Exception as e:
+            better_error_handling(e)
+        else:
+            processing_status = doc_resp.get("processingStatus",None)
+            if processing_status:
+                while True:
+                    time.sleep(20)
+                    print(processing_status)
+                    print(doc_resp)
+                    if processing_status == "DONE":
+                        return doc_resp
+                        
+            
     def getReports(self,reportTypes=None,processingStatuses=None,marketplaceIds=None,
             pageSize=None,createdSince=None,CreatedUntil=None,nextToken=None
         ):
@@ -228,22 +256,21 @@ class Reports(SPAPIBase):
             "nextToken" : nextToken
         })
         
-    
     def getReport(self,reportId):
         endpoint = f"/reports/2021-06-30/reports/{reportId}"
         self.params.update({"reportId" : reportId})
+        color_text(self.params)
+        report_status = self.make_request(endpoint=endpoint,method="get",params=self.params)
+        return report_status.json()
         
-
     def cancelReport(self,reportId):
         endpoint = f"/reports/2021-06-30/reports/{reportId}"
         self.params.update({"reportId" : reportId})
         
-
     def getReportSchedules(self,reportTypes):
         endpoint = "/reports/2021-06-30/schedules"
         self.params.update({"reportTypes" : reportTypes})
         
-
     def createReportSchedule(self):
         endpoint = f"/reports/2021-06-30/schedules"
 
@@ -258,16 +285,3 @@ class Reports(SPAPIBase):
         self.params.update({"reportDocumentId" : reportDocumentId})
         return super().execute_request(endpoint=endpoint,params=self.params,method='get',burst=15
         )
-        
-
-    # Report Df creator
-    def report_df_creator(self,report_type,start_date,end_date):
-        try:
-            df = self.createReport(
-                reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
-            )
-            return df
-        except AttributeError as ae:
-            color_text(f"Attribute Error found :\n {ae}")
-        except Exception as e:
-            better_error_handling(e)
