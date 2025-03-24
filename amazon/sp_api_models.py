@@ -57,7 +57,6 @@ class SPAPIBase:
             better_error_handling(e)
         else:
             if method.lower() != "get" and response:
-                color_text(response.json(),"blue")
                 return response.json()
             else:
                 pages = []
@@ -218,28 +217,52 @@ class Reports(SPAPIBase):
         created_report = self.make_request(endpoint=endpoint,method="post",params=self.params, data = data)
         report_id = created_report.get("reportId",None)
         return report_id if report_id else None
-    
+
+    def getReport(self,reportId):
+        endpoint = f"/reports/2021-06-30/reports/{reportId}"
+        self.params.update({"reportId" : reportId})
+        color_text(self.params)
+        report_status = self.make_request(endpoint=endpoint,method="get",params=self.params)
+        return report_status.json()
+
     # Report Df creator
     def report_df_creator(self,report_type,start_date,end_date):
         try:
             report_id = self.createReport(
                 reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
             )
-            doc_resp =  self.getReport(reportId=report_id)
+            self.params.update({"reportId" : report_id})
+            
+            while True:
+                # polling report status
+                rep_processing = self.make_request(
+                    endpoint=f"/reports/2021-06-30/reports/{report_id}",
+                    method="get",params=self.params
+                ).json()
+                #processing_status = doc_resp.get("processingStatus",None)
+                report_status = (rep_processing.get("processingStatus"))
+                
+                if report_status == "DONE":
+                    print(doc_resp)
+                    rep_doc_id = rep_processing.get("reportDocumentId")
+                    document_response = self.getReportDocument(reportDocumentId = rep_doc_id)
+                    df_url = document_response.get("url")
+                    rep_df = requests.get(df_url)
+                    color_text(rep_df)
+                    return rep_df
+
+                elif report_status in  ("CANCELLED","FATAL"):
+                    return None
+                color_text(rep_processing)
+                time.sleep(15)
+
         except AttributeError as ae:
             #color_text(f"Attribute Error found :\n {ae}")
             better_error_handling(ae)
         except Exception as e:
             better_error_handling(e)
         else:
-            processing_status = doc_resp.get("processingStatus",None)
-            if processing_status:
-                while True:
-                    time.sleep(20)
-                    print(processing_status)
-                    print(doc_resp)
-                    if processing_status == "DONE":
-                        return doc_resp
+            pass
                         
             
     def getReports(self,reportTypes=None,processingStatuses=None,marketplaceIds=None,
@@ -256,12 +279,7 @@ class Reports(SPAPIBase):
             "nextToken" : nextToken
         })
         
-    def getReport(self,reportId):
-        endpoint = f"/reports/2021-06-30/reports/{reportId}"
-        self.params.update({"reportId" : reportId})
-        color_text(self.params)
-        report_status = self.make_request(endpoint=endpoint,method="get",params=self.params)
-        return report_status.json()
+    
         
     def cancelReport(self,reportId):
         endpoint = f"/reports/2021-06-30/reports/{reportId}"
@@ -283,5 +301,5 @@ class Reports(SPAPIBase):
     def getReportDocument(self,reportDocumentId):
         endpoint = f"/reports/2021-06-30/documents/{reportDocumentId}"
         self.params.update({"reportDocumentId" : reportDocumentId})
-        return super().execute_request(endpoint=endpoint,params=self.params,method='get',burst=15
+        return super().make_request(endpoint=endpoint,params=self.params,method='get'
         )
