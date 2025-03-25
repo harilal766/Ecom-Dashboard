@@ -2,7 +2,9 @@ from django.test import TestCase
 import pandas as pd
 
 # Create your tests here.
-class ReportTest(TestCase):
+class SPAPITesting(TestCase):
+    pass
+class SPAPIReportTest(SPAPITesting):
     def report_generator_test():
         pass
     
@@ -14,3 +16,4 @@ class ReportTest(TestCase):
         """
         report_df = pd.read_csv(report,delimiter='\t')
         filtered_df = report_df.filter(selected_columns)
+        
