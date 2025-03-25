@@ -148,7 +148,6 @@ def generate_report(request,slug):
         if request.method == "POST":
             report_type = request.POST.get("type")
             report_df = request.FILES.get("report_df")
-            color_text(f"Generating {report_type}")
             selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
             start_date = from_timestamp(5); end_date = from_timestamp(0)
 
@@ -169,7 +168,7 @@ def generate_report(request,slug):
             
             report_df = pd.read_csv(report_df,delimiter='\t')
             
-            needed_columns = {
+            selected_columns = {
                 "Amazon" : {
                     "Shipment Report" : [
                         "amazon order id", "purchase date", "last updated date", "order status", "product name",
@@ -181,12 +180,12 @@ def generate_report(request,slug):
                     
                 ]
             }
-            pdb.set_trace()
-            filter_columns = needed_columns[selected_store.platform][report_type]
+                        
+            filter_cols = []
+            for column in selected_columns[selected_store.platform][report_type]:
+                filter_cols.append(column.replace(" ","-"))
+                
+            col_df = report_df.filter(filter_cols) 
             
-            col_filtered_df = report_df.filter(
-                items = filter_columns
-            )
-            
-            color_text(f"Filtered : {col_filtered_df}")
+            color_text(f"Filtered : {col_df}")
     return render(request,"dashboard.html")
