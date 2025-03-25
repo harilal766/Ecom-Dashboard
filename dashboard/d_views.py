@@ -40,6 +40,20 @@ def home(request):
         form = Loginform(request.POST)
         return render(request,'home.html',{"form":form})
 
+def order_debrief(platform,order_list):
+    debrief = {}
+
+    order_id, order_date, ship_date, date = None,None,None,None
+
+    for order in order_list:
+        if platform == "Amazon":
+            order_id = order["AmazonOrderId"]; ship_date = order["LatestShipDate"]; order_date = order["PurchaseDate"]
+            color_text(f"{order_id} - {order_date} - {ship_date}")
+
+        
+        
+
+    return debrief
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -51,7 +65,8 @@ def view_store(request,slug):
         "unshipped" : 0,
         "report_types" : None,
         "selected_slug" : slug,
-        "api_limit" : False
+        "api_limit" : False,
+        "debrief" : None
     }
     try:
         selected_store = StoreProfile.objects.get(slug = slug,user = request.user, )
@@ -69,15 +84,23 @@ def view_store(request,slug):
                 order_list = ord_ins.getOrders(
                     CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
                 )
+
+                dashboard_context["debrief"] = order_debrief(selected_store.platform,order_list)
+
+                
+
+
                 if order_list and "BuyerInfo" in order_list[0]:
                     unshipped_ord = len(order_list)
+
 
                 dashboard_context["report_types"] = selected_report_types
             elif selected_store.platform == "Shopify":
                 unshipped_ord = 0
 
-            if order_list:
-                store_debrief.unshipped_orders = unshipped_ord
+            
+            if unshipped_ord:
+                store_debrief.unshipped_orders = unshipped_ord 
                 store_debrief.save()
 
             dashboard_context["unshipped"] = store_debrief.unshipped_orders
@@ -154,9 +177,9 @@ def generate_report(request,slug):
             sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
 
             if selected_store.platform == "Amazon":
-                rep = Reports(access_token=sp.handle_access_token())
-                report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
-                
+                #rep = Reports(access_token=sp.handle_access_token())
+                #report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
+                pass
             else:
                 pass
     except Exception as e:
@@ -186,9 +209,35 @@ def generate_report(request,slug):
                 filter_cols.append(column.replace(" ","-"))
             col_df = report_df.filter(filter_cols) 
             
-            # Df rows filtering 
+            # Df rows filtering
+            hour = datetime.today().hour
+            next_ship_date = from_timestamp(0) if hour <=  11 else from_timestamp(-1)
+            color_text(next_ship_date)
+
+            sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
+            ord_ins = Orders(sp.handle_access_token())
+
+            next_shipment = ord_ins.getOrders(
+                CreatedAfter=from_timestamp(5),OrderStatuses = "Unshipped",
+                LatestShipDate= "2025-03-26T18:29:59Z"
+            )
+            color_text(next_shipment,"red")
+
+
+
+
+            product_name = None; product_price = None
+            respective_fields = {
+                "Amazon" : {
+                    "prod_name" : "product-name", "prod_price" : "item-price"
+                }
+            }
             
-            # 
+
+            product = respective_fields[selected_store.platform]["prod_name"]
+            price = respective_fields[selected_store.platform]["prod_price"]
+
+        
             color_text(f"Filtered : {col_df}")
             
     return render(request,"dashboard.html")

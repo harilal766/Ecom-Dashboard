@@ -53,6 +53,8 @@ class SPAPIBase:
             """
         except requests.exceptions.RequestException as e: 
             better_error_handling(e)
+        except requests.exceptions.ConnectTimeout:
+            color_text("Timeout","red")
         except Exception as e:
             better_error_handling(e)
         else:
@@ -125,7 +127,7 @@ class Orders(SPAPIBase):
                 "EasyShipShipmentStatuses" : EasyShipShipmentStatuses
             }
         ) 
-        if not (CreatedAfter or  LastUpdatedAfter):
+        if not (CreatedAfter or  LastUpdatedAfter or OrderStatuses):
             color_text(message="Either the CreatedAfter or the LastUpdatedAfter parameter is required,\nBoth cannot be empty",color="red")
             return None
         else:
