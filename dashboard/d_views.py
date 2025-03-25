@@ -13,8 +13,9 @@ from amazon.a_models import SPAPI_Credential
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+import pdb
 
-
+import pandas as pd
 
 from dashboard.serializers import StoreDebriefSerializer
 # Create your views here.    
@@ -146,24 +147,46 @@ def generate_report(request,slug):
     try:
         if request.method == "POST":
             report_type = request.POST.get("type")
+            report_df = request.FILES.get("report_df")
             color_text(f"Generating {report_type}")
             selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
             start_date = from_timestamp(5); end_date = from_timestamp(0)
 
             sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
 
-            report_df = None
             if selected_store.platform == "Amazon":
-                rep = Reports(access_token=sp.handle_access_token())
-                report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
+                #rep = Reports(access_token=sp.handle_access_token())
+                #report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
+                pass
             else:
                 pass
-
-            if report_df:
-                color_text(report_df)
-                
     except Exception as e:
         better_error_handling(e)
+        return redirect("home")
     else:
-        pass
+        if report_df:
+            color_text(f"Creating {selected_store.platform}")
+            
+            report_df = pd.read_csv(report_df,delimiter='\t')
+            
+            needed_columns = {
+                "Amazon" : {
+                    "Shipment Report" : [
+                        "amazon order id", "purchase date", "last updated date", "order status", "product name",
+                        "item status", "quantity", "item price", "item tax", "shipping price", "shipping tax"
+                    ],
+                    "Return Report" : []
+                    },
+                "Shopify" : [
+                    
+                ]
+            }
+            pdb.set_trace()
+            filter_columns = needed_columns[selected_store.platform][report_type]
+            
+            col_filtered_df = report_df.filter(
+                items = filter_columns
+            )
+            
+            color_text(f"Filtered : {col_filtered_df}")
     return render(request,"dashboard.html")

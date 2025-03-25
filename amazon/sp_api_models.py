@@ -89,8 +89,11 @@ class SPAPIBase:
                                             pages += (next_payload)
                                         # updating the next token to a value or None if unavailable
                                         next_token = next_payload.get("NextToken",None)
-                    color_text(f"Requested Key : {requested_key}, Data length : {len(pages)}")
-                    return pages
+                        color_text(f"Requested Key : {requested_key}, Data length : {len(pages)}")
+                        return pages
+                    else:
+                        return response_payload.get(requested_key)
+                    
                 else:
                     return response
 
