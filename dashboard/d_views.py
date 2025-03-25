@@ -154,9 +154,9 @@ def generate_report(request,slug):
             sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
 
             if selected_store.platform == "Amazon":
-                #rep = Reports(access_token=sp.handle_access_token())
-                #report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
-                pass
+                rep = Reports(access_token=sp.handle_access_token())
+                report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
+                
             else:
                 pass
     except Exception as e:
@@ -168,6 +168,7 @@ def generate_report(request,slug):
             
             report_df = pd.read_csv(report_df,delimiter='\t')
             
+            # DF column filtering based on columns selected by user
             selected_columns = {
                 "Amazon" : {
                     "Shipment Report" : [
@@ -179,14 +180,15 @@ def generate_report(request,slug):
                 "Shopify" : [
                     
                 ]
-            }
-            
+            }            
             filter_cols = []
             for column in selected_columns[selected_store.platform][report_type]:
                 filter_cols.append(column.replace(" ","-"))
-                
             col_df = report_df.filter(filter_cols) 
             
+            # Df rows filtering 
+            
+            # 
             color_text(f"Filtered : {col_df}")
             
     return render(request,"dashboard.html")

@@ -225,8 +225,12 @@ class Reports(SPAPIBase):
 
     def getReport(self,reportId):
         endpoint = f"/reports/2021-06-30/reports/{reportId}"
-        self.params.update({"reportId" : reportId})
-        color_text(self.params)
+        
+        if not ("reportId" in self.params.keys() and self.params["reportId"]):
+            self.params.update({"reportId" : reportId})
+            color_text("report id added to params")
+            
+        
         report_status = self.make_request(endpoint=endpoint,method="get",params=self.params)
         return report_status.json()
 
@@ -240,21 +244,25 @@ class Reports(SPAPIBase):
             
             while True:
                 # polling report status
+                """
                 rep_processing = self.make_request(
                     endpoint=f"/reports/2021-06-30/reports/{report_id}",
                     method="get",params=self.params
                 ).json()
+                """
+                rep_processing = self.getReport(report_id)
+                
                 #processing_status = doc_resp.get("processingStatus",None)
                 report_status = (rep_processing.get("processingStatus"))
-                
+                color_text(report_status)
                 if report_status == "DONE":
                     rep_doc_id = rep_processing.get("reportDocumentId")
                     color_text(f"report doc id : {rep_doc_id}")
                     if rep_doc_id:
                         document_response = self.getReportDocument(reportDocumentId = rep_doc_id).json()
-                        color_text(document_response)
+                        color_text(document_response,"blue")
                         if document_response:
-                            color(document_response)
+                            color_text(document_response)
                             df_url = document_response.get("url")
                             rep_df = requests.get(df_url)
                             color_text(rep_df)
@@ -263,7 +271,7 @@ class Reports(SPAPIBase):
                 elif report_status in  ("CANCELLED","FATAL"):
                     return None
                 color_text(rep_processing)
-                time.sleep(15)
+                #time.sleep(5)
 
         except AttributeError as ae:
             #color_text(f"Attribute Error found :\n {ae}")
