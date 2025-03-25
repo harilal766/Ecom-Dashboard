@@ -180,7 +180,7 @@ def generate_report(request,slug):
                     
                 ]
             }
-                        
+            
             filter_cols = []
             for column in selected_columns[selected_store.platform][report_type]:
                 filter_cols.append(column.replace(" ","-"))
@@ -188,4 +188,5 @@ def generate_report(request,slug):
             col_df = report_df.filter(filter_cols) 
             
             color_text(f"Filtered : {col_df}")
+            
     return render(request,"dashboard.html")
