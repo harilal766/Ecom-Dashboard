@@ -30,7 +30,7 @@ def shipping_label_sort(input_pdf_name, input_pdf_path,label_type):
     """
     try:
         # Create a new folder for storing filtered pdf files
-        todays_date_folder = f"{from_timestamp(0).split("T")[0]} label split" 
+        todays_date_folder = f"{timestamp(0).split("T")[0]} label split" 
         #todays_date_folder = "25.1.25 lable split"
         todays_folder_path = os.path.join(input_pdf_path, todays_date_folder)
         input_pdf_path = os.path.join(input_pdf_path,input_pdf_name)

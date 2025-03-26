@@ -7,6 +7,12 @@ from datetime import datetime
 import requests
 from helpers.messages import color_text
 # Create your models here.
+class SPAPI_Limits(models.Model):
+    endpoint = models.TextField(max_length=200,blank=True,null=True)
+    rate = models.DecimalField(null=True,blank=True,decimal_places=4,max_digits=6)
+    burst  = models.IntegerField(null=True,blank=True)
+    
+    
 class SPAPI_Credential(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     store = models.ForeignKey(StoreProfile,on_delete=models.CASCADE)
@@ -56,8 +62,8 @@ class SPAPI_Credential(models.Model):
 
     def handle_access_token(self):
         if (self.access_token == None) or self.is_access_token_expired() == True :
-            color_text("Refreshing Access Token, ","blue",end=" ")
+            color_text("Refreshing Access Token, ","blue",end=", ")
             return self.generate_access_token()
         else:
-            color_text("Reusing Access token, ","green",end=" ")
+            color_text("Reusing Access token","green",end=", ")
             return self.access_token

@@ -30,25 +30,33 @@
     <div>
         <h5>Unshipped Orders : <span id="Unshipped">{{unshipped}}</h5>
         
-        {% if report_types %}
-        <h6>Report generator</h6>
-        <form class="form two-side-form" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:generate_report' selected_slug %}">
-            {% csrf_token %} 
-            <div  class="left-form">
+        <div id="reportDiv">
+            {% if report_types %}
+            <h6>Report generator</h6>
+            <form class="form two-side-form" method="POST" enctype="multipart/form-data" action="{% url 'dashboard:generate_report' selected_slug %}">
+                {% csrf_token %} 
+                <div  class="left-form">
 
-                <input type="file" id="reportDf" name="report_df" value="report_df">
+                    <!--input type="file" id="reportDf" name="report_df" value="report_df"-->
 
-                <select id="reportTypes"  name="type" required="">
-                    {% for type in report_types %}
-                    <option>{{type}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="right-form">
-                <button id="generatorButton" class="btn btn-primary" type="submit">Create report</button>
-            </div>
-        </form>
-        {% endif %}
+                    <select id="reportTypes"  name="type" value="type" required>
+                        {% for type in report_types %}
+                        <option>{{type}}</option>   
+                        {% endfor %}
+                    </select>
+
+                </div>
+                <div class="precision">
+                    <input type="date" name="from_date">
+                    <input type="date" name="to_date">
+                </div>
+                <div class="right-form">
+                    <button id="generatorButton" class="btn btn-primary" type="submit">Create report</button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+        
         
     </div>
     {% else %}

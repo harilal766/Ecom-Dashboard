@@ -36,6 +36,7 @@ class SPAPIBase:
         """
         status_code = None
         url = self.base_url + endpoint 
+        color_text(f"Endpoint : {endpoint}","blue",end=", ")
         request_dict = {
             "get" : requests.get(url, headers=self.headers, params = self.params,timeout=10),
             "post" : requests.post(url, headers=self.headers, params= self.params,json=data,timeout=10),
@@ -239,24 +240,23 @@ class Reports(SPAPIBase):
     # Report Df creator
     def report_df_creator(self,report_type,start_date,end_date):
         try:
-            report_id = self.createReport(
-                reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
-            )
+            # report creation
+            report_id = None
+            if not report_id:
+                report_id = self.createReport(
+                    reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
+                )
             self.params.update({"reportId" : report_id})
             
+            # report schedule
+            schedule = self.getReportSchedules(reportTypes=report_type)
+            color_text(schedule,"blue")
+            
             while True:
-                # polling report status
-                """
-                rep_processing = self.make_request(
-                    endpoint=f"/reports/2021-06-30/reports/{report_id}",
-                    method="get",params=self.params
-                ).json()
-                """
+                # report processing
                 rep_processing = self.getReport(report_id)
-                
                 #processing_status = doc_resp.get("processingStatus",None)
                 report_status = (rep_processing.get("processingStatus"))
-                color_text(report_status)
                 if report_status == "DONE":
                     rep_doc_id = rep_processing.get("reportDocumentId")
                     color_text(f"report doc id : {rep_doc_id}")
@@ -271,9 +271,10 @@ class Reports(SPAPIBase):
                             return rep_df
 
                 elif report_status in  ("CANCELLED","FATAL"):
+                    color_text(report_status,"red")
                     return None
                 color_text(rep_processing)
-                #time.sleep(5)
+                time.sleep(15)
 
         except AttributeError as ae:
             #color_text(f"Attribute Error found :\n {ae}")
@@ -298,22 +299,20 @@ class Reports(SPAPIBase):
             "nextToken" : nextToken
         })
         
-    
-        
     def cancelReport(self,reportId):
         endpoint = f"/reports/2021-06-30/reports/{reportId}"
         self.params.update({"reportId" : reportId})
+    # Report scheduling
+    def createReportSchedule(self):
+        endpoint = f"/reports/2021-06-30/schedules"
+        
+    def getReportSchedule(self,reportScheduleId):
+        endpoint = f"/reports/2021-06-30/schedules/{reportScheduleId}"
         
     def getReportSchedules(self,reportTypes):
         endpoint = "/reports/2021-06-30/schedules"
         self.params.update({"reportTypes" : reportTypes})
         
-    def createReportSchedule(self):
-        endpoint = f"/reports/2021-06-30/schedules"
-
-    def getReportSchedule(self,reportScheduleId):
-        endpoint = f"/reports/2021-06-30/schedules/{reportScheduleId}"
-
     def cancelReportSchedule(self,reportScheduleId):
         endpoint = f"/reports/2021-06-30/schedules/{reportScheduleId}"
 

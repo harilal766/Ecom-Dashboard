@@ -49,6 +49,10 @@
     gap:5px;
 }
 
+.precision{
+    display: flex; gap: 5px;
+    background-color: red;
+}
 
 .btn {
     font-weight: bold;

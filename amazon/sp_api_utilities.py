@@ -8,7 +8,7 @@ from pytz import timezone
 
 # SP API Utilities needed for several needs
 
-def from_timestamp(days):
+def timestamp(days):
     date = (datetime.utcnow() - timedelta(days=days))
     today_start_time = date.replace(hour=0,minute=0,second=0,microsecond=0).isoformat()+"Z"
     return today_start_time

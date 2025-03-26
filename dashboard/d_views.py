@@ -42,15 +42,17 @@ def home(request):
 
 def order_debrief(platform,order_list):
     debrief = {}
+    
+    price_debrief = {}
 
     order_id, order_date, ship_date, date = None,None,None,None
 
+    color_text(order_list[0].keys(),end="\n")
     for order in order_list:
         if platform == "Amazon":
             order_id = order["AmazonOrderId"]; ship_date = order["LatestShipDate"]; order_date = order["PurchaseDate"]
-            color_text(f"{order_id} - {order_date} - {ship_date}")
-
-        
+            payment_method = order["PaymentMethod"];  
+            #color_text(f"{order_id} - {order_date} - {ship_date}")
         
 
     return debrief
@@ -82,14 +84,11 @@ def view_store(request,slug):
                 ord_ins = Orders(sp.handle_access_token())
                 
                 order_list = ord_ins.getOrders(
-                    CreatedAfter=from_timestamp(7),OrderStatuses = "Unshipped"
+                    CreatedAfter=timestamp(7),OrderStatuses = "Unshipped"
                 )
 
                 dashboard_context["debrief"] = order_debrief(selected_store.platform,order_list)
-
                 
-
-
                 if order_list and "BuyerInfo" in order_list[0]:
                     unshipped_ord = len(order_list)
 
@@ -171,17 +170,23 @@ def generate_report(request,slug):
         if request.method == "POST":
             report_type = request.POST.get("type")
             report_df = request.FILES.get("report_df")
+            from_date = request.POST.get("from_date")
+            to_date = request.POST.get("to_date")
             selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
-            start_date = from_timestamp(5); end_date = from_timestamp(0)
-
-            sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-
-            if selected_store.platform == "Amazon":
-                #rep = Reports(access_token=sp.handle_access_token())
-                #report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
-                pass
+            start_date = timestamp(5); end_date = timestamp(0)
+            if report_type:
+                color_text(f"Date range : {from_date} to {to_date}","red")
+                if selected_store.platform == "Amazon":
+                    if not report_df:
+                        # getting sp api credentials, and accessing the access token to create the report
+                        sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
+                        rep = Reports(access_token=sp.handle_access_token())
+                        report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
+                    h = 0
+                else:
+                    pass
             else:
-                pass
+                color_text("select a report type","red")
     except Exception as e:
         better_error_handling(e)
         return redirect("home")
@@ -211,20 +216,16 @@ def generate_report(request,slug):
             
             # Df rows filtering
             hour = datetime.today().hour
-            next_ship_date = from_timestamp(0) if hour <=  11 else from_timestamp(-1)
-            color_text(next_ship_date)
 
             sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
             ord_ins = Orders(sp.handle_access_token())
-
+            
+            
             next_shipment = ord_ins.getOrders(
-                CreatedAfter=from_timestamp(5),OrderStatuses = "Unshipped",
-                LatestShipDate= "2025-03-26T18:29:59Z"
+                CreatedAfter=timestamp(5),OrderStatuses = "Unshipped",
+                LatestShipDate= amzn_next_ship_date(),PaymentMethods="COD"
             )
             color_text(next_shipment,"red")
-
-
-
 
             product_name = None; product_price = None
             respective_fields = {
@@ -233,7 +234,6 @@ def generate_report(request,slug):
                 }
             }
             
-
             product = respective_fields[selected_store.platform]["prod_name"]
             price = respective_fields[selected_store.platform]["prod_price"]
 

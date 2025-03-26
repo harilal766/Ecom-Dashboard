@@ -55,11 +55,19 @@ addedStoresTitles.forEach((title) => {
 
 
  
+let reportDiv = document.getElementById("reportDiv")
 
-reportTypes = document.getElementById("reportTypes");
-generatorButton = document.getElementById("generatorButton");
+let reportTypes = document.getElementById("reportTypes");
+let generatorButton = document.getElementById("generatorButton");
 generatorButton.innerText = `Create ${reportTypes.value}`;
+
+
+let fromDate = document.createElement("input"); fromDate.type = "date"; fromDate.value = "From :"
+let toDate = document.createElement("input"); toDate.type = "date"
+
+
 reportTypes.addEventListener("change",function(event){
     let selection = event.target.value;
+
     generatorButton.innerText = `Create ${selection}`
 });

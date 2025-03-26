@@ -9,7 +9,7 @@ from helpers.messages import color_text
 from datetime import datetime
 class WebsocketBase(AsyncWebsocketConsumer):
     async def connect(self):
-        color_text("Websocket connected...")
+        color_text("Websocket connected",end=", ")
         await self.accept()
         await self.send_time()
         while True:

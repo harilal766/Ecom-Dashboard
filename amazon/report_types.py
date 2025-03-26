@@ -1,10 +1,10 @@
 
 
 selected_report_types = {
-    #"Shipment Report" : "GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
-    "Shipment Report" : "GET_AMAZON_FULFILLED_SHIPMENTS_DATA_GENERAL",
+    "Fulfilled Report" : "GET_AMAZON_FULFILLED_SHIPMENTS_DATA_GENERAL",
+    "Order Report" : "GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
     "Return Report" : "GET_FLAT_FILE_RETURNS_DATA_BY_RETURN_DATE",
-    "Settlement Report" : ""
+    "Settlement Report" : "GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE"
 }
 
 
