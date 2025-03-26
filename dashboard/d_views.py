@@ -42,20 +42,20 @@ def home(request):
 
 def order_debrief(platform,order_list):
     debrief = {}
-    
-    price_debrief = {}
+    if order_list:
+        price_debrief = {}
 
-    order_id, order_date, ship_date, date = None,None,None,None
+        order_id, order_date, ship_date, date = None,None,None,None
 
-    color_text(order_list[0].keys(),end="\n")
-    for order in order_list:
-        if platform == "Amazon":
-            order_id = order["AmazonOrderId"]; ship_date = order["LatestShipDate"]; order_date = order["PurchaseDate"]
-            payment_method = order["PaymentMethod"];  
-            #color_text(f"{order_id} - {order_date} - {ship_date}")
-        
+        #color_text(order_list[0].keys(),end="\n")
+        for order in order_list:
+            if platform == "Amazon":
+                order_id = order["AmazonOrderId"]; ship_date = order["LatestShipDate"]; order_date = order["PurchaseDate"]
+                payment_method = order["PaymentMethod"];  
+                #color_text(f"{order_id} - {order_date} - {ship_date}")
+            
 
-    return debrief
+        return debrief
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
