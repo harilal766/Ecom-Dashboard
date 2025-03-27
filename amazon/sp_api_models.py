@@ -36,7 +36,7 @@ class SPAPIBase():
         """
         status_code = None
         url = self.base_url + endpoint 
-        color_text(f"Endpoint : {endpoint}","blue",end=", ")
+        color_text(f"SP API Endpoint : {endpoint}","blue",end=", ")
         request_dict = {
             "get" : requests.get(url, headers=self.headers, params = self.params,timeout=10),
             "post" : requests.post(url, headers=self.headers, params= self.params,json=data,timeout=10),
@@ -47,7 +47,7 @@ class SPAPIBase():
             
             status_code = response.status_code
             
-            color_text(f"Status code : {status_code}","green" if 200 <= status_code < 400 else "red")
+            color_text(f"SPAPI Status code : {status_code}","green" if 200 <= status_code < 400 else "red")
             
             """
             a while loop should look for if the status code is 429
@@ -101,7 +101,7 @@ class SPAPIBase():
                     return response
 
 
-class Orders(SPAPIBase):
+class Sp_Orders(SPAPIBase):
     def getOrders(
             self,CreatedAfter=None,CreatedBefore=None,OrderStatuses=None,LastUpdatedAfter=None,
             PaymentMethods=None,EasyShipShipmentStatuses=None,EarliestShipDate=None,

@@ -1,11 +1,9 @@
 from django.shortcuts import render,redirect
-from amazon.response_manipulator import *
-from amazon.sp_api_utilities import *
-from amazon.sp_api_models import SPAPIBase,Orders,Reports
+
 from helpers.sql_scripts import *
 from django.http import FileResponse,HttpResponse
 from django.contrib.auth.decorators import login_required
-from amazon.report_types import selected_report_types
+from amazon.report_types import spapi_report_types
 from user.forms import Loginform
 from .forms import Addstoreform
 from .d_models import *
@@ -18,6 +16,18 @@ import pdb
 import pandas as pd
 
 from dashboard.serializers import StoreDebriefSerializer
+
+# Amazon
+from amazon.response_manipulator import *
+from amazon.sp_api_utilities import *
+from amazon.sp_api_models import SPAPIBase,Sp_Orders,Reports
+
+
+# Shopify
+from shopify.s_models import ShopifyApiCredentials
+from shopify.shopify_api_models import *
+
+
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
 """
@@ -53,8 +63,6 @@ def order_debrief(platform,order_list):
                 order_id = order["AmazonOrderId"]; ship_date = order["LatestShipDate"]; order_date = order["PurchaseDate"]
                 payment_method = order["PaymentMethod"];  
                 #color_text(f"{order_id} - {order_date} - {ship_date}")
-            
-
         return debrief
 
 @api_view(['GET'])
@@ -71,42 +79,59 @@ def view_store(request,slug):
         "debrief" : None
     }
     try:
-        selected_store = StoreProfile.objects.get(slug = slug,user = request.user, )
-
-        store_debrief = StoreDebrief.objects.get_or_create(store = selected_store,user = request.user)
-        
+        store = StoreProfile.objects.get(slug = slug,user = request.user)
+        store_debrief = StoreDebrief.objects.get_or_create(store = store,user = request.user)
         store_debrief = store_debrief[0]
         if store_debrief:
             unshipped_ord = None
 
-            if selected_store.platform == "Amazon":
-                sp = SPAPI_Credential.objects.get(store = selected_store,user = request.user )
-                ord_ins = Orders(sp.handle_access_token())
+
+            if store.platform == "Amazon":
+                sp = SPAPI_Credential.objects.get(store = store,user = request.user )
+                ord_ins = Sp_Orders(sp.handle_access_token())
                 
                 order_list = ord_ins.getOrders(
                     CreatedAfter=timestamp(7),OrderStatuses = "Unshipped"
                 )
-
-                dashboard_context["debrief"] = order_debrief(selected_store.platform,order_list)
+                dashboard_context["debrief"] = order_debrief(store.platform,order_list)
                 
                 if order_list and "BuyerInfo" in order_list[0]:
                     unshipped_ord = len(order_list)
-
-
-                dashboard_context["report_types"] = selected_report_types
-            elif selected_store.platform == "Shopify":
+                
+                
+            elif store.platform == "Shopify":
                 unshipped_ord = 0
-
-            
+                sh = ShopifyApiCredentials.objects.get(user=request.user)
+                sh_ord = Sh_Orders(
+                    access_token=sh.access_token, storename=sh.store_name
+                )
+                
+                prod = sh_ord.get_orders()
+                color_text(prod,"red")
+                
             if unshipped_ord:
                 store_debrief.unshipped_orders = unshipped_ord 
                 store_debrief.save()
-
-            dashboard_context["unshipped"] = store_debrief.unshipped_orders
-            return render(request,"dashboard.html",dashboard_context)
-
+                
+            debrief_dict = {
+                "Amazon" : {
+                    "unshipped" : 0 , "report_types" : spapi_report_types
+                },
+                "Shopify" : {
+                    "unshipped" : 0, "report_types" : {"a" : 0}
+                }
+            }
+            
+            dashboard_context["report_types"] = debrief_dict[store.platform]["report_types"]
+            
     except Exception as e:
         better_error_handling(e)
+    else:
+        
+
+        dashboard_context["unshipped"] = store_debrief.unshipped_orders
+        return render(request,"dashboard.html",dashboard_context)
+        
     
 
 @login_required
@@ -181,7 +206,7 @@ def generate_report(request,slug):
                         # getting sp api credentials, and accessing the access token to create the report
                         sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
                         rep = Reports(access_token=sp.handle_access_token())
-                        report_df = rep.report_df_creator(selected_report_types[report_type],start_date,end_date)
+                        report_df = rep.report_df_creator(spapi_report_types[report_type],start_date,end_date)
                     h = 0
                 else:
                     pass
@@ -218,7 +243,7 @@ def generate_report(request,slug):
             hour = datetime.today().hour
 
             sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-            ord_ins = Orders(sp.handle_access_token())
+            ord_ins = Sh_Orders(sp.handle_access_token())
             
             
             next_shipment = ord_ins.getOrders(

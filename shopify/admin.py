@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ShopifyApiCredentials
+from .s_models import ShopifyApiCredentials
 # Register your models here.
 
 

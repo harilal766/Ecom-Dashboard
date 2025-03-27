@@ -1,6 +1,6 @@
 
 
-selected_report_types = {
+spapi_report_types = {
     "Fulfilled Report" : "GET_AMAZON_FULFILLED_SHIPMENTS_DATA_GENERAL",
     "Order Report" : "GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL",
     "Return Report" : "GET_FLAT_FILE_RETURNS_DATA_BY_RETURN_DATE",
