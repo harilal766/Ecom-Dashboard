@@ -101,7 +101,7 @@ class SPAPIBase():
                     return response
 
 
-class Sp_Orders(SPAPIBase):
+class Amzn_Orders(SPAPIBase):
     def getOrders(
             self,CreatedAfter=None,CreatedBefore=None,OrderStatuses=None,LastUpdatedAfter=None,
             PaymentMethods=None,EasyShipShipmentStatuses=None,EarliestShipDate=None,

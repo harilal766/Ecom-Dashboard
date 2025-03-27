@@ -20,7 +20,7 @@ from dashboard.serializers import StoreDebriefSerializer
 # Amazon
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
-from amazon.sp_api_models import SPAPIBase,Sp_Orders,Reports
+from amazon.sp_api_models import SPAPIBase,Amzn_Orders,Reports
 
 
 # Shopify
@@ -88,7 +88,7 @@ def view_store(request,slug):
 
             if store.platform == "Amazon":
                 sp = SPAPI_Credential.objects.get(store = store,user = request.user )
-                ord_ins = Sp_Orders(sp.handle_access_token())
+                ord_ins = Amzn_Orders(sp.handle_access_token())
                 
                 order_list = ord_ins.getOrders(
                     CreatedAfter=timestamp(7),OrderStatuses = "Unshipped"
@@ -106,8 +106,8 @@ def view_store(request,slug):
                     access_token=sh.access_token, storename=sh.store_name
                 )
                 
-                prod = sh_ord.get_orders()
-                color_text(prod,"red")
+                orders = sh_ord.get_orders()
+                
                 
             if unshipped_ord:
                 store_debrief.unshipped_orders = unshipped_ord 
@@ -118,7 +118,8 @@ def view_store(request,slug):
                     "unshipped" : 0 , "report_types" : spapi_report_types
                 },
                 "Shopify" : {
-                    "unshipped" : 0, "report_types" : {"a" : 0}
+                    "unshipped" : 0, 
+                    "report_types" : {"a" : 0}
                 }
             }
             

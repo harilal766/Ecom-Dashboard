@@ -9,7 +9,7 @@ def postal_tracking():
 
 def amazon_initiator():
     # activate amazon model classes
-    order_inst = Sp_Orders(); rep_ins = Reports()
+    order_inst = Amzn_Orders(); rep_ins = Reports()
 
 
 def report_generator():

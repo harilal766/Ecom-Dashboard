@@ -1,5 +1,6 @@
 import requests,json
 from helpers.messages import *
+import re
 
 
 class ShopifyApiBase():
@@ -13,27 +14,27 @@ class ShopifyApiBase():
             "X-Shopify-Access-Token" : self.access_token
             }
             
-    def make_request(self,endpoint,method):
+    def make_shopify_request(self,endpoint,method):
         try:
             domain = f"https://{self.storename}.myshopify.com/admin/api/"
             fields = "limit=2"
-            base_url = domain + endpoint + fields
+            version = "/2024-01/"
+            base_url = domain + version +endpoint + fields
             request_dict = {
                 "get" : requests.get(base_url,headers=self.headers),
                 "post" : requests.post(base_url,headers=self.headers),
             }
+            # finding the model from the endpoint
+            model = re.search(r'[a-z]+\.json\b',endpoint)
+            color_text(message=f"Detected Model : {str(model)} from : {endpoint}")
+            
         except Exception as e:
             better_error_handling(e)
         else:
             result = request_dict.get(method.lower(),None)
             if result:
                 return result.json()
-        
-        
-class Sh_Products(ShopifyApiBase):
-    def get_products(self):
-        return self.make_request(endpoint=f"/2024-01/products.json?",method="get")
     
 class Sh_Orders(ShopifyApiBase):
     def get_orders(self):
-        return self.make_request(endpoint=f"/2024-01/orders.json?",method="get")
+        return self.make_shopify_request(endpoint=f"orders.json?",method="get")
