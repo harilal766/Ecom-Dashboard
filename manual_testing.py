@@ -68,25 +68,25 @@ def pivot_table(df,columns):
 
 
 
-"""
+
 from helpers.label_sorter import *
 amazon = dir_switch(win=win_amazon_invoice,lin=lin_amazon_invoice)
 post = r"D:\3.Shopify\Sholly ayurveda\labels" ;lin_post = r"/home/hari/Downloads/"
-shipping_label_sort(input_pdf_name="26.3.25 cod 25.pdf", input_pdf_path = amazon ,label_type='amazon')
-"""
+#shipping_label_sort(input_pdf_name="27.3.25 prepaid 22.pdf", input_pdf_path = amazon ,label_type='amazon')
 
 
 
 
-api_key = 
-api_secret = 
-api_token = 
-storename = 
+
+api_key = ""
+api_secret = ""
+api_token = ""
+storename = ""
 import requests,json
 
 def shpy():
-    domain = f"https://api/{storename}.myshopify.com"
-    endpoint = "/admin/api/2024-01/products.json?"
+    domain = f"https://{storename}.myshopify.com/admin/api/"
+    endpoint = "/2024-01/products.json?"
     product_fields = "limit=2"
     base_url = domain + endpoint + product_fields
     
@@ -96,7 +96,5 @@ def shpy():
     }
     
     get_products = requests.get(base_url,headers=header_values)
-    print(get_products)
+    print(get_products.json())
 
-
-shpy()

@@ -13,7 +13,7 @@ production_endpoint = "https://sellingpartnerapi-eu.amazon.com"
 sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"
 
 
-class SPAPIBase:
+class SPAPIBase():
     def __init__(self,access_token):
         if access_token:
             self.access_token = access_token

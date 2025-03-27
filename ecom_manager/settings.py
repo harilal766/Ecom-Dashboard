@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # custom apps
     'dashboard','user','amazon',
+    'shopify',
     'rest_framework','corsheaders',
     'debug_toolbar',
 ]

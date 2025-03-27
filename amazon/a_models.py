@@ -35,7 +35,6 @@ class SPAPI_Credential(models.Model):
             time_difference = current_time - self.access_token_updation_time.replace(tzinfo=None)
             difference_seconds = time_difference.total_seconds()
             return difference_seconds >= token_expiry
-            #return self.access_token_updation_time
         else:
             return None
 
@@ -62,7 +61,7 @@ class SPAPI_Credential(models.Model):
 
     def handle_access_token(self):
         if (self.access_token == None) or self.is_access_token_expired() == True :
-            color_text("Refreshing Access Token, ","blue",end=", ")
+            color_text("Refreshing Access Token","red",end=", ")
             return self.generate_access_token()
         else:
             color_text("Reusing Access token","green",end=", ")
