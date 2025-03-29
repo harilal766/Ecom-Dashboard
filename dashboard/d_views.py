@@ -20,13 +20,15 @@ from dashboard.serializers import StoreDebriefSerializer
 # Amazon
 from amazon.response_manipulator import *
 from amazon.sp_api_utilities import *
-from amazon.sp_api_models import SPAPIBase,Amzn_Orders,Reports
+from amazon.sp_api_models import SPAPIBase,Amzn_Orders,Amzn_Reports
 
 
 # Shopify
 from shopify.s_models import ShopifyApiCredentials
 from shopify.shopify_api_models import *
 
+# package for sp api
+from sp_api.api import Orders,Reports
 
 # Create your views here.    
 # create a common context for amazon which can be saved to a json file later
@@ -88,6 +90,9 @@ def view_store(request,slug):
 
             if store.platform == "Amazon":
                 sp = SPAPI_Credential.objects.get(store = store,user = request.user )
+                
+                
+                
                 ord_ins = Amzn_Orders(sp.handle_access_token())
                 
                 order_list = ord_ins.getOrders(
@@ -100,13 +105,20 @@ def view_store(request,slug):
                 
                 
             elif store.platform == "Shopify":
-                unshipped_ord = 0
                 sh = ShopifyApiCredentials.objects.get(user=request.user)
-                sh_ord = Sh_Orders(
-                    access_token=sh.access_token, storename=sh.store_name
-                )
+                sh_ord = Sh_Orders(access_token=sh.access_token, storename=sh.store_name)
                 
-                orders = sh_ord.get_orders()
+                ord = sh_ord.get_orders()
+                
+                sh_report = pd.DataFrame.from_dict(pd.json_normalize(ord),orient='columns')
+                
+                unshipped_ord = len(ord)
+                
+                color_text(sh_report,"red")
+                
+                for order in ord:
+                    id = order["name"]; phone = order["phone"]
+                    #color_text(f"{id} - {phone}","blue")
                 
                 
             if unshipped_ord:
@@ -133,7 +145,7 @@ def view_store(request,slug):
         dashboard_context["unshipped"] = store_debrief.unshipped_orders
         return render(request,"dashboard.html",dashboard_context)
         
-    
+
 
 @login_required
 def add_store(request):
@@ -199,16 +211,21 @@ def generate_report(request,slug):
             from_date = request.POST.get("from_date")
             to_date = request.POST.get("to_date")
             selected_store = StoreProfile.objects.get(user=request.user,slug=slug)
-            start_date = timestamp(5); end_date = timestamp(0)
+            start_date = iso_8601_timestamp(5); end_date = iso_8601_timestamp(0)
             if report_type:
-                color_text(f"Date range : {from_date} to {to_date}","red")
+                color_text(f"Creating {selected_store.platform} from {start_date} to {end_date}")
                 if selected_store.platform == "Amazon":
                     if not report_df:
                         # getting sp api credentials, and accessing the access token to create the report
                         sp = SPAPI_Credential.objects.get(user=request.user,store=selected_store)
-                        rep = Reports(access_token=sp.handle_access_token())
-                        report_df = rep.report_df_creator(spapi_report_types[report_type],start_date,end_date)
-                    h = 0
+                        rep = Amzn_Reports(access_token=sp.handle_access_token())
+                        report_df = rep.report_df_creator(
+                            report_type=spapi_report_types[report_type],
+                            start_date = iso_8601_timestamp(17),
+                            end_date = iso_8601_timestamp(0)
+                        )
+                        
+                        color_text(f"package : {9}")
                 else:
                     pass
             else:
@@ -218,8 +235,6 @@ def generate_report(request,slug):
         return redirect("home")
     else:
         if report_df:
-            color_text(f"Creating {selected_store.platform}")
-            
             report_df = pd.read_csv(report_df,delimiter='\t')
             
             # DF column filtering based on columns selected by user

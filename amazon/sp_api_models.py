@@ -15,6 +15,7 @@ sandbox_endpoint = "https://sandbox.sellingpartnerapi-eu.amazon.com"
 
 class SPAPIBase():
     def __init__(self,access_token):
+        color_text("SPAPI")
         if access_token:
             self.access_token = access_token
             self.base_url = production_endpoint
@@ -47,7 +48,7 @@ class SPAPIBase():
             
             status_code = response.status_code
             
-            color_text(f"SPAPI Status code : {status_code}","green" if 200 <= status_code < 400 else "red")
+            color_text(f"Status code : {status_code}","green" if 200 <= status_code < 400 else "red")
             
             """
             a while loop should look for if the status code is 429
@@ -209,7 +210,7 @@ class EasyShip(SPAPIBase):
         endpoint = f"/easyShip/{self.version}/packages/bulk"
 
 
-class Reports(SPAPIBase):
+class Amzn_Reports(SPAPIBase):
     # https://developer-docs.amazon.com/sp-api/docs/reports-api-v2021-06-30-reference        
     def createReport(self,reportType,reportOptions=None,dataStartTime=None,dataEndTime=None):
         endpoint = '/reports/2021-06-30/reports'
@@ -232,49 +233,34 @@ class Reports(SPAPIBase):
         if not ("reportId" in self.params.keys() and self.params["reportId"]):
             self.params.update({"reportId" : reportId})
             color_text("report id added to params")
-            
         
-        report_status = self.make_request(endpoint=endpoint,method="get",params=self.params)
-        return report_status.json()
-
+        while True:
+            report_status = self.make_request(endpoint=endpoint,method="get",params=self.params).json()
+            color_text(self.params,"red")
+            status = report_status.get("processingStatus")
+            if not status:
+                return None
+                
+            color_text(status,"red" if status in ["CANCELLED","FATAL"] else "green")
+            
+            if status == "DONE":
+                break
+            time.sleep(30)
+        
     # Report Df creator
     def report_df_creator(self,report_type,start_date,end_date):
         try:
             # report creation
-            report_id = None
-            if not report_id:
-                report_id = self.createReport(
+            report_id = self.createReport(
                     reportType=report_type,dataStartTime=start_date,dataEndTime=end_date
                 )
-            self.params.update({"reportId" : report_id})
             
-            # report schedule
-            schedule = self.getReportSchedules(reportTypes=report_type)
-            color_text(schedule,"blue")
+            if not report_id:
+                color_text("Faliled to generate report id","red")
+                return None
             
-            while True:
-                # report processing
-                rep_processing = self.getReport(report_id)
-                #processing_status = doc_resp.get("processingStatus",None)
-                report_status = (rep_processing.get("processingStatus"))
-                if report_status == "DONE":
-                    rep_doc_id = rep_processing.get("reportDocumentId")
-                    color_text(f"report doc id : {rep_doc_id}")
-                    if rep_doc_id:
-                        document_response = self.getReportDocument(reportDocumentId = rep_doc_id).json()
-                        color_text(document_response,"blue")
-                        if document_response:
-                            color_text(document_response)
-                            df_url = document_response.get("url")
-                            rep_df = requests.get(df_url)
-                            color_text(rep_df)
-                            return rep_df
-
-                elif report_status in  ("CANCELLED","FATAL"):
-                    color_text(report_status,"red")
-                    return None
-                color_text(rep_processing)
-                time.sleep(15)
+            self.getReport(reportId=report_id)
+            
 
         except AttributeError as ae:
             #color_text(f"Attribute Error found :\n {ae}")

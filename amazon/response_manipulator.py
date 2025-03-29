@@ -14,7 +14,7 @@ def rep_doc_id_generator(report_id,access_token):
     retries =0 ; max_retries = 100 ; delay = 2
     report_status_json = {"status":None}
     while retries <  max_retries:
-        R = Reports(access_token=access_token); last_status = None
+        R = Amzn_Reports(access_token=access_token); last_status = None
         report = R.getReport(reportId=report_id)
         if report:
             last_status = ''

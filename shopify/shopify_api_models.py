@@ -17,12 +17,12 @@ class ShopifyApiBase():
     def make_shopify_request(self,endpoint,method):
         try:
             domain = f"https://{self.storename}.myshopify.com/admin/api/"
-            fields = "limit=2"
-            version = "/2024-01/"
-            base_url = domain + version +endpoint + fields
+            limit = "limit=100"
+            version = "/2025-01/"
+            api_url = domain + version + endpoint + limit
             request_dict = {
-                "get" : requests.get(base_url,headers=self.headers),
-                "post" : requests.post(base_url,headers=self.headers),
+                "get" : requests.get(api_url,headers=self.headers),
+                "post" : requests.post(api_url,headers=self.headers),
             }
             # finding the model from the endpoint
             model = re.search(r'[a-z]+\.json\b',endpoint)
@@ -31,10 +31,10 @@ class ShopifyApiBase():
         except Exception as e:
             better_error_handling(e)
         else:
-            result = request_dict.get(method.lower(),None)
-            if result:
-                return result.json()
+            response = request_dict.get(method.lower(),None)
+            if response.status_code==200:
+                return response.json()
     
 class Sh_Orders(ShopifyApiBase):
     def get_orders(self):
-        return self.make_shopify_request(endpoint=f"orders.json?",method="get")
+        return self.make_shopify_request(endpoint=f"orders.json?",method="get")["orders"]
